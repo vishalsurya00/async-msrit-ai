@@ -1,0 +1,21 @@
+{
+  "Cprog.pdf": {"doc_type": "notes"},
+  "MAC11.pdf": {"doc_type": "notes"},
+
+  "~z-lib.org": {"doc_type": "textbook"},
+  "~Thomas": {"doc_type": "textbook"},
+  "~Laud": {"doc_type": "textbook"},
+  "~Mathur": {"doc_type": "textbook"},
+  "~Krane": {"doc_type": "textbook"},
+  "~University_Physics": {"doc_type": "textbook"},
+
+  "~tutorial": {"doc_type": "practice_problems"},
+  "~Tut sheet": {"doc_type": "practice_problems"},
+  "~questions": {"doc_type": "practice_problems"},
+
+  "LCR Series.pdf": {"doc_type": "lab_manual"},
+  "LCR parallel.pdf": {"doc_type": "lab_manual"},
+  "Trans1.pdf": {"doc_type": "lab_manual"},
+  "Trans2.pdf": {"doc_type": "lab_manual"},
+  "Zener.pdf": {"doc_type": "lab_manual"}
+}

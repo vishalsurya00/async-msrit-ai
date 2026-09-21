@@ -1,0 +1,3986 @@
+{
+  "created_at": "2026-09-21T20:20:48.931546+00:00",
+  "stream_branches": {
+    "Computer Science & Engineering Stream": "CSE, ISE, AIML, AIDS, CSE-AIML, CSE-Cyber",
+    "Electrical & Electronics Engineering Stream": "ECE, EEE, EIE, ETE and MD",
+    "Civil Engineering Stream": "Civil",
+    "Mechanical Engineering Stream": "ME, IEM and CH"
+  },
+  "documents": [
+    {
+      "doc_id": "9f0a1761f1cf",
+      "file_name": "Chemistry concise.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Chemistry concise.pdf",
+      "pages": 10,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "9f0a1761f1cf80314cd9cf24fe28136fec6cfe1104ab671bdc49095767e4291a",
+      "doc_type": "quick_revision",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "52f2c300e6c2",
+      "file_name": "2023.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/PYQ/2023.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "52f2c300e6c281b1f46342f42b50139831df5c236e5b1f5bbb7ab63d0018c94c",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "f898e35a1324",
+      "file_name": "2025.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/PYQ/2025.pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "f898e35a132456af6c82fa67ab957397bcd1aee64f3b5a2139313524bd3c0bd3",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2025,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "c1d3b525b1b9",
+      "file_name": "CIE 1 Chem.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/PYQ/CIE/CIE 1 Chem.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "c1d3b525b1b9562520baf05b9204bb909ba82a81144b8f16c7ae94d88ec066bc",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 1,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "b9976f658719",
+      "file_name": "CIE 2 Chem.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/PYQ/CIE/CIE 2 Chem.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "b9976f658719ff7f19f79955fd399ff7753b8256b2e05226763f405e5913e4b6",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 2,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "0c3f8a281cc1",
+      "file_name": "Unit 1(Electrochemistry).pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 1(Electrochemistry).pdf",
+      "pages": 26,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "0c3f8a281cc1347d6e9eaf30e99c407057e18fb3509c58e5687e93b7b6920143",
+      "doc_type": "notes",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "f62914e6c654",
+      "file_name": "Unit 1(Numericals).pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 1(Numericals).pdf",
+      "pages": 4,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "f62914e6c6541641eb13a8780fc21f61ab31368127a38ddbfee5b3c5acf74481",
+      "doc_type": "practice_problems",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "c4371053ac4b",
+      "file_name": "Unit 2(Corrosion).pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 2(Corrosion).pdf",
+      "pages": 18,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "c4371053ac4bb695d4d3718977e3f4759f1787e88e8a2775843672b5a65a940f",
+      "doc_type": "notes",
+      "unit": 2,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "19eabc66fa93",
+      "file_name": "Unit 3(Polymer And Liquid Crystal).pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 3(Polymer And Liquid Crystal).pdf",
+      "pages": 21,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "19eabc66fa93c605f4ade537ada5ea3ef2fd42edbd9085904121598eb907f453",
+      "doc_type": "notes",
+      "unit": 3,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "28ca50c938f9",
+      "file_name": "Unit 5(Class Notes).pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 5(Class Notes).pdf",
+      "pages": 9,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "28ca50c938f966fca1bc261f80d13898f1d0f481be84f8e080fa713f489c710b",
+      "doc_type": "notes",
+      "unit": 5,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "26d23b64787f",
+      "file_name": "Unit 5(Fuel Cells and E-waste Management).pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 5(Fuel Cells and E-waste Management).pdf",
+      "pages": 32,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "26d23b64787f4c557cddf6965731a9dd4d04374f5e6aca8fd8eba45ee7c86d76",
+      "doc_type": "notes",
+      "unit": 5,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "0842b1f237e2",
+      "file_name": "Unit 5.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit 5.pdf",
+      "pages": 11,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "0842b1f237e251138fe8f2fc65557149a841e80fb48165afc8292a6b9258b364",
+      "doc_type": "notes",
+      "unit": 5,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "9e85b8a85edb",
+      "file_name": "Unit4.pdf",
+      "path": "data/raw/first_year/by_folder/chemistry__166-4ZRA/Unit4.pdf",
+      "pages": 13,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "9e85b8a85edb38ab19ecbf09fa808220f76fea19d97eb94d84e0703095a0b3c9",
+      "doc_type": "notes",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "b7b87405e40f",
+      "file_name": "C prog ch 1,2,3.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/C prog ch 1,2,3.pdf",
+      "pages": 95,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "b7b87405e40f4a95cb9deda2e9eca99737d3500ac5595d4b69087b1e5d18b9ab",
+      "doc_type": "notes",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "6bdf0621631d",
+      "file_name": "Cprog.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/Cprog.pdf",
+      "pages": 32,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "6bdf0621631d7e2d6968990f7a1a09c9bc690edf45528d177f2bd42a3524e21f",
+      "doc_type": "notes",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "734bd453e8c2",
+      "file_name": "2023 c.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/PYQ/2023 c.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "734bd453e8c2b55309726f536f61a752abaa6a7cea59ff02733d0b4b61218988",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "e18732e781fb",
+      "file_name": "2023.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/PYQ/2023.pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "e18732e781fbcd143cc48235e0fe3a094a4fa8ed13fc10880897c90434a82710",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "7192c99904d0",
+      "file_name": "CIE 1.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/PYQ/CIE/CIE 1.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "7192c99904d0c0ea7782034520c7b38cfd508626f0eefc4fa39568b6e867e050",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 1,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "d9219e6fef9f",
+      "file_name": "CIE 2.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/PYQ/CIE/CIE 2.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "d9219e6fef9fd3f506f8cc1a3afd3c12c9f00155733e34867f3000fe2a18a2d0",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 2,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "f866f856b840",
+      "file_name": "MAKEUP 2023.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/C Programming/PYQ/MAKEUP 2023.pdf",
+      "pages": 3,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "f866f856b84066de4305cb9c1eb3394c32061b4d4b6f7e8f2ff9cce79980ad01",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "a247fd0dc1e9",
+      "file_name": "2023 SEE.pdf",
+      "path": "data/raw/first_year/by_folder/esc__1x8GwDxO/civil/Notes/2023 SEE.pdf",
+      "pages": 3,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "a247fd0dc1e94344c9ddcf3885d13b456e93c7d8a9ff0f0f0fde89fe19927f03",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "7206b5bbd325",
+      "file_name": "Lab Manual.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/Lab Manual.pdf",
+      "pages": 27,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "7206b5bbd325bbeef13df81521daade0b804fc1377a1b16fa367a59063ebdfd2",
+      "doc_type": "lab_manual",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle",
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing",
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": [
+        "mathematics__1tBGTOy3"
+      ]
+    },
+    {
+      "doc_id": "8ad820179da3",
+      "file_name": "2023 CIE1.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/PYQ/2023 CIE1.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "8ad820179da35e862870c973613eae27f2559c659ee5741c08e30957482cb59a",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": 1,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "367be1db504e",
+      "file_name": "2023 CIE2.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/PYQ/2023 CIE2.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "367be1db504edff30af99c3cb67d9585e19ca468a06aa2c3f6511aa69599fe52",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": 2,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "44bd08c85227",
+      "file_name": "2023.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/PYQ/2023.pdf",
+      "pages": 3,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "44bd08c85227a312ea52cca9edfa3fb3e35238c390b2dbf0931ddd1e781f07f6",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "dd80a8ff4049",
+      "file_name": "2025.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/PYQ/2025.pdf",
+      "pages": 3,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "dd80a8ff404910d46ec7693d516809fa6cb1c17fab1239a82d1d69074e6e19dc",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2025,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "532e1782d3af",
+      "file_name": "Unit_1.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/Unit_1.pdf",
+      "pages": 39,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "532e1782d3affb8c1a225fa1a35e97ef41f8cc0541b0221d2248e605ab117472",
+      "doc_type": "notes",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "166b1cb9ec5c",
+      "file_name": "Unit_2.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/Unit_2.pdf",
+      "pages": 31,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "166b1cb9ec5c4da1f861c879f58ea83055e7b90dafb764e33576b0a66dc9fea9",
+      "doc_type": "notes",
+      "unit": 2,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "459a030b3952",
+      "file_name": "Unit_3.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/Unit_3.pdf",
+      "pages": 31,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "459a030b395267fc23696838fd715221b292886f401e9bde5eaeecec3ac7bde3",
+      "doc_type": "notes",
+      "unit": 3,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "2f99cd92065d",
+      "file_name": "Unit_4.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__10neY4vT/Unit_4.pdf",
+      "pages": 119,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "2f99cd92065d765521f2d2e33c8f07d5535be3bf4b3781150c7f9edbe2168b9d",
+      "doc_type": "notes",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Chemistry Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "5adee4d13cde",
+      "file_name": "1. Syllabus.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/1. Syllabus.pdf",
+      "pages": 3,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "5adee4d13cdef9976b576d367a96d8ef7a33427b40e442f2ac741e4ccd59c9fe",
+      "doc_type": "syllabus",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "401967f23ceb",
+      "file_name": "Advanced Engineering Mathematics, 10th Edition by Erwin Kreyszig, In collaboration with Herbert Kreyszig and Edward J. Norminton (z-lib.org).pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Book/Advanced Engineering Mathematics, 10th Edition by Erwin Kreyszig, In collaboration with Herbert Kreyszig and Edward J. Norminton (z-lib.org).pdf",
+      "pages": 1283,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "401967f23ceb4e8e46d53e121c9a20eb0dcc4177937c964e299811a5141f0f53",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "8cf0a83cedec",
+      "file_name": "Advanced Engineering Mathematics, 7th Edition by Peter V. ONeil (z-lib.org).pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Book/Advanced Engineering Mathematics, 7th Edition by Peter V. ONeil (z-lib.org).pdf",
+      "pages": 913,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "8cf0a83cedec4b0b20653f33cf0eaf45240f7dd5e5bf2f198071fa2d1fed4c77",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "e74dd8c54917",
+      "file_name": "George B. Thomas, Maurice D. Weir, Joel Hass, Frank R. Giordano - Thomas_s calculus-Addison Wesley (2004).pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Book/George B. Thomas, Maurice D. Weir, Joel Hass, Frank R. Giordano - Thomas_s calculus-Addison Wesley (2004).pdf",
+      "pages": 1563,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "e74dd8c54917e860692a872f4f383a2d46380dc4fbeb8559d7da7bfb63c0fcdb",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "3eb3573bd187",
+      "file_name": "Thomas_Calculus.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Book/Thomas_Calculus.pdf",
+      "pages": 1205,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "3eb3573bd1874ddcdd92ddc788c6e3fd6fec7630530bb5af4abcadfb385ddf83",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "df4a329b77ca",
+      "file_name": "Mathamatics Concise.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Mathamatics Concise.pdf",
+      "pages": 34,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "df4a329b77ca00b17976edd721122f53f4605743300f5e85eb99633e745479d6",
+      "doc_type": "quick_revision",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "77d900988b6c",
+      "file_name": "MAC11- CIE1.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/PYQ/MAC11- CIE1.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "77d900988b6cbbc907bae0a89aaf186f18632f84bd640c5746736211abd90bd7",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 1,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "20b56b57cf68",
+      "file_name": "MAC11- CIE2 .pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/PYQ/MAC11- CIE2 .pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "20b56b57cf685f63ecc02cf23ce1d0f13b1fea9b0e544571b9128828daf35a3b",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 2,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "904b18a0d45a",
+      "file_name": "MAC11.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/PYQ/MAC11.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "904b18a0d45a27f8978b62441c2341d9fdcf3f8265f8103d9eee52d11dac655e",
+      "doc_type": "notes",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "4d2d3bcde61e",
+      "file_name": "Question Bank.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Tutorials/Question Bank.pdf",
+      "pages": 37,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "4d2d3bcde61e3ea0bb6abc62873ff0dde3d26b6cce7e98859d3ad94b72aadc34",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "f87b91d5e10c",
+      "file_name": "tutorial 5.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Tutorials/tutorial 5.pdf",
+      "pages": 5,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "f87b91d5e10c9320f24735d02d1b2d9b2e3ad58e4bee1ba78024b221d07a6753",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "5fbc6158fdf0",
+      "file_name": "tutorial 6.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Tutorials/tutorial 6.pdf",
+      "pages": 4,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "5fbc6158fdf08c5f0305d3634c6283b82b2c4a018341c3be588e434522350b11",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "471628328d35",
+      "file_name": "tutorial 7.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Tutorials/tutorial 7.pdf",
+      "pages": 4,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "471628328d3549c216af324c89e92901a9f3c094e0303ae68b931ef433d51b89",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "449c4ad7d9c2",
+      "file_name": "tutorial 8,9,10.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Tutorials/tutorial 8,9,10.pdf",
+      "pages": 15,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "449c4ad7d9c22c9ffb60e9324ead6bd3ce8b3794d1e300e17125f1a841314d35",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "216d0bc4c844",
+      "file_name": "Unit 1,2,3.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/Unit 1,2,3.pdf",
+      "pages": 124,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "216d0bc4c8440ef4fb40e5ea6bdde5f6a280c6f67151753a1a60c0d894c1931f",
+      "doc_type": "notes",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "febd8d3ce75a",
+      "file_name": "UNIT I  Differential Calculus - II.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/UNIT I  Differential Calculus - II.pdf",
+      "pages": 41,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "febd8d3ce75a779c31c2c1db7ca51bc3ec569c72d27fcf76dfc22c1fd7508adb",
+      "doc_type": "notes",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "1ed740e3b63b",
+      "file_name": "UNIT II First order and first degree differential equations and its applications.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/UNIT II First order and first degree differential equations and its applications.pdf",
+      "pages": 25,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "1ed740e3b63b955fcdae352e66e95a20090d0bc4b11f3439512cc599f2fe8d0e",
+      "doc_type": "notes",
+      "unit": 2,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "7b0452e0cc6b",
+      "file_name": "UNIT III Linear differential equations of higher order.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/UNIT III Linear differential equations of higher order.pdf",
+      "pages": 40,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "7b0452e0cc6bcb8d5620b4f7efb84f9739022d2767b4bb2a20c0dcb0f3940744",
+      "doc_type": "notes",
+      "unit": 3,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "d42a155a4aa6",
+      "file_name": "UNIT IV Beta and Gamma Function.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/UNIT IV Beta and Gamma Function.pdf",
+      "pages": 26,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "d42a155a4aa623a617640a45069b4c0aea917c12f017b60dbe039701e7b09228",
+      "doc_type": "notes",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "82809e88cfbe",
+      "file_name": "UNIT V Laplace transforms II.pdf",
+      "path": "data/raw/first_year/by_folder/mathematics__1tBGTOy3/UNIT V Laplace transforms II.pdf",
+      "pages": 27,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "82809e88cfbee60a537cd94b187ef24e8965aaf703cdeaa1cb5182bcd4fb6782",
+      "doc_type": "notes",
+      "unit": 5,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Computer Science & Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "b45d96592299",
+      "file_name": "Assignment (Physics)_PYM22_May- 2024 (Mechanical stream).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Assignment (Physics)_PYM22_May- 2024 (Mechanical stream).pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "b45d9659229923e65df2fbf689ca803e153e9409022e4b7c7fc4078c60ca6c07",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "eae2b193ad57",
+      "file_name": "B.B Laud _Lasers_and_Non _Linear_Optics.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/B.B Laud _Lasers_and_Non _Linear_Optics.pdf",
+      "pages": 319,
+      "needs_ocr": true,
+      "exclude_from_index": true,
+      "sha256": "eae2b193ad571fbc1038a2e57bf7320f37ef90e2d1b2340eb9890bab8f59fd08",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "cb62d33babbf",
+      "file_name": "D. S. Mathur--Elements of properties of matter.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/D. S. Mathur--Elements of properties of matter.pdf",
+      "pages": 615,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "cb62d33babbf5efbd477995b5881afa38ccf6b00808c8af6bf85717161552c4e",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "6fc570d1ce60",
+      "file_name": "Introduction to Electrodynamics, 4th Edition by David J. Griffiths (z-lib.org).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/Introduction to Electrodynamics, 4th Edition by David J. Griffiths (z-lib.org).pdf",
+      "pages": 623,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "6fc570d1ce606c53d0cefe53e430ee3a4df2914da3ca265744e3deee430538af",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "94e0eb189ecc",
+      "file_name": "ModernPhysics-Krane-3ed.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/ModernPhysics-Krane-3ed.pdf",
+      "pages": 566,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "94e0eb189ecc1f9f3b1db6747d00c79cee0868d7c0d87ce4f8c644246fd6df86",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "8c1d05abd99d",
+      "file_name": "Semiconductor physics and devices basic principles by Donald A. Neamen (z-lib.org).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/Semiconductor physics and devices basic principles by Donald A. Neamen (z-lib.org).pdf",
+      "pages": 784,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "8c1d05abd99d35225595b41c4cf564908f4ccec5ea0e514da1302dbb422a0b05",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "17b2ad182d7e",
+      "file_name": "The Feynman Lectures on Physics, Vol. II_ The New Millennium Edition_ Mainly Electromagnetism and Matter ( PDFDrive )(1).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/The Feynman Lectures on Physics, Vol. II_ The New Millennium Edition_ Mainly Electromagnetism and Matter ( PDFDrive )(1).pdf",
+      "pages": 566,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "17b2ad182d7eff221e983a0250793dc8fc73c97f6f68331726c2bb154af91a79",
+      "doc_type": "notes",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "13f9cb3fbdc7",
+      "file_name": "The Feynman Lectures on Physics, Volume 1_ Mainly Mechanics, Radiation, and Heat (The New Millennium Edition - Desktop Edition) ( PDFDrive ).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/The Feynman Lectures on Physics, Volume 1_ Mainly Mechanics, Radiation, and Heat (The New Millennium Edition - Desktop Edition) ( PDFDrive ).pdf",
+      "pages": 536,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "13f9cb3fbdc782593d7a57c318df1130bd2b2e3ba8c47f88b57cc6f98b2441b7",
+      "doc_type": "notes",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "6101f71f99d2",
+      "file_name": "University_Physics_with_Modern_Physics_1.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Books/University_Physics_with_Modern_Physics_1.pdf",
+      "pages": 1598,
+      "needs_ocr": false,
+      "exclude_from_index": true,
+      "sha256": "6101f71f99d2ffce9cadc2ab3a0334d67d12adc02c784d96c8a0b6b8f5c3e81f",
+      "doc_type": "textbook",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "0e835dff08ff",
+      "file_name": "model-questions-Elasticity_SVM-march2024.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/model-questions-Elasticity_SVM-march2024.pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "0e835dff08ffa13995f0e67bed24b0abb559243a83aeb2d8c867eb00ba613b1a",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "5e5e4390e077",
+      "file_name": "Physics Assignment.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Physics Assignment.pdf",
+      "pages": 5,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "5e5e4390e077c5c5595f9243a6bcab80a4b443f70a357e4869dff56d2c1d2d02",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "0635cb43878f",
+      "file_name": "LCR parallel.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Physics Laboratory/LCR parallel.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "0635cb43878f6f9af9f09837f9894789c671e2cbb74bff9b8952648fc4e1bd87",
+      "doc_type": "lab_manual",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "8c3bc17049f0",
+      "file_name": "LCR Series.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Physics Laboratory/LCR Series.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "8c3bc17049f018246fcfd4da2efdafd89642167a0f21de84d2dd229ed87deb69",
+      "doc_type": "lab_manual",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "b4708125a4fa",
+      "file_name": "Trans1.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Physics Laboratory/Trans1.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "b4708125a4fab6c7b9669c5954d306e071fc3096a78016f21fa1c4dcdacd9778",
+      "doc_type": "lab_manual",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "843ab47fbe82",
+      "file_name": "Trans2.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Physics Laboratory/Trans2.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "843ab47fbe823b1f1deb90af340e6e3e182e377da3fc61fc4238fa51eb62103c",
+      "doc_type": "lab_manual",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "560d25216cee",
+      "file_name": "Zener.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Physics Laboratory/Zener.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "560d25216cee8319b4db0be1676512363e94710c113fb55c146750f3100cd470",
+      "doc_type": "lab_manual",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "d404c06d617d",
+      "file_name": "2023 may.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/PYQ/2023 may.pdf",
+      "pages": 4,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "d404c06d617d67f68097a6ceb80c8189f5cc60449360c77323c89428475a973c",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "4fe75db43f5a",
+      "file_name": "2023 Sept.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/PYQ/2023 Sept.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "4fe75db43f5ae2cbb4ae8a719c637a05589c27f4572886c82204595f978ce2c1",
+      "doc_type": "question_paper",
+      "unit": null,
+      "exam_year": 2023,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "8fdc525a65e2",
+      "file_name": "CIE 1.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/PYQ/CIE/CIE 1.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "8fdc525a65e2038116c0d9f484ea7bbf05898d3e28ff7be6c9c665f6233f77df",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 1,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "67063ab53a41",
+      "file_name": "CIE 2 Phy.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/PYQ/CIE/CIE 2 Phy.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "67063ab53a41d7b213d327a049f0b2530ddec93034cd04d2e6c29078c13009f8",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 2,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "1e3fdf2e3f1f",
+      "file_name": "CIE 2.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/PYQ/CIE/CIE 2.pdf",
+      "pages": 1,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "1e3fdf2e3f1ff1fbbb46b1c84f6802f421ef73d9b311918bfc233ed527e93e61",
+      "doc_type": "cie_paper",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": 2,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "d4921d19c0f3",
+      "file_name": "Elasticity questions.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Question Bank/Elasticity questions.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "d4921d19c0f3120b7c2ea7668ed1056e87eb718fd29b7bea86a8e9164fef7a85",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "da5c2148a838",
+      "file_name": "Electrical conductivity questions.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Question Bank/Electrical conductivity questions.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "da5c2148a8385641d465e28f44a99cd4a46ef6f19a45f8852aaece532ae872e0",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "e2926674a41a",
+      "file_name": "laser numericals.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Question Bank/laser numericals.pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "e2926674a41ac5b5f135e9d7066f1463f6815f6ae792fdfa36e3535cafd8a3eb",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "ae147253b5bd",
+      "file_name": "Numerical_Problems_on_Laser.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Question Bank/Numerical_Problems_on_Laser.pdf",
+      "pages": 10,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "ae147253b5bdbe3a163337567e276f4214671b2db7b40a4810b98a81eba87150",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "67834d3b2856",
+      "file_name": "optical_fiber Tut sheet.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Question Bank/optical_fiber Tut sheet.pdf",
+      "pages": 2,
+      "needs_ocr": true,
+      "exclude_from_index": false,
+      "sha256": "67834d3b28567a3ad0a46ac2276176a4b58d0adc053d522254ab74e6c099777c",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "5038f734fe14",
+      "file_name": "Vibrations questions.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Question Bank/Vibrations questions.pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "5038f734fe145b2db67d3a8e11dd7f92233fff9ac79a88718d4a27b30f8ecd08",
+      "doc_type": "practice_problems",
+      "unit": null,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "98894a338de9",
+      "file_name": "Tutorials Unit-1 (Lasers).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-1 (Lasers).pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "98894a338de9d1c089bf36fe2c89397c4e5566f21d731762211e827f06907f05",
+      "doc_type": "practice_problems",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "606933c8bc12",
+      "file_name": "Tutorials Unit-1 (Optical Fibers).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-1 (Optical Fibers).pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "606933c8bc1209a9a8eb7c601d035faa1f5c75d758a469b1dbfa0104e6390f97",
+      "doc_type": "practice_problems",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "df0a67a24345",
+      "file_name": "Tutorials Unit-2 (Elasticity).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-2 (Elasticity).pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "df0a67a24345b243864304aa38ec274c5aafe52f014103211f4bfc229024a0d7",
+      "doc_type": "practice_problems",
+      "unit": 2,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "c79263923176",
+      "file_name": "Tutorials Unit-3 (Modern Physics).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-3 (Modern Physics).pdf",
+      "pages": 2,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "c79263923176e604027f7a20952fe047cc1c11cab9cc3cbfb20acc9bdd00090d",
+      "doc_type": "practice_problems",
+      "unit": 3,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "0ffd258dd704",
+      "file_name": "Tutorials Unit-4 (Electrical conductivity).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-4 (Electrical conductivity).pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "0ffd258dd7048faa24e2de28565b9d1345e88eab1c7c104668ff37a970794dc8",
+      "doc_type": "practice_problems",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "2fa2524c8645",
+      "file_name": "Tutorials Unit-4 (Semiconductors).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-4 (Semiconductors).pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "2fa2524c86456e1c8618b374a0595ef0aaed1e2dd76cdd3ff6b52ef40556043e",
+      "doc_type": "practice_problems",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "059af1ebcb9b",
+      "file_name": "Tutorials Unit-5 (Materials science).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Tutorials/Tutorials Unit-5 (Materials science).pdf",
+      "pages": 1,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "059af1ebcb9b6c77923c95637931fff1e28d3b12e7b46d02daf7f6b488225bfa",
+      "doc_type": "practice_problems",
+      "unit": 5,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "bafcba13266e",
+      "file_name": "UNIT - 4 CYROGENICS  NOTES.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/UNIT - 4 CYROGENICS  NOTES.pdf",
+      "pages": 19,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "bafcba13266e710f775cf8733c4466a2ec505c7575eff51d5349f2df97435a4f",
+      "doc_type": "notes",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "2c8ef4962b06",
+      "file_name": "Unit 1 (Lasers).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Unit 1 (Lasers).pdf",
+      "pages": 20,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "2c8ef4962b06fec76c39d98d9bbf532c8529a5497cfdce7574076a9a8051e92f",
+      "doc_type": "notes",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "0ade364baaf7",
+      "file_name": "Unit 1 (Optical Fibres).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Unit 1 (Optical Fibres).pdf",
+      "pages": 10,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "0ade364baaf71b69b414b2d472e948333a32b1e8b9a5d3d7294c0d9fdd53bc52",
+      "doc_type": "notes",
+      "unit": 1,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "9f8c5776bde3",
+      "file_name": "Unit 2 (Quantum Mechanics).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Unit 2 (Quantum Mechanics).pdf",
+      "pages": 14,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "9f8c5776bde3a46ab0ba063661302f8a702be2c2b6d64c38df7f84122e9f4850",
+      "doc_type": "notes",
+      "unit": 2,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "45608ef8da1d",
+      "file_name": "Unit 3 (Electrical conductivity Dielectrics) Notes Revised.pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Unit 3 (Electrical conductivity Dielectrics) Notes Revised.pdf",
+      "pages": 26,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "45608ef8da1d2b83279277dc5fdebee2eaf84958ab2b95a134621261bb91795f",
+      "doc_type": "notes",
+      "unit": 3,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    },
+    {
+      "doc_id": "080e87bef8c8",
+      "file_name": "Unit 4 (Quantum Computing)(For cse branches).pdf",
+      "path": "data/raw/first_year/by_folder/physics__14ZLhu4G/Unit 4 (Quantum Computing)(For cse branches).pdf",
+      "pages": 25,
+      "needs_ocr": false,
+      "exclude_from_index": false,
+      "sha256": "080e87bef8c84baa602578460d5002ae5fdbcdbf9f886515428cf8e88cc3902b",
+      "doc_type": "notes",
+      "unit": 4,
+      "exam_year": null,
+      "cie_number": null,
+      "streams": [
+        "Civil Engineering Stream",
+        "Computer Science & Engineering Stream",
+        "Electrical & Electronics Engineering Stream",
+        "Mechanical Engineering Stream"
+      ],
+      "cycles": [
+        "Physics Cycle"
+      ],
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ],
+      "source_folder_urls": [
+        "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing"
+      ],
+      "also_in_folders": []
+    }
+  ]
+}
