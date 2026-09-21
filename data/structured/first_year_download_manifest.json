@@ -1,0 +1,341 @@
+{
+  "year": "first",
+  "folders": {
+    "1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_": {
+      "dir": "data/raw/first_year/by_folder/mathematics__1tBGTOy3",
+      "folder_url": "https://drive.google.com/drive/folders/1tBGTOy3OYG3MZKsc9qonxmQTws4WTK6_?usp=sharing",
+      "status": "ok",
+      "file_count": 22,
+      "total_bytes": 173952735,
+      "error": null,
+      "attempts": 1,
+      "last_attempt": "2026-09-21T18:50:31.133066+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Mathematics"
+        }
+      ]
+    },
+    "14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR": {
+      "dir": "data/raw/first_year/by_folder/physics__14ZLhu4G",
+      "folder_url": "https://drive.google.com/drive/folders/14ZLhu4G2KB6vY1T68NCcjSXBJHFYtazR?usp=sharing",
+      "status": "partial",
+      "file_count": 41,
+      "total_bytes": 220431748,
+      "error": "5 file(s) failed (rate-limited)",
+      "failed_files": [
+        {
+          "file_id": "1fCJ9flYWem1h80EIPmiEzoOt40LM7gxy",
+          "name": "Unit 4 (SEmiconductors and devices) (for electronics branch).pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1S06yUomcTWHu7g8gFykE3mwKbAFNtvRF",
+          "name": "Unit 5 (Application of Physics in Statistics and Animations)(for cse branches).pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1JKAirK7GqpuHMdlnbmN1R6a69mGgAT29",
+          "name": "Unit 5 (ELECTRO MAGNETIC THEORY)(For electronics branch).pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1Wy0LWQ9QoUMM4p4esPLabbfDk6zcd_fG",
+          "name": "Viva 2.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1XS-90W4ehHffbFfLhx5i5H6tB_Qz48zn",
+          "name": "Viva1.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        }
+      ],
+      "skipped_types": {
+        ".doc": 1,
+        ".jpg": 6
+      },
+      "attempts": 2,
+      "last_attempt": "2026-09-21T19:30:31.849124+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Physics"
+        }
+      ]
+    },
+    "1vA_LTTV7vTXLYor31-5LMzX7Rnkvwdfp": {
+      "dir": "data/raw/first_year/by_folder/communication-english__1vA_LTTV",
+      "folder_url": "https://drive.google.com/drive/folders/1vA_LTTV7vTXLYor31-5LMzX7Rnkvwdfp?usp=sharing",
+      "status": "partial",
+      "file_count": 0,
+      "total_bytes": 0,
+      "error": "5 file(s) failed (rate-limited)",
+      "failed_files": [
+        {
+          "file_id": "1qi0XiTn6WU6wfTVeacGZNZStNKMQVugK",
+          "name": "Diwakar_A Course in English Pronunciation.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1MyZ-S1j1vAaHjDJfu8ZIc6icqcTZugrb",
+          "name": "Model QP-1 SEE HS12 2022.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1tSBm4UVUIQ6GnuBI1iiX4gWkZ1A5ZF1p",
+          "name": "Model QP-2 SEE HS12 2022.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "118hexCm5Q9wkQmCAs6LWZGFFlNDZRIN1",
+          "name": "Adobe Scan 04 Mar 2024.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1af3pzYNsalb5KbjJ8bLVyufz0wFFJS8u",
+          "name": "communicative english.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        }
+      ],
+      "skipped_types": {
+        ".pptx": 43,
+        ".docx": 6,
+        ".jpeg": 14,
+        ".pps": 2,
+        ".ppt": 3,
+        ".doc": 1
+      },
+      "attempts": 1,
+      "last_attempt": "2026-09-21T19:32:50.496006+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Communication English"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Communication English"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Communication English"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Communication English"
+        }
+      ]
+    },
+    "166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ": {
+      "dir": "data/raw/first_year/by_folder/chemistry__166-4ZRA",
+      "folder_url": "https://drive.google.com/drive/folders/166-4ZRAy__G7_0-dNjxrYM_1cCmkZkIJ?usp=drive_link",
+      "status": "ok",
+      "file_count": 13,
+      "total_bytes": 18272054,
+      "error": null,
+      "failed_files": [],
+      "skipped_types": {
+        ".doc": 5
+      },
+      "attempts": 2,
+      "last_attempt": "2026-09-21T19:49:05.025319+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Chemistry"
+        }
+      ]
+    },
+    "10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d": {
+      "dir": "data/raw/first_year/by_folder/mathematics__10neY4vT",
+      "folder_url": "https://drive.google.com/drive/folders/10neY4vTk5WYWfFwiwy7CQXrcz7WJXm8d?usp=sharing",
+      "status": "ok",
+      "file_count": 9,
+      "total_bytes": 50618853,
+      "error": null,
+      "failed_files": [],
+      "skipped_types": {
+        ".docx": 1
+      },
+      "attempts": 1,
+      "last_attempt": "2026-09-21T19:47:51.041849+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "Mathematics"
+        }
+      ]
+    },
+    "1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0": {
+      "dir": "data/raw/first_year/by_folder/esc__1x8GwDxO",
+      "folder_url": "https://drive.google.com/drive/folders/1x8GwDxOmfOo2iyE7nnYdu9KqOQDFO0B0?usp=sharing",
+      "status": "partial",
+      "file_count": 8,
+      "total_bytes": 27578890,
+      "error": "5 file(s) failed (rate-limited)",
+      "failed_files": [
+        {
+          "file_id": "1AKL_6rqdfqt6cxH7JVvwDliNzDv354HB",
+          "name": "BCE_M-NEP2021-2022-Unit 1_1.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1QwYrJXXlxOlmKhni7SI_aM5Yb8cfcSE4",
+          "name": "BCE_M-NEP2021-2022-Unit 1_2.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1w9eHgZ26vVsjn1TsXqeKxa0ebuNu-qqH",
+          "name": "Civil (1).pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1mE8r1VlwbgkVVIMhh4GpF-x75nJ8wJSS",
+          "name": "Civil Unit-2 Brief Notes.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1VvLkQ0vn0TIuLv9nYpSu_5CNuXByaIXm",
+          "name": "Civil.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        }
+      ],
+      "skipped_types": {
+        ".doc": 20,
+        ".rar": 1,
+        ".ppt": 2,
+        ".jpg": 7
+      },
+      "attempts": 1,
+      "last_attempt": "2026-09-21T19:52:20.911007+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Electrical & Electronics Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Civil Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Chemistry Cycle",
+          "subject": "ESC"
+        },
+        {
+          "stream": "Mechanical Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "ESC"
+        }
+      ]
+    },
+    "1V9vDDmV3qLyFggmTvHQEEoE7rcKmES02": {
+      "dir": "data/raw/first_year/by_folder/principles-of-programming-using-c__1V9vDDmV",
+      "folder_url": "https://drive.google.com/drive/folders/1V9vDDmV3qLyFggmTvHQEEoE7rcKmES02?usp=sharing",
+      "status": "partial",
+      "file_count": 0,
+      "total_bytes": 0,
+      "error": "5 file(s) failed (rate-limited)",
+      "failed_files": [
+        {
+          "file_id": "1EldLbUEgJq3PdyIeKM_hyHI9MqmJgn4K",
+          "name": "C Programs.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "17JsexqTA0-xOv7gyoDxQpqNKMj-Q6N2T",
+          "name": "Arrays and Functions.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "1qDFgxXyr37oALckjnGzlEF6kxGJ-dBZF",
+          "name": "Introduction to C.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "16Su8950E0aGxl2eDB3LhSn2gMyeVbz9v",
+          "name": "Operators and Expressions.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        },
+        {
+          "file_id": "19RtN_1DFFmVi2fjIm3dw4ACayBkTIXXQ",
+          "name": "PPC LAB SYLLABUS.pdf",
+          "error": "FileURLRetrievalError: Failed to retrieve file url: Cannot retrieve the public link of the file. You may need to change the permission to 'Anyone with the link', or have had many accesses. Check FAQ i"
+        }
+      ],
+      "skipped_types": {
+        ".doc": 4
+      },
+      "attempts": 1,
+      "last_attempt": "2026-09-21T19:55:02.831909+00:00",
+      "subjects": [
+        {
+          "stream": "Computer Science & Engineering Stream",
+          "cycle": "Physics Cycle",
+          "subject": "Principles of Programming Using C"
+        }
+      ]
+    }
+  }
+}
