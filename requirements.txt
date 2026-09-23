@@ -5,3 +5,8 @@ pymupdf
 psycopg2-binary
 sqlalchemy
 pgvector
+sentence-transformers
+langchain-text-splitters
+fastapi
+uvicorn
+mcp[cli]<2

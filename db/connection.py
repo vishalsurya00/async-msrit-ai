@@ -18,6 +18,10 @@ def load_env():
 load_env()
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:msritdev@localhost:5432/msrit_ai")
 
+def get_connection():
+    """Returns a fresh psycopg2 connection using the configured DATABASE_URL."""
+    return psycopg2.connect(DATABASE_URL)
+
 def init_db():
     print(f"Connecting to database: {DATABASE_URL}")
     try:
