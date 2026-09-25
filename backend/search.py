@@ -3,7 +3,13 @@ Search module for MSRIT AI.
 Performs semantic vector search across notes_chunks using pgvector and all-MiniLM-L6-v2.
 """
 from typing import Optional, List, Dict, Any
+import os
 import sys
+
+# Ensure local offline loading for cached model weights
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 from sentence_transformers import SentenceTransformer
 from db.connection import get_connection
 

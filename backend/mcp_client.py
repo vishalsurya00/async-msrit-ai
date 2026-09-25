@@ -12,7 +12,19 @@ from contextlib import AsyncExitStack, asynccontextmanager
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-SERVER_SCRIPT = Path(__file__).resolve().parent.parent / "mcp_server" / "server.py"
+BASE_DIR = Path(__file__).resolve().parent.parent
+SERVER_SCRIPT = BASE_DIR / "mcp_server" / "server.py"
+
+
+def get_python_executable() -> str:
+    """Return project virtual environment Python if available, else current sys.executable."""
+    win_venv = BASE_DIR / "venv" / "Scripts" / "python.exe"
+    if win_venv.exists():
+        return str(win_venv)
+    posix_venv = BASE_DIR / "venv" / "bin" / "python"
+    if posix_venv.exists():
+        return str(posix_venv)
+    return sys.executable
 
 
 class PersistentMCPClient:
@@ -23,16 +35,22 @@ class PersistentMCPClient:
     def __init__(self):
         self._session: Optional[ClientSession] = None
         self._exit_stack: Optional[AsyncExitStack] = None
-        self._lock = asyncio.Lock()
+        self._lock: Optional[asyncio.Lock] = None
+
+    def _get_lock(self) -> asyncio.Lock:
+        if self._lock is None:
+            self._lock = asyncio.Lock()
+        return self._lock
 
     async def start(self) -> ClientSession:
-        async with self._lock:
+        async with self._get_lock():
             if self._session is not None:
                 return self._session
 
             self._exit_stack = AsyncExitStack()
+            python_cmd = get_python_executable()
             server_params = StdioServerParameters(
-                command=sys.executable,
+                command=python_cmd,
                 args=[str(SERVER_SCRIPT)],
                 env=dict(os.environ)
             )
@@ -44,7 +62,7 @@ class PersistentMCPClient:
             return self._session
 
     async def close(self) -> None:
-        async with self._lock:
+        async with self._get_lock():
             if self._exit_stack is not None:
                 try:
                     await self._exit_stack.aclose()
@@ -123,4 +141,9 @@ async def call_tool(tool_name: str, **kwargs) -> Any:
 
     except Exception as e:
         print(f"Error calling MCP tool '{tool_name}': {e}", file=sys.stderr)
+        try:
+            client = get_mcp_client()
+            await client.close()
+        except Exception:
+            pass
         return {"error": f"MCP communication error: {str(e)}"}

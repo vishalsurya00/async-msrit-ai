@@ -17,7 +17,7 @@ OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
 def answer_question(
     query: str,
     student_id: Optional[str] = None,
-    top_k: int = 5
+    top_k: int = 3
 ) -> Dict[str, Any]:
     """
     Answer student questions grounded strictly in retrieved course notes.
@@ -44,8 +44,10 @@ def answer_question(
             cycle = profile.get("cycle")
 
     try:
-        # Retrieve chunks
+        # Retrieve chunks (top_k=3 to keep context focused and avoid broad chapter dumps)
         chunks = search_notes(query=query, stream=stream, cycle=cycle, top_k=top_k)
+        if chunks:
+            chunks = chunks[:top_k]
 
         sources = []
         seen = set()
@@ -60,7 +62,7 @@ def answer_question(
                 })
 
         if not chunks:
-            answer = "I could not find any notes or materials related to your question in the database."
+            answer = "The provided MSRIT notes do not contain this specific information."
             result = {
                 "answer": answer,
                 "sources": [],
@@ -85,11 +87,12 @@ def answer_question(
         context_text = "\n\n".join(context_blocks)
 
         prompt = (
-            "You are MSRIT AI, a sovereign academic assistant for Ramaiah Institute of Technology students.\n"
-            "Answer the question ONLY using the provided context below. Be concise, direct, and helpful.\n"
-            "If the provided context does not contain enough information to answer the question, clearly state:\n"
-            "\"The provided course notes do not contain sufficient information to answer this question.\"\n"
-            "Do not hallucinate or use ungrounded external knowledge.\n\n"
+            "You are MSRIT AI, a precise academic assistant for Ramaiah Institute of Technology students.\n"
+            "CRITICAL RULES:\n"
+            "1. Answer ONLY the specific concept or question asked, using strictly the provided notes context.\n"
+            "2. Be direct and concise: provide 3 to 6 focused bullet points or 2 short paragraphs maximum.\n"
+            "3. Do NOT dump entire unit outlines, textbook introductions, syllabus objectives, or broad chapter summaries unless the user explicitly requested a summary.\n"
+            "4. If the context does not address the question, state: 'The provided MSRIT notes do not contain this specific information.'\n\n"
             f"Context:\n{context_text}\n\n"
             f"Question: {query}\n\n"
             "Answer:"
@@ -194,9 +197,11 @@ def summarize_notes(
         context_text = "\n\n".join(context_blocks)
 
         prompt = (
-            "You are MSRIT AI, a sovereign academic assistant for Ramaiah Institute of Technology students.\n"
-            f"Summarize the key points, core formulas, and major concepts from these notes on '{clean_subject}'.\n"
-            "Use clear bullet points and stay strictly grounded in the provided notes.\n\n"
+            "You are MSRIT AI, a precise academic assistant for Ramaiah Institute of Technology students.\n"
+            f"Provide a crisp, well-structured bullet-point summary of the core concepts, definitions, and key formulas for '{clean_subject}' based strictly on the provided notes.\n"
+            "CRITICAL RULES:\n"
+            "1. Avoid vague filler, syllabus outlines, preface text, or course objectives.\n"
+            "2. Present key takeaways directly as clean, focused bullet points.\n\n"
             f"Context:\n{context_text}\n\n"
             "Summary:"
         )

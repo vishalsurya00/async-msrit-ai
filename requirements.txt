@@ -10,3 +10,4 @@ langchain-text-splitters
 fastapi
 uvicorn
 mcp[cli]<2
+openpyxl

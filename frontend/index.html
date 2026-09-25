@@ -1,1 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MSRIT AI - Sovereign Academic Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #090d16;
+      --bg-panel: #111827;
+      --bg-card: #1e293b;
+      --bg-card-hover: #263346;
+      --border-subtle: #334155;
+      --border-accent: #4f46e5;
+      --accent-primary: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --accent-cyan: #06b6d4;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --user-bubble: linear-gradient(135deg, #4f46e5, #4338ca);
+      --assistant-bubble: #1e293b;
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      z-index: 10;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-badge {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 18px;
+      color: #fff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .controls-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .student-badge {
+      display: flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 4px 10px;
+      gap: 8px;
+    }
+
+    .student-badge label {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .student-badge input {
+      background: transparent;
+      border: none;
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      width: 110px;
+      outline: none;
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.15); }
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px;
+      overflow: hidden;
+    }
+
+    /* Chat Feed */
+    #chat-feed {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    #chat-feed::-webkit-scrollbar {
+      width: 6px;
+    }
+    #chat-feed::-webkit-scrollbar-thumb {
+      background: var(--border-subtle);
+      border-radius: 4px;
+    }
+
+    /* Welcome Banner */
+    .welcome-card {
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.7), rgba(17, 24, 39, 0.8));
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 8px;
+    }
+
+    .welcome-card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .welcome-card p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .suggestion-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Messages */
+    .message-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-width: 85%;
+    }
+
+    .message-row.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .message-row.assistant {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .bubble {
+      padding: 14px 18px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+      position: relative;
+    }
+
+    .user .bubble {
+      background: var(--user-bubble);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .assistant .bubble {
+      background: var(--assistant-bubble);
+      border: 1px solid var(--border-subtle);
+      border-bottom-left-radius: 4px;
+      color: var(--text-main);
+    }
+
+    /* Metadata Badges */
+    .meta-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-action {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+      color: #a5b4fc;
+    }
+
+    .badge-latency {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    /* Sources Accordion */
+    .sources-accordion {
+      margin-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 10px;
+    }
+
+    .sources-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent-cyan);
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .sources-toggle:hover {
+      text-decoration: underline;
+    }
+
+    .sources-list {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .source-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .source-card .subject {
+      color: var(--accent-emerald);
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .source-card .path {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      font-size: 11px;
+      word-break: break-all;
+    }
+
+    /* Typing Indicator */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 14px 18px;
+      background: var(--assistant-bubble);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      border-bottom-left-radius: 4px;
+      width: fit-content;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .dot:nth-child(1) { animation-delay: -0.32s; }
+    .dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Bottom Input Bar */
+    .input-container {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      margin-top: 12px;
+    }
+
+    .input-container:focus-within {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .input-container textarea {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      resize: none;
+      height: 24px;
+      max-height: 120px;
+      outline: none;
+      line-height: 24px;
+    }
+
+    .send-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-primary);
+      border: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+      background: #4f46e5;
+      transform: scale(1.05);
+    }
+
+    .send-btn:disabled {
+      background: var(--border-subtle);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Footer Note */
+    footer {
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-dim);
+      padding: 8px 0;
+    }
+
+    /* Markdown Formatter Elements */
+    .bubble ul {
+      margin-left: 20px;
+      margin-top: 6px;
+      margin-bottom: 6px;
+    }
+    .bubble li {
+      margin-bottom: 4px;
+    }
+    .bubble strong {
+      color: #fff;
+    }
+    .bubble p {
+      margin-bottom: 6px;
+    }
+    .bubble p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="brand-section">
+      <div class="logo-badge">M</div>
+      <div class="brand-text">
+        <h1>MSRIT AI</h1>
+        <p>Ramaiah Institute of Technology • Sovereign Academic Assistant</p>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <div class="student-badge">
+        <label for="student-id-input">Student ID:</label>
+        <input type="text" id="student-id-input" value="1MS24CS001" title="Active Student Profile USN">
+      </div>
+      <div class="system-status">
+        <div class="status-dot"></div>
+        <span>Ollama 7B • pgvector • FastMCP</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Chat Section -->
+  <main>
+    <div id="chat-feed">
+      <!-- Welcome Banner -->
+      <div class="welcome-card">
+        <h2>👋 Welcome to MSRIT AI</h2>
+        <p>
+          Your sovereign campus companion. Ask questions about First Year course notes (Chemistry, Physics, Math, etc.), look up department offices and HODs, discover student clubs, or update your profile.
+        </p>
+        <div class="suggestion-chips">
+          <button class="chip-btn" onclick="sendPrompt('Explain corrosion mechanisms and factors affecting corrosion')">
+            🔬 Explain corrosion mechanisms
+          </button>
+          <button class="chip-btn" onclick="sendPrompt('Where is the CSE department office and who is the HOD?')">
+            🏢 CSE Department & HOD
+          </button>
+          <button class="chip-btn" onclick="sendPrompt('Tell me about CodeRIT and which branches can join')">
+            💻 CodeRIT Club details
+          </button>
+          <button class="chip-btn" onclick="sendPrompt('I am in 2nd semester AIML branch')">
+            👤 Update to 2nd sem AIML
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input Bar -->
+    <div class="input-container">
+      <textarea id="user-input" placeholder="Ask about notes, syllabus, departments, or clubs..." rows="1"></textarea>
+      <button id="send-button" class="send-btn" title="Send message">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+
+    <footer>
+      🔒 100% Sovereign Local Inference • No Cloud APIs • FastMCP Audited Compliance
+    </footer>
+  </main>
+
+  <script>
+    const chatFeed = document.getElementById('chat-feed');
+    const userInput = document.getElementById('user-input');
+    const sendButton = document.getElementById('send-button');
+    const studentIdInput = document.getElementById('student-id-input');
+
+    // Auto resize textarea
+    userInput.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+      if (this.value.trim() === '') {
+        this.style.height = '24px';
+      }
+    });
+
+    userInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit();
+      }
+    });
+
+    sendButton.addEventListener('click', handleSubmit);
+
+    function sendPrompt(text) {
+      userInput.value = text;
+      handleSubmit();
+    }
+
+    function formatMarkdown(text) {
+      if (!text) return '';
+      // Escape HTML entities
+      let safe = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+
+      // Bold **text**
+      safe = safe.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      
+      // Lines to HTML
+      const lines = safe.split('\n');
+      let html = '';
+      let inList = false;
+
+      for (let line of lines) {
+        let trimmed = line.trim();
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+          if (!inList) {
+            html += '<ul>';
+            inList = true;
+          }
+          html += `<li>${trimmed.substring(2)}</li>`;
+        } else if (/^\d+\.\s/.test(trimmed)) {
+          if (!inList) {
+            html += '<ul>';
+            inList = true;
+          }
+          html += `<li>${trimmed.replace(/^\d+\.\s/, '')}</li>`;
+        } else {
+          if (inList) {
+            html += '</ul>';
+            inList = false;
+          }
+          if (trimmed.length > 0) {
+            html += `<p>${line}</p>`;
+          }
+        }
+      }
+      if (inList) html += '</ul>';
+      return html;
+    }
+
+    async function handleSubmit() {
+      const message = userInput.value.trim();
+      const studentId = studentIdInput.value.trim() || 'anonymous';
+      if (!message) return;
+
+      // Append User message
+      appendMessage('user', message);
+      userInput.value = '';
+      userInput.style.height = '24px';
+      sendButton.disabled = true;
+
+      // Show typing indicator
+      const typingEl = showTypingIndicator();
+      chatFeed.scrollTop = chatFeed.scrollHeight;
+
+      const startTime = performance.now();
+
+      try {
+        const response = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: message, student_id: studentId })
+        });
+
+        const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
+        removeTypingIndicator(typingEl);
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          appendMessage('assistant', `⚠️ Error: ${errData.detail || 'Failed to process request.'}`, {
+            action: 'error',
+            latency: `${elapsedSec}s`
+          });
+        } else {
+          const data = await response.json();
+          appendMessage('assistant', data.answer, {
+            action: data.action_taken || 'answer',
+            latency: `${elapsedSec}s`,
+            sources: data.sources || []
+          });
+        }
+      } catch (err) {
+        removeTypingIndicator(typingEl);
+        appendMessage('assistant', `⚠️ Network error communicating with local server: ${err.message}`, {
+          action: 'error',
+          latency: '0.0s'
+        });
+      } finally {
+        sendButton.disabled = false;
+        chatFeed.scrollTop = chatFeed.scrollHeight;
+      }
+    }
+
+    function appendMessage(sender, text, meta = {}) {
+      const row = document.createElement('div');
+      row.className = `message-row ${sender}`;
+
+      if (sender === 'assistant' && meta.action) {
+        const metaDiv = document.createElement('div');
+        metaDiv.className = 'meta-badges';
+
+        const actionBadge = document.createElement('span');
+        actionBadge.className = 'badge badge-action';
+        actionBadge.textContent = `⚡ ${meta.action}`;
+        metaDiv.appendChild(actionBadge);
+
+        if (meta.latency) {
+          const latencyBadge = document.createElement('span');
+          latencyBadge.className = 'badge badge-latency';
+          latencyBadge.textContent = `⏱ ${meta.latency}`;
+          metaDiv.appendChild(latencyBadge);
+        }
+
+        row.appendChild(metaDiv);
+      }
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.innerHTML = formatMarkdown(text);
+
+      // Sources accordion if provided
+      if (meta.sources && meta.sources.length > 0) {
+        const sourcesDiv = document.createElement('div');
+        sourcesDiv.className = 'sources-accordion';
+
+        const toggle = document.createElement('div');
+        toggle.className = 'sources-toggle';
+        toggle.innerHTML = `📚 Cited Sources (${meta.sources.length}) ▼`;
+        
+        const list = document.createElement('div');
+        list.className = 'sources-list';
+        list.style.display = 'none';
+
+        meta.sources.forEach(src => {
+          const card = document.createElement('div');
+          card.className = 'source-card';
+          card.innerHTML = `
+            <div class="subject">${src.subject || 'Course Note'}</div>
+            <div class="path">${src.file_path}</div>
+          `;
+          list.appendChild(card);
+        });
+
+        toggle.addEventListener('click', () => {
+          const isHidden = list.style.display === 'none';
+          list.style.display = isHidden ? 'flex' : 'none';
+          toggle.innerHTML = isHidden ? `📚 Cited Sources (${meta.sources.length}) ▲` : `📚 Cited Sources (${meta.sources.length}) ▼`;
+        });
+
+        sourcesDiv.appendChild(toggle);
+        sourcesDiv.appendChild(list);
+        bubble.appendChild(sourcesDiv);
+      }
+
+      row.appendChild(bubble);
+      chatFeed.appendChild(row);
+      chatFeed.scrollTop = chatFeed.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const row = document.createElement('div');
+      row.className = 'message-row assistant';
+      row.id = 'active-typing';
+
+      const ind = document.createElement('div');
+      ind.className = 'typing-indicator';
+      ind.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+      
+      row.appendChild(ind);
+      chatFeed.appendChild(row);
+      return row;
+    }
+
+    function removeTypingIndicator(el) {
+      if (el && el.parentNode) {
+        el.parentNode.removeChild(el);
+      }
+    }
+  </script>
+</body>
+</html>
