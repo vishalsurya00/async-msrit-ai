@@ -42,10 +42,15 @@ CREATE TABLE IF NOT EXISTS clubs (
 -- Persistent student profile memory
 CREATE TABLE IF NOT EXISTS student_profile (
     student_id VARCHAR(50) PRIMARY KEY,
-    stream TEXT,
-    cycle TEXT,
+    name TEXT,
+    college TEXT,
+    degree TEXT,
     branch TEXT,
     semester INT,
+    year INT,
+    stream TEXT,
+    cycle TEXT,
+    cgpa NUMERIC(4,2),
     preferences JSONB DEFAULT '{}'::jsonb,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

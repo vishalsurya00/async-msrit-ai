@@ -54,20 +54,32 @@ def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
 @audited("update_student_profile")
 def update_student_profile(
     student_id: str,
+    name: Optional[str] = None,
+    college: Optional[str] = None,
+    degree: Optional[str] = None,
+    branch: Optional[str] = None,
+    semester: Optional[int] = None,
+    year: Optional[int] = None,
     stream: Optional[str] = None,
     cycle: Optional[str] = None,
-    branch: Optional[str] = None,
-    semester: Optional[int] = None
+    cgpa: Optional[float] = None,
+    preferences: Optional[Dict[str, Any]] = None
 ) -> Dict[str, Any]:
     """
-    Create or update a student's academic profile (branch, semester, stream, cycle) in persistent database memory.
+    Create or update a student's profile (name, college, degree, branch, semester, year, stream, cycle, cgpa, preferences) in persistent database memory.
     """
     return _update_student_profile(
         student_id=student_id,
+        name=name,
+        college=college,
+        degree=degree,
+        branch=branch,
+        semester=semester,
+        year=year,
         stream=stream,
         cycle=cycle,
-        branch=branch,
-        semester=semester
+        cgpa=cgpa,
+        preferences=preferences
     )
 
 

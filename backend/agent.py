@@ -25,7 +25,7 @@ from backend.info_lookup import (
 AMBIGUOUS_BRANCHES = {"me"}
 
 IDENTITY_PATTERNS = [
-    r'\b(?:who\s+are\s+you|what\s+are\s+you|what\s+can\s+you\s+do|tell\s+me\s+about\s+yourself|what\s+is\s+msrit\s+ai|about\s+msrit\s+ai|introduce\s+yourself|who\s+made\s+you)\b'
+    r'\b(?:who\s+are\s+you|who\s+r\s+u|who\s+are\s+u|what\s+are\s+you|what\s+can\s+you\s+do|tell\s+me\s+about\s+yourself|what\s+is\s+msrit\s+ai|about\s+msrit\s+ai|introduce\s+yourself|who\s+made\s+you)\b'
 ]
 
 GREETING_PATTERNS = [
@@ -36,20 +36,54 @@ GREETING_PATTERNS = [
 ]
 
 MEMORY_UPDATE_PATTERNS = [
-    r'\b(?:i\s+am\s+in|i\'m\s+in|my\s+branch\s+is|update\s+my|set\s+my\s+branch|set\s+my\s+semester)\b',
-    r'\b(?:remember\s+that\s+i|remember\s+my)\b'
+    r'\b(?:update|change|set|save|record|add)\s+(?:my\s+)?profile\b',
+    r'\b(?:my\s+name\s+is|my\s+name\'s)\b',
+    r'\b(?:my\s+cgpa\s+is|my\s+gpa\s+is)\b',
+    r'\b(?:with\s+cgpa|cgpa\s*[:=]|gpa\s*[:=])\b',
+    r'\b(?:my\s+branch\s+is|my\s+branch\s*:)\b',
+    r'\b(?:my\s+semester\s+is|my\s+sem\s+is)\b',
+    r'\b(?:my\s+college\s+is|my\s+degree\s+is|my\s+stream\s+is|my\s+cycle\s+is)\b',
+    r'\b(?:i\s+am\s+studying|i\'m\s+studying|i\s+study\s+at)\b',
+    r'\b(?:i\s+am\s+pursuing|i\'m\s+pursuing|currently\s+pursuing)\b',
+    r'\b(?:i\s+am\s+in|i\'m\s+in)\b',
+    r'\b(?:i\s+am\s+a\s+\d+(?:st|nd|rd|th)?\s+year\s+student|i\s+completed\s+my\s+\d+(?:st|nd|rd|th)?\s+year)\b',
+    r'\b(?:remember\s+that\s+i|remember\s+my)\b',
+    r'\b(?:branch\s*[:=]|semester\s*[:=]|sem\s*[:=]|stream\s*[:=]|cycle\s*[:=]|cgpa\s*[:=]|college\s*[:=]|degree\s*[:=]|year\s*[:=]|name\s*[:=])\b'
 ]
 
 MEMORY_QUERY_PATTERNS = [
-    r'\b(?:what\s+is\s+my\s+branch|what\s+branch\s+am\s+i\s+in)\b',
-    r'\b(?:what\s+semester\s+am\s+i\s+in|which\s+semester\s+am\s+i\s+in)\b',
-    r'\b(?:what\s+is\s+my\s+profile|show\s+my\s+profile|who\s+am\s+i|my\s+profile|my\s+details)\b'
+    r'\b(?:who\s+am\s+i|tell\s+me\s+about\s+myself|what\s+do\s+you\s+know\s+about\s+me|show\s+my\s+profile|what\s+is\s+my\s+profile|^my\s+profile$|^my\s+details$)\b',
+    r'\b(?:what\s+is\s+my\s+name|what\s+is\s+my\s+branch|what\s+branch\s+am\s+i\s+in)\b',
+    r'\b(?:what\s+semester\s+am\s+i\s+in|which\s+semester\s+am\s+i\s+in|what\s+is\s+my\s+semester|what\s+is\s+my\s+sem)\b',
+    r'\b(?:what\s+is\s+my\s+cgpa|what\s+is\s+my\s+gpa|what\s+is\s+my\s+grade|what\s+is\s+my\s+score)\b',
+    r'\b(?:which\s+college\s+do\s+i\s+study\s+in|what\s+college\s+do\s+i\s+study\s+in|what\s+is\s+my\s+college|where\s+do\s+i\s+study)\b',
+    r'\b(?:what\s+course\s+am\s+i\s+pursuing|what\s+degree\s+am\s+i\s+pursuing|what\s+is\s+my\s+degree|what\s+is\s+my\s+course)\b',
 ]
 
+
+def detect_profile_query_field(query: str) -> str:
+    """
+    Detects which specific profile field a user is querying, or 'full' for overall profile.
+    """
+    low = query.lower()
+    if re.search(r'\b(?:name)\b', low):
+        return "name"
+    if re.search(r'\b(?:cgpa|gpa|grade|score)\b', low):
+        return "cgpa"
+    if re.search(r'\b(?:branch)\b', low):
+        return "branch"
+    if re.search(r'\b(?:sem(?:ester)?)\b', low):
+        return "semester"
+    if re.search(r'\b(?:college|institution|university)\b', low):
+        return "college"
+    if re.search(r'\b(?:course|degree)\b', low):
+        return "degree"
+    return "full"
+
 DEPT_KEYWORDS = [
-    r'\b(?:hod|hoda|head\s+of(?:\s+the)?(?:\s+department)?)\b',
+    r'\b(?:hod|hoda|heads?|leading|leader|person\s+leading|head\s+of(?:\s+the)?(?:\s+department)?)\b',
     r'\b(?:department|dept)\b',
-    r'\b(?:where\s+is|location(?:\s+of)?|office(?:\s+location)?|located)\b',
+    r'\b(?:where\s+is|location(?:\s+of)?|office(?:\s+location)?|located|where\s+to\s+go|where\s+should\s+i\s+go)\b',
     r'\b(?:stream|which\s+stream|belongs?\s+to\s+which\s+stream)\b'
 ]
 
@@ -86,16 +120,15 @@ def detect_department_query_fields(query: str) -> List[str]:
     """
     clean = re.sub(r'[^\w\s\(\)&-]', ' ', query.lower())
 
-    # HOD keywords: hod, head of department, head of the department, hod name, etc.
+    # HOD keywords: hod, head of department, head of the department, hod name, who heads, person leading, etc.
     has_hod = bool(re.search(
-        r'\b(?:hod|hoda|head\s+of(?:\s+the)?\s+department|hod\s+name|name\s+of(?:\s+the)?\s+hod)\b',
+        r'\b(?:hod|hoda|heads?|leading|leader|person\s+leading|head\s+of(?:\s+the)?(?:\s+department)?|hod\s+name|name\s+of(?:\s+the)?\s+hod)\b',
         clean
     ))
 
-    # LOCATION keywords: where, location, located, office
-    # Crucial rule: "where is <branch>" or "where is" MUST mean LOCATION
+    # LOCATION keywords: where, location, located, office, where should i go, where to go
     has_location = bool(re.search(
-        r'\b(?:where(?:\s+is)?|location(?:\s+of)?|office(?:\s+location)?|located)\b',
+        r'\b(?:where(?:\s+is)?|location(?:\s+of)?|office(?:\s+location)?|located|where\s+should\s+i\s+go|where\s+to\s+go|where\s+do\s+i\s+go|how\s+to\s+reach)\b',
         clean
     ))
 
@@ -183,6 +216,116 @@ def format_department_response(res: Dict[str, Any], query_type_or_fields: Any) -
     )
 
 
+def _call_qwen_grounded(question: str, facts: Dict[str, Any], response_type: str) -> Optional[str]:
+    """
+    Synchronous worker querying local Qwen 2.5:7B via Ollama.
+    Acts as a natural-language interpreter strictly grounded in verified database facts.
+    """
+    import requests
+    from backend.rag import OLLAMA_URL, OLLAMA_MODEL
+
+    code = (facts.get("code") or "").strip()
+    name = (facts.get("name") or code).strip().replace("", "-")
+    hod = (facts.get("hod_name") or "").strip()
+    loc = (facts.get("location") or "").strip()
+    stream = (facts.get("stream") or "").strip()
+
+    facts_lines = []
+    if name:
+        facts_lines.append(f"- Department: {name} ({code})" if code else f"- Department: {name}")
+
+    if response_type == "hod":
+        if hod:
+            facts_lines.append(f"- Head of Department (HOD): {hod}")
+        field_instruction = "The user is asking specifically about who leads or heads the department. Focus strictly on the HOD."
+    elif response_type == "location":
+        if loc:
+            facts_lines.append(f"- Office Location: {loc}")
+        field_instruction = "The user is asking specifically about the department's location or where to find it. Focus strictly on the location."
+    elif response_type == "stream":
+        if stream:
+            facts_lines.append(f"- Academic Stream: {stream}")
+        field_instruction = "The user is asking specifically about the academic stream. Focus strictly on the stream."
+    elif "+" in response_type:
+        fields = [f.strip() for f in response_type.split("+")]
+        if "hod" in fields and hod:
+            facts_lines.append(f"- Head of Department (HOD): {hod}")
+        if "location" in fields and loc:
+            facts_lines.append(f"- Office Location: {loc}")
+        if "stream" in fields and stream:
+            facts_lines.append(f"- Academic Stream: {stream}")
+        field_instruction = f"The user is asking about {', '.join(fields)}. Cover only these requested fields."
+    else:
+        # Full / general query
+        if hod:
+            facts_lines.append(f"- Head of Department (HOD): {hod}")
+        if loc:
+            facts_lines.append(f"- Office Location: {loc}")
+        if stream:
+            facts_lines.append(f"- Academic Stream: {stream}")
+        field_instruction = "The user wants general or full department information. Provide a concise, natural overview covering the verified facts."
+
+    facts_str = "\n".join(facts_lines)
+
+    prompt = (
+        "You are MSRIT AI, a knowledgeable, friendly, and helpful campus assistant for Ramaiah Institute of Technology students.\n\n"
+        "USER QUESTION:\n"
+        f"{question}\n\n"
+        "VERIFIED MSRIT FACTS:\n"
+        f"{facts_str}\n\n"
+        "INSTRUCTIONS:\n"
+        "- Directly answer the user's question in a natural, fluent, and conversational sentence.\n"
+        "- Adapt your wording and sentence structure naturally to match how the user asked their question.\n"
+        "- Rely ONLY on the verified facts above. Never invent, assume, or alter any names, titles, locations, floors, or details.\n"
+        "- Do not extrapolate or add unverified details (such as curriculum descriptions, history, or rankings).\n"
+        f"- {field_instruction}\n"
+        "- Do not repeat the same rigid sentence formula. Avoid sounding like a canned database template or machine printout.\n"
+        "- Never mention 'database', 'MCP', 'verified facts', 'system', 'prompt', 'retrieval', or internal data structures. Speak naturally as MSRIT AI.\n"
+        "- If a requested fact is not present in the verified facts, say: 'I don't have that information in the available MSRIT data.'\n"
+        "- Keep the answer concise (1-2 sentences for specific questions, 2-3 sentences for general overviews).\n\n"
+        "Answer:"
+    )
+
+    try:
+        resp = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": OLLAMA_MODEL,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "temperature": 0.3,
+                    "num_predict": 120
+                }
+            },
+            timeout=30
+        )
+        resp.raise_for_status()
+        reply = resp.json().get("response", "").strip()
+        return reply if reply else None
+    except Exception as e:
+        print(f"[Qwen Grounding] Ollama call error: {e}", file=sys.stderr)
+        return None
+
+
+async def generate_grounded_response(question: str, facts: Dict[str, Any], response_type: str) -> str:
+    """
+    Generate a grounded natural language response from verified database facts using local Qwen 2.5:7B.
+    If Ollama/Qwen is unavailable, errors, or times out, safely falls back to deterministic format_department_response().
+    """
+    try:
+        print(f"[Qwen Grounding] Interpreting verified facts for question: {question!r} (type: {response_type})", file=sys.stderr)
+        qwen_answer = await asyncio.to_thread(_call_qwen_grounded, question, facts, response_type)
+        if qwen_answer:
+            print(f"[Qwen Grounding] Success: {qwen_answer!r}", file=sys.stderr)
+            return qwen_answer
+        print("[Qwen Grounding] Received empty response from Qwen. Using deterministic fallback.", file=sys.stderr)
+    except Exception as e:
+        print(f"[Qwen Grounding] Exception ({e}). Using deterministic fallback.", file=sys.stderr)
+
+    return format_department_response(facts, response_type)
+
+
 def _match_branch(raw: str, clean: str) -> Optional[str]:
     """
     Matches query to a canonical branch code with strict priority:
@@ -199,7 +342,7 @@ def _match_branch(raw: str, clean: str) -> Optional[str]:
     # 2. Priority check: Check all unambiguous aliases from longest to shortest
     sorted_aliases = [a for a in sorted(BRANCH_ALIASES.keys(), key=len, reverse=True) if a not in AMBIGUOUS_BRANCHES]
     for alias in sorted_aliases:
-        pat = r'(?:\b|^)' + re.escape(alias) + r'(?:\b|$)'
+        pat = r'(?<![a-zA-Z0-9])' + re.escape(alias) + r'(?![a-zA-Z0-9])'
         if re.search(pat, clean):
             return BRANCH_ALIASES[alias]
 
@@ -228,22 +371,108 @@ def _match_club(clean: str) -> Optional[str]:
 
 
 def _extract_profile_data(message: str) -> Dict[str, Any]:
-    """Extract branch and semester from text like 'I am in AIML 3rd semester'."""
-    lower = message.lower()
+    """
+    Extracts all supported student profile fields from natural language or key-value formatted text:
+    name, college, degree, branch, semester, year, stream, cycle, cgpa.
+    Only extracts information explicitly provided by the user.
+    """
     data = {}
+    lower = message.lower()
+    clean = re.sub(r'[^\w\s\(\)&-]', ' ', lower).strip()
 
-    sem_match = re.search(r'\b(?:sem(?:ester)?\s*(\d+)|(\d+)(?:st|nd|rd|th)?\s*sem(?:ester)?)\b', lower)
-    if sem_match:
-        sem_str = sem_match.group(1) or sem_match.group(2)
+    # 1. Name
+    m_name_kv = re.search(r'\bname\s*[:=]\s*([a-zA-Z\s\.\'-]+?)(?:,|$|\b(?:and|with|branch|sem|semester|cgpa|college|degree|year|stream|cycle)\b)', message, re.I)
+    m_name_nat = re.search(r'\bmy\s+name\s+is\s+([a-zA-Z\s\.\'-]+?)(?:,|$|\.|\b(?:and|i\s+am|studying|currently|with|cgpa|branch|sem|semester|at)\b)', message, re.I)
+    raw_name = (m_name_kv.group(1) if m_name_kv else (m_name_nat.group(1) if m_name_nat else None))
+    if raw_name:
+        clean_name = raw_name.strip(' .,;:-')
+        if len(clean_name) >= 2 and clean_name.lower() not in {'not specified', 'a', 'an', 'the', 'msrit'}:
+            data['name'] = clean_name
+
+    # 2. CGPA
+    m_cgpa = re.search(r'\b(?:cgpa|gpa)\s*[:=]?\s*(?:is\s*)?(\d+(?:\.\d+)?)\b', message, re.I)
+    if not m_cgpa:
+        m_cgpa = re.search(r'\b(?:with\s+)?(\d+(?:\.\d+)?)\s*(?:cgpa|gpa)\b', message, re.I)
+    if m_cgpa:
         try:
-            data["semester"] = int(sem_str)
+            val = float(m_cgpa.group(1))
+            if 0.0 <= val <= 10.0:
+                data['cgpa'] = val
         except ValueError:
             pass
 
-    clean = re.sub(r'[^\w\s\(\)&-]', ' ', lower).strip()
-    branch_code = _match_branch(message, clean)
-    if branch_code:
-        data["branch"] = branch_code
+    # 3. Semester
+    m_sem_kv = re.search(r'\b(?:semester|sem)\s*[:=]\s*(\d+)\b', message, re.I)
+    m_sem_nat = re.search(r'\b(?:in\s+)?(\d+)(?:st|nd|rd|th)?\s*(?:semester|sem)\b', message, re.I)
+    m_sem_nat2 = re.search(r'\b(?:semester|sem)\s*(?:is\s*)?(\d+)\b', message, re.I)
+    sem_val = (m_sem_kv.group(1) if m_sem_kv else (m_sem_nat.group(1) if m_sem_nat else (m_sem_nat2.group(1) if m_sem_nat2 else None)))
+    if sem_val:
+        try:
+            s_int = int(sem_val)
+            if 1 <= s_int <= 10:
+                data['semester'] = s_int
+        except ValueError:
+            pass
+
+    # 4. Year
+    m_yr_kv = re.search(r'\byear\s*[:=]\s*(\d+)\b', message, re.I)
+    m_yr_dig = re.search(r'\b(?:completed\s+my\s+|in\s+|am\s+in\s+|a\s+)?(\d+)(?:st|nd|rd|th)\s+year\b', message, re.I)
+    m_yr_word = re.search(r'\b(?:completed\s+my\s+|in\s+|am\s+in\s+|a\s+)?(first|second|third|fourth)\s+year\b', message, re.I)
+    word_map = {'first': 1, 'second': 2, 'third': 3, 'fourth': 4}
+    yr_val = (m_yr_kv.group(1) if m_yr_kv else (m_yr_dig.group(1) if m_yr_dig else None))
+    if yr_val:
+        try:
+            y_int = int(yr_val)
+            if 1 <= y_int <= 6:
+                data['year'] = y_int
+        except ValueError:
+            pass
+    elif m_yr_word and m_yr_word.group(1).lower() in word_map:
+        data['year'] = word_map[m_yr_word.group(1).lower()]
+
+    # 5. College
+    m_col_kv = re.search(r'\b(?:college|institution)\s*[:=]\s*([a-zA-Z0-9\s\.\'-]+?)(?:,|$|\b(?:branch|sem|semester|stream|cycle|cgpa|degree|year)\b)', message, re.I)
+    m_col_nat = re.search(r'\b(?:studying\s+in|study\s+at|student\s+at|at)\s+(msrit|ramaiah\s+institute\s+of\s+technology|ramaiah)\b', message, re.I)
+    if m_col_kv:
+        data['college'] = m_col_kv.group(1).strip()
+    elif m_col_nat:
+        data['college'] = 'MSRIT'
+
+    # 6. Degree
+    m_deg_kv = re.search(r'\bdegree\s*[:=]\s*([a-zA-Z\.\s]+?)(?:,|$|\b(?:with|branch|sem|semester|stream|cycle|cgpa|year)\b)', message, re.I)
+    m_deg_nat = re.search(r'\b(?:pursuing|doing|studying\s+for|for)\s+(be|b\.e\.|btech|b\.tech|mtech|m\.tech|mca|mba|barch|b\.arch)\b', message, re.I)
+    deg_val = m_deg_kv.group(1) if m_deg_kv else (m_deg_nat.group(1) if m_deg_nat else None)
+    if deg_val:
+        clean_deg = deg_val.strip().upper().replace('.', '')
+        data['degree'] = clean_deg
+
+    # 7. Branch
+    m_br_kv = re.search(r'\bbranch\s*[:=]\s*([a-zA-Z0-9\(\)&-]+)', message, re.I)
+    if m_br_kv:
+        code = find_branch_code(m_br_kv.group(1)) or _match_branch(m_br_kv.group(1), m_br_kv.group(1).lower())
+        if code:
+            data['branch'] = code
+        else:
+            data['branch'] = m_br_kv.group(1).strip()
+    else:
+        # Match from natural message
+        b_code = _match_branch(message, clean)
+        if b_code:
+            data['branch'] = b_code
+
+    # 8. Stream
+    m_str_kv = re.search(r'\bstream\s*[:=]\s*([a-zA-Z0-9\s&-]+?)(?:,|$|\b(?:cycle|sem|semester|branch|cgpa)\b)', message, re.I)
+    m_str_nat = re.search(r'\b(?:my\s+)?stream\s+(?:is\s+)?([a-zA-Z0-9\s&-]+?)(?:,|$|\b(?:and|cycle|sem|semester|branch|cgpa)\b)', message, re.I)
+    str_val = m_str_kv.group(1) if m_str_kv else (m_str_nat.group(1) if m_str_nat else None)
+    if str_val:
+        data['stream'] = str_val.strip()
+
+    # 9. Cycle
+    m_cyc_kv = re.search(r'\bcycle\s*[:=]\s*([a-zA-Z0-9\s-]+?)(?:,|$|\b(?:stream|sem|semester|branch|cgpa)\b)', message, re.I)
+    m_cyc_nat = re.search(r'\b(?:my\s+)?cycle\s+(?:is\s+)?(physics|chemistry|chem|phy|p|c|no|none)\b', message, re.I)
+    cyc_val = m_cyc_kv.group(1) if m_cyc_kv else (m_cyc_nat.group(1) if m_cyc_nat else None)
+    if cyc_val:
+        data['cycle'] = cyc_val.strip()
 
     return data
 
@@ -267,37 +496,44 @@ def _extract_subject_for_summary(message: str) -> Optional[str]:
 def classify_intent(message: str) -> IntentResult:
     """
     Deterministic intent router implementing strict priority:
-    1. Greeting / Conversation / Identity
-    2. Memory (Update / Query)
-    3. Faculty Lookup (HOD/Faculty by name)
-    4. Department Lookup (field-specific or full)
-    5. Club Lookup
-    6. Academic RAG / Summarization
-    7. Unknown / Faculty directory placeholder
+    1. Identity / Conversation
+    2. Memory Update / Profile Statements
+    3. Memory Query (Profile Questions)
+    4. Greeting
+    5. Faculty Lookup (HOD/Faculty by name)
+    6. Department Lookup (field-specific or full)
+    7. Club Lookup
+    8. Academic RAG / Summarization
+    9. Unknown / Faculty directory placeholder
     """
     raw = message.strip()
     low = raw.lower()
     clean = re.sub(r'[^\w\s\(\)&-]', ' ', low).strip()
 
-    # 1. Identity / Conversation
+    # 1. Identity (MSRIT AI assistant identity - never matches student queries like 'who am i')
     for ip in IDENTITY_PATTERNS:
         if re.search(ip, clean):
             return IntentResult(type="identity", raw=raw)
 
+    # 2. Memory Update (Statements providing student profile information)
+    is_mem_up = any(re.search(mp, clean) for mp in MEMORY_UPDATE_PATTERNS)
+    extracted_prof = _extract_profile_data(raw)
+    if is_mem_up or (extracted_prof and len(extracted_prof) >= 2):
+        return IntentResult(type="memory_update", raw=raw, profile_data=extracted_prof)
+
+    # 3. Memory Query (Student queries asking about their own profile details)
+    for mq in MEMORY_QUERY_PATTERNS:
+        if re.search(mq, clean):
+            q_field = detect_profile_query_field(clean)
+            return IntentResult(type="memory_query", raw=raw, query_field=q_field)
+
+    # 4. Greeting
     for gp in GREETING_PATTERNS:
         if re.search(gp, clean):
             words = clean.split()
             # Ensure it is a short conversational message and not followed by a dept query
             if len(words) <= 4 or not any(re.search(dk, clean) for dk in DEPT_KEYWORDS):
                 return IntentResult(type="greeting", raw=raw)
-
-    # 2. Memory
-    for mp in MEMORY_UPDATE_PATTERNS:
-        if re.search(mp, clean):
-            return IntentResult(type="memory_update", raw=raw)
-    for mq in MEMORY_QUERY_PATTERNS:
-        if re.search(mq, clean):
-            return IntentResult(type="memory_query", raw=raw)
 
     # 3. Faculty Lookup (specific named faculty members like 'Dr. Siddesh G. M.')
     matched_faculty = lookup_faculty(raw)
@@ -367,7 +603,7 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
 
     # 1. IDENTITY / CONVERSATION
     if intent_type == "identity":
-        reply = "I’m MSRIT AI, a local-first academic assistant for MSRIT. I can help with MSRIT departments, clubs, academic notes, and your student profile."
+        reply = "I'm MSRIT AI, a local-first academic assistant for MSRIT. I can help with MSRIT departments, clubs, academic notes, and your student profile."
         log_action(
             tool_name="conversation",
             student_id=clean_id,
@@ -408,47 +644,103 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
 
     # 2. MEMORY UPDATE
     if intent_type == "memory_update":
-        extracted_profile = _extract_profile_data(clean_msg)
-        if extracted_profile.get("branch") or extracted_profile.get("semester"):
+        extracted_profile = intent.get("profile_data")
+        if not extracted_profile:
+            extracted_profile = _extract_profile_data(clean_msg)
+
+        if extracted_profile:
             res = await mcp_client.call_tool(
                 "update_student_profile",
                 student_id=clean_id,
-                branch=extracted_profile.get("branch"),
-                semester=extracted_profile.get("semester")
+                **extracted_profile
             )
             if isinstance(res, dict) and res.get("error"):
                 answer = f"Could not update profile: {res.get('error')}"
             else:
-                branch_info = extracted_profile.get('branch', 'Not specified')
-                sem_info = extracted_profile.get('semester', 'Not specified')
-                answer = f"Profile updated successfully for {clean_id}:\n- Branch: {branch_info}\n- Semester: {sem_info}"
+                field_labels = [
+                    ("name", "Name"),
+                    ("college", "College"),
+                    ("degree", "Degree"),
+                    ("branch", "Branch"),
+                    ("semester", "Semester"),
+                    ("year", "Year"),
+                    ("cgpa", "CGPA"),
+                    ("stream", "Stream"),
+                    ("cycle", "Cycle")
+                ]
+                lines = [f"Profile updated successfully for {clean_id}:"]
+                for key, label in field_labels:
+                    if key in extracted_profile:
+                        lines.append(f"- **{label}:** {extracted_profile[key]}")
+                answer = "\n".join(lines)
+        else:
+            answer = "I couldn't identify any profile details to update. You can specify details like Branch:CSE, Semester:3, Name: Vishal, CGPA: 8.97, etc."
 
-            return {
-                "answer": answer,
-                "action_taken": "update_student_profile",
-                "sources": []
-            }
+        log_action(
+            tool_name="update_student_profile",
+            student_id=clean_id,
+            parameters={"query": clean_msg, **(extracted_profile or {})},
+            result_summary="Updated student profile",
+            success=True
+        )
+        return {
+            "answer": answer,
+            "action_taken": "update_student_profile",
+            "sources": []
+        }
 
-    # 2. MEMORY QUERY
+    # 3. MEMORY QUERY
     if intent_type == "memory_query":
+        q_field = intent.get("query_field") or detect_profile_query_field(clean_msg)
         res = await mcp_client.call_tool("get_student_profile", student_id=clean_id)
+
         if isinstance(res, dict) and "error" in res:
             answer = "MSRIT knowledge service is temporarily unavailable. Please check that the local database and MCP service are running."
-        elif isinstance(res, dict) and res.get("branch"):
-            answer = (
-                f"**Your Student Profile ({clean_id}):**\n"
-                f"- **Branch:** {res.get('branch') or 'Not specified'}\n"
-                f"- **Semester:** {res.get('semester') or 'Not specified'}\n"
-                f"- **Stream:** {res.get('stream') or 'Not specified'}\n"
-                f"- **Cycle:** {res.get('cycle') or 'Not specified'}"
-            )
+        elif not res or not any(res.get(k) is not None for k in ["name", "college", "degree", "branch", "semester", "year", "stream", "cycle", "cgpa"]):
+            answer = "You haven't set your profile yet. You can tell me something like 'My name is Vishal and I am in 3rd semester CSE' to set it up!"
         else:
-            answer = "You haven't set your profile yet. You can tell me something like 'I am in 2nd semester AIML' to set it up!"
+            if q_field == "name":
+                answer = f"Your name is {res['name']}." if res.get("name") else "I don't have your name in your profile yet."
+            elif q_field == "cgpa":
+                answer = f"Your CGPA is {res['cgpa']}." if res.get("cgpa") is not None else "I don't have your CGPA recorded in your profile yet."
+            elif q_field == "branch":
+                answer = f"You are in the {res['branch']} branch." if res.get("branch") else "I don't have your branch recorded in your profile yet."
+            elif q_field == "semester":
+                answer = f"You are currently in semester {res['semester']}." if res.get("semester") is not None else "I don't have your semester recorded in your profile yet."
+            elif q_field == "college":
+                answer = f"You study at {res['college']}." if res.get("college") else "I don't have your college recorded in your profile yet."
+            elif q_field == "degree":
+                if res.get("degree") and res.get("branch"):
+                    answer = f"You are pursuing {res['degree']} in {res['branch']}."
+                elif res.get("degree"):
+                    answer = f"You are pursuing {res['degree']}."
+                elif res.get("branch"):
+                    answer = f"You are in the {res['branch']} branch."
+                else:
+                    answer = "I don't have your degree or course recorded in your profile yet."
+            else:
+                field_labels = [
+                    ("name", "Name"),
+                    ("college", "College"),
+                    ("degree", "Degree"),
+                    ("branch", "Branch"),
+                    ("semester", "Semester"),
+                    ("year", "Year"),
+                    ("cgpa", "CGPA"),
+                    ("stream", "Stream"),
+                    ("cycle", "Cycle")
+                ]
+                lines = [f"**Your Student Profile ({clean_id}):**"]
+                for key, label in field_labels:
+                    val = res.get(key)
+                    if val is not None and str(val).strip():
+                        lines.append(f"- **{label}:** {val}")
+                answer = "\n".join(lines)
 
         log_action(
             tool_name="get_student_profile",
             student_id=clean_id,
-            parameters={"student_id": clean_id},
+            parameters={"query": clean_msg, "field": q_field},
             result_summary="Retrieved student profile",
             success=True
         )
@@ -469,7 +761,7 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             answer = "MSRIT knowledge service is temporarily unavailable. Please check that the local database and MCP service are running."
         # 2. SUCCESS (lookup succeeded and branch record found)
         elif isinstance(res, dict) and res.get("code"):
-            answer = format_department_response(res, query_type)
+            answer = await generate_grounded_response(clean_msg, res, query_type)
         # 3. NOT FOUND (lookup executed but no department matched)
         else:
             answer = f"No department details found matching '{target}'. Please specify a recognized branch name or code (e.g., CSE, ME, Civil, ECE)."

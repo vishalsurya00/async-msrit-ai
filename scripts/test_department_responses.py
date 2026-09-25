@@ -131,7 +131,8 @@ async def run_tests():
     res2 = await handle_message("who is hod of cse dept", "test_user")
     ans2 = res2["answer"]
     print("Test 2 'who is hod of cse dept' ->", ans2)
-    assert "CSE HOD: Dr. R. China Appala Naidu" in ans2, f"Got: {ans2}"
+    assert "Dr. R. China Appala Naidu" in ans2, f"Got: {ans2}"
+    assert "HOD" in ans2 or "head" in ans2.lower()
     assert "ISE" not in ans2, f"Answer should not contain 'ISE': {ans2}"
     assert "Office Location" not in ans2, f"Answer should not contain 'Office Location': {ans2}"
     assert "Stream" not in ans2, f"Answer should not contain 'Stream': {ans2}"
@@ -141,23 +142,24 @@ async def run_tests():
     res2b = await handle_message("who is the hod of cse?", "test_user")
     ans2b = res2b["answer"]
     print("Test 2b 'who is the hod of cse?' ->", ans2b)
-    assert ans2b == "CSE HOD: Dr. R. China Appala Naidu", f"Got: {ans2b}"
+    assert "Dr. R. China Appala Naidu" in ans2b, f"Got: {ans2b}"
+    assert "HOD" in ans2b or "head" in ans2b.lower()
     test_count += 1
 
     # Test 3: where is cse?
     res3 = await handle_message("where is cse?", "test_user")
     ans3 = res3["answer"]
     print("Test 3 'where is cse?' ->", ans3)
-    assert "CSE Department Location" in ans3, f"Got: {ans3}"
-    assert "HOD:" not in ans3, f"Answer should not contain 'HOD:': {ans3}"
-    assert "Stream:" not in ans3, f"Answer should not contain 'Stream:': {ans3}"
+    assert "DES Block" in ans3, f"Got: {ans3}"
+    assert "HOD" not in ans3, f"Answer should not contain 'HOD': {ans3}"
+    assert "Stream" not in ans3, f"Answer should not contain 'Stream': {ans3}"
     test_count += 1
 
     # Test 3b: who is hod of ise?
     res3b = await handle_message("who is hod of ise?", "test_user")
     ans3b = res3b["answer"]
     print("Test 3b 'who is hod of ise?' ->", ans3b)
-    assert "ISE HOD: Dr. Sumana M. S." in ans3b, f"Got: {ans3b}"
+    assert "Dr. Sumana M. S." in ans3b, f"Got: {ans3b}"
     assert "CSE" not in ans3b, f"Got: {ans3b}"
     test_count += 1
 
@@ -165,27 +167,74 @@ async def run_tests():
     res4 = await handle_message("What stream is CSE?", "test_user")
     ans4 = res4["answer"]
     print("Test 4 'What stream is CSE?' ->", ans4)
-    assert "CSE Stream: Computer Science" in ans4, f"Got: {ans4}"
-    assert "HOD:" not in ans4
+    assert "Computer Science" in ans4, f"Got: {ans4}"
+    assert "HOD" not in ans4
     assert "Office Location" not in ans4
     test_count += 1
 
     # Test 5: Tell me about CSE department (Full response)
     res5 = await handle_message("Tell me about CSE department", "test_user")
     ans5 = res5["answer"]
-    assert "Department Information — Computer Science & Engineering (CSE)" in ans5
-    assert "HOD:" in ans5
-    assert "Office Location:" in ans5
-    assert "Stream:" in ans5
+    print("Test 5 'Tell me about CSE department' ->", ans5)
+    assert "Dr. R. China Appala Naidu" in ans5
+    assert "DES Block" in ans5
+    assert "Computer Science" in ans5
+    test_count += 1
+
+    # Test 5b: Natural variations of HOD and Location queries
+    res_heads = await handle_message("Who heads CSE?", "test_user")
+    print("Test 5b 'Who heads CSE?' ->", res_heads["answer"])
+    assert "Dr. R. China Appala Naidu" in res_heads["answer"]
+    assert "DES Block" not in res_heads["answer"]
+    test_count += 1
+
+    res_leading = await handle_message("Tell me about the person leading CSE.", "test_user")
+    print("Test 5c 'Tell me about the person leading CSE.' ->", res_leading["answer"])
+    assert "Dr. R. China Appala Naidu" in res_leading["answer"]
+    assert "DES Block" not in res_leading["answer"]
+    test_count += 1
+
+    res_go = await handle_message("I'm looking for the CSE department. Where should I go?", "test_user")
+    print("Test 5d 'I'm looking for the CSE department. Where should I go?' ->", res_go["answer"])
+    assert "DES Block" in res_go["answer"]
+    assert "Dr. R. China Appala Naidu" not in res_go["answer"]
+    test_count += 1
+
+    # Test 5e: CSE(AI&ML) vs AI&ML disambiguation
+    res_cse_aiml_loc = await handle_message("Where is CSE(AI&ML)?", "test_user")
+    print("Test 5e 'Where is CSE(AI&ML)?' ->", res_cse_aiml_loc["answer"])
+    assert "Multipurpose Block" in res_cse_aiml_loc["answer"], f"Expected Multipurpose Block: {res_cse_aiml_loc['answer']}"
+    assert "Apex Block" not in res_cse_aiml_loc["answer"]
+    test_count += 1
+
+    res_aiml_loc = await handle_message("Where is AI&ML?", "test_user")
+    print("Test 5f 'Where is AI&ML?' ->", res_aiml_loc["answer"])
+    assert "Apex Block" in res_aiml_loc["answer"], f"Expected Apex Block: {res_aiml_loc['answer']}"
+    assert "Multipurpose Block" not in res_aiml_loc["answer"]
+    test_count += 1
+
+    res_cse_aiml_hod = await handle_message("Who is the HOD of CSE(AI&ML)?", "test_user")
+    print("Test 5g 'Who is the HOD of CSE(AI&ML)?' ->", res_cse_aiml_hod["answer"])
+    assert "Dr. Siddesh G. M." in res_cse_aiml_hod["answer"], f"Expected Dr. Siddesh G. M.: {res_cse_aiml_hod['answer']}"
+    assert "Dr. Jagadish" not in res_cse_aiml_hod["answer"]
     test_count += 1
 
     # Test 6: Faculty name lookup (Dr Siddesh G M)
     res6 = await handle_message("Who is Dr Siddesh G M?", "test_user")
     ans6 = res6["answer"]
-    assert "Faculty Information — Dr. Siddesh G. M." in ans6
+    assert "Dr. Siddesh G. M." in ans6
     assert "CSE(AIML)" in ans6
     assert "CSE(CS)" in ans6
     test_count += 1
+
+    # Test 7: Qwen Failure Fallback Test
+    print("\n--- Testing Qwen Failure Fallback State ---")
+    with patch("backend.agent._call_qwen_grounded", return_value=None):
+        res_fb = await handle_message("who is hod of cse dept", "test_user")
+        ans_fb = res_fb["answer"]
+        print("Fallback response ->", ans_fb)
+        assert ans_fb == "CSE HOD: Dr. R. China Appala Naidu", f"Fallback failed: {ans_fb}"
+        test_count += 1
 
     # 4. Test NOT FOUND state
     print("\n--- Testing NOT FOUND State ---")
@@ -206,6 +255,99 @@ async def run_tests():
         assert "MSRIT knowledge service is temporarily unavailable" in ans_err, f"Got: {ans_err}"
         assert "No department details found" not in ans_err, f"Error should NOT say department not found: {ans_err}"
         test_count += 1
+
+    # 6. Test Student Profile Memory (Section 13 Regression)
+    print("\n--- Testing Student Profile Memory & Long-term Retrieval ---")
+    mem_sid = "test_student_memory_reg"
+
+    # Profile Update Tests
+    u1 = await handle_message("My name is Vishal", mem_sid)
+    assert u1.get("action_taken") == "update_student_profile"
+    assert "Vishal" in u1.get("answer")
+    test_count += 1
+
+    u2 = await handle_message("My branch is CSE", mem_sid)
+    assert u2.get("action_taken") == "update_student_profile"
+    assert "CSE" in u2.get("answer")
+    test_count += 1
+
+    u3 = await handle_message("I am studying in CSE(AI&ML)", mem_sid)
+    assert u3.get("action_taken") == "update_student_profile"
+    assert "CSE(AIML)" in u3.get("answer")
+    test_count += 1
+
+    u4 = await handle_message("My CGPA is 8.97", mem_sid)
+    assert u4.get("action_taken") == "update_student_profile"
+    assert "8.97" in u4.get("answer")
+    test_count += 1
+
+    u5 = await handle_message("I am in 3rd semester", mem_sid)
+    assert u5.get("action_taken") == "update_student_profile"
+    assert "3" in u5.get("answer")
+    test_count += 1
+
+    u6 = await handle_message("Update my profile Semester:3", mem_sid)
+    assert u6.get("action_taken") == "update_student_profile"
+    assert "3" in u6.get("answer")
+    test_count += 1
+
+    u7 = await handle_message("Update my profile with Branch:CSE(AI&ML), Semester:3, Stream:CSE, Cycle:no", mem_sid)
+    assert u7.get("action_taken") == "update_student_profile"
+    assert "CSE(AIML)" in u7.get("answer")
+    assert "3" in u7.get("answer")
+    assert "CSE" in u7.get("answer")
+    assert "no" in u7.get("answer")
+    test_count += 1
+
+    # Profile Query Tests
+    q_name = await handle_message("What is my name?", mem_sid)
+    assert q_name.get("action_taken") == "get_student_profile"
+    assert "Vishal" in q_name.get("answer")
+    test_count += 1
+
+    q_branch = await handle_message("What branch am I in?", mem_sid)
+    assert q_branch.get("action_taken") == "get_student_profile"
+    assert "CSE(AIML)" in q_branch.get("answer")
+    test_count += 1
+
+    q_sem = await handle_message("What semester am I in?", mem_sid)
+    assert q_sem.get("action_taken") == "get_student_profile"
+    assert "3" in q_sem.get("answer")
+    test_count += 1
+
+    q_cgpa = await handle_message("What is my CGPA?", mem_sid)
+    assert q_cgpa.get("action_taken") == "get_student_profile"
+    assert "8.97" in q_cgpa.get("answer")
+    test_count += 1
+
+    # Set college and verify retrieval
+    await handle_message("I study at MSRIT", mem_sid)
+    q_col = await handle_message("What college do I study in?", mem_sid)
+    assert q_col.get("action_taken") == "get_student_profile"
+    assert "MSRIT" in q_col.get("answer")
+    test_count += 1
+
+    q_whoami = await handle_message("Who am I?", mem_sid)
+    assert q_whoami.get("action_taken") == "get_student_profile"
+    assert "Vishal" in q_whoami.get("answer")
+    assert "8.97" in q_whoami.get("answer")
+    assert "CSE(AIML)" in q_whoami.get("answer")
+    assert "Semester:** 3" in q_whoami.get("answer")
+    assert "Stream:** CSE" in q_whoami.get("answer")
+    assert "Cycle:** no" in q_whoami.get("answer")
+    assert "MSRIT" in q_whoami.get("answer")
+    test_count += 1
+
+    # Identity Disambiguation Tests
+    q_id1 = await handle_message("Who are you?", mem_sid)
+    assert q_id1.get("action_taken") == "conversation"
+    assert "MSRIT AI" in q_id1.get("answer")
+    test_count += 1
+
+    q_id2 = await handle_message("Who r u?", mem_sid)
+    assert q_id2.get("action_taken") == "conversation"
+    assert "MSRIT AI" in q_id2.get("answer")
+    test_count += 1
 
     print("\n" + "=" * 70)
     print(f"ALL {test_count} TESTS PASSED SUCCESSFULLY!")

@@ -40,9 +40,19 @@ BRANCH_ALIASES: Dict[str, str] = {
     "cse cyber security": "CSE(CS)",
     "cse-cs": "CSE(CS)",
     # CSE AIML
+    "cse(ai&ml)": "CSE(AIML)",
+    "cse (ai&ml)": "CSE(AIML)",
+    "cse ai&ml": "CSE(AIML)",
+    "cse-ai&ml": "CSE(AIML)",
     "cse(aiml)": "CSE(AIML)",
+    "cse (aiml)": "CSE(AIML)",
     "cse aiml": "CSE(AIML)",
     "cse-aiml": "CSE(AIML)",
+    "cse ai and ml": "CSE(AIML)",
+    "cse(ai and ml)": "CSE(AIML)",
+    "cse (ai and ml)": "CSE(AIML)",
+    "cse artificial intelligence & machine learning": "CSE(AIML)",
+    "cse artificial intelligence and machine learning": "CSE(AIML)",
     # ISE
     "ise": "ISE",
     "information science": "ISE",
@@ -301,7 +311,7 @@ def find_branch_code(query: str) -> Optional[str]:
     # 3. Priority: Check all unambiguous aliases from longest to shortest
     sorted_aliases = [a for a in sorted(BRANCH_ALIASES.keys(), key=len, reverse=True) if a not in AMBIGUOUS_ALIASES]
     for alias in sorted_aliases:
-        pat = r'(?:\b|^)' + re.escape(alias) + r'(?:\b|$)'
+        pat = r'(?<![a-zA-Z0-9])' + re.escape(alias) + r'(?![a-zA-Z0-9])'
         if re.search(pat, lower):
             return BRANCH_ALIASES[alias]
 

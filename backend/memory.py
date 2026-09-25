@@ -8,13 +8,24 @@ import json
 import psycopg2.extras
 from db.connection import get_connection
 
-ALLOWED_PROFILE_FIELDS = {"stream", "cycle", "branch", "semester", "preferences"}
+ALLOWED_PROFILE_FIELDS = {
+    "name",
+    "college",
+    "degree",
+    "branch",
+    "semester",
+    "year",
+    "stream",
+    "cycle",
+    "cgpa",
+    "preferences",
+}
 
 
 def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieve a student's profile from student_profile table.
-    Returns a dictionary or None if not found.
+    Returns a dictionary of all stored profile fields or None if not found.
     """
     if not student_id or not student_id.strip():
         return None
@@ -24,7 +35,7 @@ def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
         cur = conn.cursor()
         cur.execute(
             """
-            SELECT student_id, stream, cycle, branch, semester, preferences, updated_at
+            SELECT student_id, name, college, degree, branch, semester, year, stream, cycle, cgpa, preferences, updated_at
             FROM student_profile
             WHERE student_id = %s;
             """,
@@ -39,12 +50,17 @@ def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
 
         return {
             "student_id": row[0],
-            "stream": row[1],
-            "cycle": row[2],
-            "branch": row[3],
-            "semester": row[4],
-            "preferences": row[5] if row[5] is not None else {},
-            "updated_at": row[6].isoformat() if row[6] else None
+            "name": row[1],
+            "college": row[2],
+            "degree": row[3],
+            "branch": row[4],
+            "semester": row[5],
+            "year": row[6],
+            "stream": row[7],
+            "cycle": row[8],
+            "cgpa": float(row[9]) if row[9] is not None else None,
+            "preferences": row[10] if row[10] is not None else {},
+            "updated_at": row[11].isoformat() if row[11] else None
         }
 
     except Exception as e:
@@ -54,7 +70,8 @@ def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
 
 def update_student_profile(student_id: str, **fields) -> Dict[str, Any]:
     """
-    Upsert student profile record. Only updates fields that were explicitly passed.
+    Upsert student profile record. Only updates fields that were explicitly passed (PATCH behavior).
+    Preserves all existing unmentioned fields in the record.
     Always updates the updated_at timestamp.
     Returns the resulting profile row as a dictionary.
     """
@@ -75,13 +92,18 @@ def update_student_profile(student_id: str, **fields) -> Dict[str, Any]:
             placeholders.append("%s")
             if col == "preferences" and isinstance(val, (dict, list)):
                 values.append(psycopg2.extras.Json(val))
-            elif col == "semester" and val is not None:
+            elif col in ("semester", "year") and val is not None:
                 try:
                     values.append(int(val))
                 except (ValueError, TypeError):
                     values.append(None)
+            elif col == "cgpa" and val is not None:
+                try:
+                    values.append(float(val))
+                except (ValueError, TypeError):
+                    values.append(None)
             else:
-                values.append(val)
+                values.append(str(val).strip() if isinstance(val, str) else val)
             update_clauses.append(f"{col} = EXCLUDED.{col}")
 
         update_clauses.append("updated_at = CURRENT_TIMESTAMP")
@@ -94,7 +116,7 @@ def update_student_profile(student_id: str, **fields) -> Dict[str, Any]:
             VALUES ({placeholders_sql}, CURRENT_TIMESTAMP)
             ON CONFLICT (student_id)
             DO UPDATE SET {update_sql}
-            RETURNING student_id, stream, cycle, branch, semester, preferences, updated_at;
+            RETURNING student_id, name, college, degree, branch, semester, year, stream, cycle, cgpa, preferences, updated_at;
         """
 
         conn = get_connection()
@@ -110,12 +132,17 @@ def update_student_profile(student_id: str, **fields) -> Dict[str, Any]:
 
         return {
             "student_id": row[0],
-            "stream": row[1],
-            "cycle": row[2],
-            "branch": row[3],
-            "semester": row[4],
-            "preferences": row[5] if row[5] is not None else {},
-            "updated_at": row[6].isoformat() if row[6] else None
+            "name": row[1],
+            "college": row[2],
+            "degree": row[3],
+            "branch": row[4],
+            "semester": row[5],
+            "year": row[6],
+            "stream": row[7],
+            "cycle": row[8],
+            "cgpa": float(row[9]) if row[9] is not None else None,
+            "preferences": row[10] if row[10] is not None else {},
+            "updated_at": row[11].isoformat() if row[11] else None
         }
 
     except Exception as e:
