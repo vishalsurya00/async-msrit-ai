@@ -34,14 +34,21 @@ def answer_question(
         )
         return result
 
-    # Check student profile for context filters (stream/cycle)
+    # Check student profile for optional context filters and personalization (failsafe)
     stream = None
     cycle = None
+    student_branch = None
+    student_sem = None
     if student_id:
-        profile = get_student_profile(student_id)
-        if profile:
-            stream = profile.get("stream")
-            cycle = profile.get("cycle")
+        try:
+            profile = get_student_profile(student_id)
+            if profile:
+                stream = profile.get("stream")
+                cycle = profile.get("cycle")
+                student_branch = profile.get("branch")
+                student_sem = profile.get("semester")
+        except Exception as e:
+            print(f"Warning: Optional student profile retrieval in RAG failed gracefully: {e}", file=sys.stderr)
 
     try:
         from backend.documents import normalize_subject
@@ -95,10 +102,20 @@ def answer_question(
 
         context_text = "\n\n".join(context_blocks)
 
+        # Optional student personalization context
+        student_context = ""
+        if student_branch and student_sem:
+            student_context = f"\nSTUDENT ACADEMIC CONTEXT (Optional): Branch: {student_branch}, Semester: {student_sem}\n"
+        elif student_branch:
+            student_context = f"\nSTUDENT ACADEMIC CONTEXT (Optional): Branch: {student_branch}\n"
+        elif student_sem:
+            student_context = f"\nSTUDENT ACADEMIC CONTEXT (Optional): Semester: {student_sem}\n"
+
         prompt = (
             "You are MSRIT AI, a knowledgeable, friendly academic assistant for Ramaiah Institute of Technology students.\n\n"
             f"USER QUESTION:\n{query}\n\n"
-            f"VERIFIED LOCAL MSRIT CONTEXT:\n{context_text}\n\n"
+            f"VERIFIED LOCAL MSRIT CONTEXT:\n{context_text}\n"
+            f"{student_context}\n"
             "INSTRUCTIONS:\n"
             "1. Explain the requested concept clearly, naturally, and concisely.\n"
             "2. Use the verified local MSRIT material above as your primary grounding source.\n"
@@ -106,7 +123,8 @@ def answer_question(
             "4. If the retrieved notes context lacks specific details about the question, clearly state: "
             "'The available MSRIT notes do not contain full details on this topic, but here is an explanation:' "
             "and provide a clear, accurate explanation of the concept.\n"
-            "5. Structure the explanation cleanly using concise paragraphs or bullet points.\n\n"
+            "5. Structure the explanation cleanly using concise paragraphs or bullet points.\n"
+            "6. If student academic context is provided above, you may subtly tailor examples appropriately for a student at that level, while remaining strictly grounded in verified academic facts.\n\n"
             "Answer:"
         )
 

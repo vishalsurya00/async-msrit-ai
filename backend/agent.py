@@ -8,7 +8,7 @@ Implements a fast, deterministic intent router before RAG, dispatching queries t
 - Academic RAG / Summarization (grounded local notes Q&A)
 - Unknown / Faculty directory placeholder (no blind RAG hallucination)
 """
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 import re
 import asyncio
 import sys
@@ -26,6 +26,12 @@ from backend.documents import (
     search_academic_documents,
     format_document_response
 )
+from backend.memory import (
+    format_single_field_response,
+    format_profile_overview,
+    validate_and_normalize_profile_fields,
+    normalize_canonical_branch
+)
 
 AMBIGUOUS_BRANCHES = {"me"}
 
@@ -40,27 +46,39 @@ GREETING_PATTERNS = [
     r'^(?:bye|goodbye|see\s+you|cya)\b'
 ]
 
+EXPLICIT_PROFILE_UPDATE_PATTERNS = [
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:profile|branch|department|dept|semester|sem|cgpa|gpa|year|college|degree|name)\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:semester|sem|branch|dept|department|cgpa|gpa|year|name)\s+(?:to|with|as|is|=)\b',
+    r'\b(?:my\s+branch|my\s+semester|my\s+sem|my\s+cgpa|my\s+gpa|my\s+name|my\s+college|my\s+degree|my\s+year)\s*(?:is|to|as|with|:=|:|:=|=)\b',
+]
+
 MEMORY_UPDATE_PATTERNS = [
-    r'\b(?:update|change|set|save|record|add)\s+(?:my\s+)?profile\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:profile|branch|department|dept|semester|sem|cgpa|gpa|year|college|degree|name)\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:semester|sem|branch|dept|department|cgpa|gpa|year|name)\s+(?:to|with|as|is|=)\b',
     r'\b(?:my\s+name\s+is|my\s+name\'s)\b',
-    r'\b(?:my\s+cgpa\s+is|my\s+gpa\s+is)\b',
+    r'\b(?:you\s+can\s+call\s+me|call\s+me)\b',
+    r'\b(?:my\s+cgpa\s+is|my\s+gpa\s+is|my\s+current\s+cgpa\s+is)\b',
     r'\b(?:with\s+cgpa|cgpa\s*[:=]|gpa\s*[:=])\b',
+    r'\b(?:i\s+scored\s+[\d\w\.]+\s*(?:cgpa|gpa)?)\b',
     r'\b(?:my\s+branch\s+is|my\s+branch\s*:)\b',
-    r'\b(?:my\s+semester\s+is|my\s+sem\s+is)\b',
+    r'\b(?:my\s+semester\s+is|my\s+sem\s+is|my\s+current\s+semester\s+is)\b',
     r'\b(?:my\s+college\s+is|my\s+degree\s+is|my\s+stream\s+is|my\s+cycle\s+is)\b',
     r'\b(?:i\s+am\s+studying|i\'m\s+studying|i\s+study\s+at)\b',
     r'\b(?:i\s+am\s+pursuing|i\'m\s+pursuing|currently\s+pursuing)\b',
+    r'\b(?:i\s+belong\s+to)\b',
     r'\b(?:i\s+am\s+in|i\'m\s+in)\b',
-    r'\b(?:i\s+am\s+a\s+\d+(?:st|nd|rd|th)?\s+year\s+student|i\s+completed\s+my\s+\d+(?:st|nd|rd|th)?\s+year)\b',
+    r'\b(?:i\s+am\s+a\s+\d+(?:st|nd|rd|th)?\s+year\s+student|i\s+completed\s+my\s+\d+(?:st|nd|rd|th)?\s+year|i\s+am\s+currently\s+in\s+my\s+\d+(?:st|nd|rd|th)?\s+year)\b',
+    r'\b(?:i\s+am\s+a\s+student\s+of)\b',
     r'\b(?:remember\s+that\s+i|remember\s+my)\b',
     r'\b(?:branch\s*[:=]|semester\s*[:=]|sem\s*[:=]|stream\s*[:=]|cycle\s*[:=]|cgpa\s*[:=]|college\s*[:=]|degree\s*[:=]|year\s*[:=]|name\s*[:=])\b'
 ]
 
 MEMORY_QUERY_PATTERNS = [
-    r'\b(?:who\s+am\s+i|tell\s+me\s+about\s+myself|what\s+do\s+you\s+know\s+about\s+me|show\s+my\s+profile|what\s+is\s+my\s+profile|^my\s+profile$|^my\s+details$)\b',
-    r'\b(?:what\s+is\s+my\s+name|what\s+is\s+my\s+branch|what\s+branch\s+am\s+i\s+in)\b',
-    r'\b(?:what\s+semester\s+am\s+i\s+in|which\s+semester\s+am\s+i\s+in|what\s+is\s+my\s+semester|what\s+is\s+my\s+sem)\b',
-    r'\b(?:what\s+is\s+my\s+cgpa|what\s+is\s+my\s+gpa|what\s+is\s+my\s+grade|what\s+is\s+my\s+score)\b',
+    r'\b(?:who\s+am\s+i|who\s+i\s+am|tell\s+me\s+who\s+i\s+am|tell\s+me\s+about\s+myself|what\s+do\s+you\s+know\s+about\s+me|what\s+do\s+u\s+know\s+about\s+me|show\s+my\s+profile|what\s+is\s+my\s+profile|^my\s+profile$|^my\s+details$)\b',
+    r'\b(?:(?:what|which)\s+(?:is\s+my\s+name|name\s+do\s+i\s+have)|tell\s+me\s+my\s+name)\b',
+    r'\b(?:(?:what|which)\s+(?:is\s+my\s+branch|branch\s+am\s+i\s+(?:in|studying(?:\s+in)?)|branch\s+do\s+i\s+(?:have|belong\s+to))|tell\s+me\s+my\s+branch)\b',
+    r'\b(?:(?:what|which)\s+(?:is\s+my\s+sem(?:ester)?|sem(?:ester)?\s+am\s+i\s+(?:in|studying(?:\s+in)?)|sem(?:ester)?\s+do\s+i\s+have)|tell\s+me\s+my\s+sem(?:ester)?)\b',
+    r'\b(?:(?:what|which)\s+(?:is\s+my\s+(?:cgpa|gpa|grade|score)|(?:cgpa|gpa|grade|score)\s+do\s+i\s+have)|tell\s+me\s+my\s+(?:cgpa|gpa|grade|score))\b',
     r'\b(?:which\s+college\s+do\s+i\s+study\s+in|what\s+college\s+do\s+i\s+study\s+in|what\s+is\s+my\s+college|where\s+do\s+i\s+study)\b',
     r'\b(?:what\s+course\s+am\s+i\s+pursuing|what\s+degree\s+am\s+i\s+pursuing|what\s+is\s+my\s+degree|what\s+is\s+my\s+course)\b',
 ]
@@ -79,6 +97,8 @@ def detect_profile_query_field(query: str) -> str:
         return "branch"
     if re.search(r'\b(?:sem(?:ester)?)\b', low):
         return "semester"
+    if re.search(r'\b(?:year)\b', low):
+        return "year"
     if re.search(r'\b(?:college|institution|university)\b', low):
         return "college"
     if re.search(r'\b(?:course|degree)\b', low):
@@ -390,69 +410,156 @@ def _match_club(clean: str) -> Optional[str]:
     return None
 
 
-def _extract_profile_data(message: str) -> Dict[str, Any]:
+def _extract_profile_data(message: str) -> Tuple[Dict[str, Any], List[str]]:
     """
     Extracts all supported student profile fields from natural language or key-value formatted text:
     name, college, degree, branch, semester, year, stream, cycle, cgpa.
     Only extracts information explicitly provided by the user.
+    Returns (extracted_dict, invalid_fields_list).
     """
-    data = {}
+    data: Dict[str, Any] = {}
+    invalid_fields: List[str] = []
     lower = message.lower()
     clean = re.sub(r'[^\w\s\(\)&-]', ' ', lower).strip()
 
     # 1. Name
+    m_name_cmd = re.search(
+        r'\b(?:(?:update|change|set|save|record|add|modify|edit)\s+(?:my\s+)?name|(?:my\s+)?name)\s*(?:is|to|as|with|:=|:|:=|=)?\s*([a-zA-Z\s\.\'-]+?)(?:,|$|\b(?:and|with|branch|sem|semester|cgpa|college|degree|year|stream|cycle)\b)',
+        message,
+        re.I
+    )
     m_name_kv = re.search(r'\bname\s*[:=]\s*([a-zA-Z\s\.\'-]+?)(?:,|$|\b(?:and|with|branch|sem|semester|cgpa|college|degree|year|stream|cycle)\b)', message, re.I)
     m_name_nat = re.search(r'\bmy\s+name\s+is\s+([a-zA-Z\s\.\'-]+?)(?:,|$|\.|\b(?:and|i\s+am|studying|currently|with|cgpa|branch|sem|semester|at)\b)', message, re.I)
-    raw_name = (m_name_kv.group(1) if m_name_kv else (m_name_nat.group(1) if m_name_nat else None))
+    m_name_call = re.search(r'\b(?:you\s+can\s+call\s+me|call\s+me)\s+([a-zA-Z\s\.\'-]+?)(?:,|$|\.|\b(?:and|with|branch|sem|cgpa)\b)', message, re.I)
+    raw_name = (m_name_cmd.group(1) if m_name_cmd else (m_name_kv.group(1) if m_name_kv else (m_name_nat.group(1) if m_name_nat else (m_name_call.group(1) if m_name_call else None))))
+
+    # Natural "I am <Name>" pattern (e.g. "I am Vishal" or "I am Vishal Kumar")
+    if not raw_name:
+        m_name_iam = re.search(r'\b(?:i\s+am|i\'m)\s+([a-zA-Z\s\.\'-]+?)(?:,|$|\.|\b(?:and|with|branch|sem|semester|cgpa)\b)', message, re.I)
+        if m_name_iam:
+            cand = m_name_iam.group(1).strip()
+            stopwords = {"a", "an", "the", "in", "studying", "pursuing", "currently", "at", "from", "looking", "searching", "not", "learning", "student", "msrit", "first", "second", "third", "fourth", "semester", "year", "be", "btech", "here", "done"}
+            tokens = [t.lower() for t in cand.split() if t]
+            if tokens and tokens[0] not in stopwords and not any(t in stopwords for t in tokens) and len(cand) >= 2:
+                raw_name = cand
+
     if raw_name:
         clean_name = raw_name.strip(' .,;:-')
         if len(clean_name) >= 2 and clean_name.lower() not in {'not specified', 'a', 'an', 'the', 'msrit'}:
             data['name'] = clean_name
 
     # 2. CGPA
-    m_cgpa = re.search(r'\b(?:cgpa|gpa)\s*[:=]?\s*(?:is\s*)?(\d+(?:\.\d+)?)\b', message, re.I)
-    if not m_cgpa:
-        m_cgpa = re.search(r'\b(?:with\s+)?(\d+(?:\.\d+)?)\s*(?:cgpa|gpa)\b', message, re.I)
-    if m_cgpa:
+    m_cgpa_cmd = re.search(
+        r'\b(?:(?:update|change|set|save|record|add|modify|edit)\s+(?:my\s+)?(?:current\s+)?(?:cgpa|gpa)|(?:my\s+)?(?:current\s+)?(?:cgpa|gpa))\s*(?:is|to|as|with|:=|:|:=|=)?\s*([^\s,;]+)',
+        message,
+        re.I
+    )
+    m_cgpa_kv = re.search(r'\b(?:cgpa|gpa)\s*[:=]\s*([^\s,;]+)', message, re.I)
+    m_cgpa_nat = re.search(r'\b(?:i\s+scored|scored|with)\s+([^\s,;]+)\s*(?:cgpa|gpa)\b', message, re.I)
+    m_cgpa_nat2 = re.search(r'\b([^\s,;]+)\s*(?:cgpa|gpa)\b', message, re.I)
+    cgpa_val = (m_cgpa_cmd.group(1) if m_cgpa_cmd else (m_cgpa_kv.group(1) if m_cgpa_kv else (m_cgpa_nat.group(1) if m_cgpa_nat else (m_cgpa_nat2.group(1) if m_cgpa_nat2 else None))))
+
+    if cgpa_val:
+        raw_val = cgpa_val.strip(' .,;:-')
         try:
-            val = float(m_cgpa.group(1))
+            val = float(raw_val)
             if 0.0 <= val <= 10.0:
-                data['cgpa'] = val
+                data['cgpa'] = round(val, 2)
+            else:
+                invalid_fields.append("cgpa")
         except ValueError:
-            pass
+            invalid_fields.append("cgpa")
 
     # 3. Semester
-    m_sem_kv = re.search(r'\b(?:semester|sem)\s*[:=]\s*(\d+)\b', message, re.I)
+    # Supports: "update semester with 3", "update my semester with 3", "update semester to 3",
+    # "change my semester to 3", "set semester to 3", "my semester is 3", "semester = 3", "in 3rd semester"
+    m_sem_cmd = re.search(
+        r'\b(?:(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:semester|sem)|(?:my\s+)?(?:current\s+)?(?:semester|sem))\b\s*(?:is|to|as|with|:=|:|:=|=)?\s*([a-zA-Z0-9]+)\b',
+        message,
+        re.I
+    )
+    m_sem_kv = re.search(r'\b(?:semester|sem)\s*[:=]\s*([a-zA-Z0-9]+)', message, re.I)
     m_sem_nat = re.search(r'\b(?:in\s+)?(\d+)(?:st|nd|rd|th)?\s*(?:semester|sem)\b', message, re.I)
-    m_sem_nat2 = re.search(r'\b(?:semester|sem)\s*(?:is\s*)?(\d+)\b', message, re.I)
-    sem_val = (m_sem_kv.group(1) if m_sem_kv else (m_sem_nat.group(1) if m_sem_nat else (m_sem_nat2.group(1) if m_sem_nat2 else None)))
+    m_sem_word = re.search(r'\b(?:in\s+)?(first|second|third|fourth|fifth|sixth|seventh|eighth)\s+(?:semester|sem)\b', message, re.I)
+
+    sem_val = None
+    if m_sem_cmd:
+        cand = m_sem_cmd.group(1).strip(' .,;:-')
+        if cand.lower() not in {"to", "with", "as", "is"}:
+            sem_val = cand
+    elif m_sem_kv:
+        sem_val = m_sem_kv.group(1).strip(' .,;:-')
+    elif m_sem_nat:
+        sem_val = m_sem_nat.group(1).strip(' .,;:-')
+    elif m_sem_word:
+        sem_val = m_sem_word.group(1).strip(' .,;:-')
+
     if sem_val:
+        clean_sem = sem_val.strip(' .,;:-').lower()
+        word_to_num = {
+            'first': 1, '1st': 1, 'one': 1,
+            'second': 2, '2nd': 2, 'two': 2,
+            'third': 3, '3rd': 3, 'three': 3,
+            'fourth': 4, '4th': 4, 'four': 4,
+            'fifth': 5, '5th': 5, 'five': 5,
+            'sixth': 6, '6th': 6, 'six': 6,
+            'seventh': 7, '7th': 7, 'seven': 7,
+            'eighth': 8, '8th': 8, 'eight': 8,
+        }
         try:
-            s_int = int(sem_val)
+            if clean_sem in word_to_num:
+                s_int = word_to_num[clean_sem]
+            else:
+                s_int = int(clean_sem)
             if 1 <= s_int <= 10:
                 data['semester'] = s_int
+            else:
+                invalid_fields.append("semester")
         except ValueError:
-            pass
+            invalid_fields.append("semester")
 
     # 4. Year
-    m_yr_kv = re.search(r'\byear\s*[:=]\s*(\d+)\b', message, re.I)
-    m_yr_dig = re.search(r'\b(?:completed\s+my\s+|in\s+|am\s+in\s+|a\s+)?(\d+)(?:st|nd|rd|th)\s+year\b', message, re.I)
-    m_yr_word = re.search(r'\b(?:completed\s+my\s+|in\s+|am\s+in\s+|a\s+)?(first|second|third|fourth)\s+year\b', message, re.I)
-    word_map = {'first': 1, 'second': 2, 'third': 3, 'fourth': 4}
-    yr_val = (m_yr_kv.group(1) if m_yr_kv else (m_yr_dig.group(1) if m_yr_dig else None))
-    if yr_val:
+    m_yr_cmd = re.search(
+        r'\b(?:(?:update|change|set|save|record|add|modify|edit)\s+(?:my\s+)?year|(?:my\s+)?year)\b\s*(?:is|to|as|with|:=|:|:=|=)?\s*([a-zA-Z0-9]+)\b',
+        message,
+        re.I
+    )
+    m_yr_kv = re.search(r'\byear\s*[:=]\s*([a-zA-Z0-9]+)', message, re.I)
+    m_yr_dig = re.search(r'\b(?:completed\s+my\s+|in\s+my\s+|currently\s+in\s+my\s+|in\s+|am\s+in\s+|a\s+)?(\d+)(?:st|nd|rd|th)\s+year\b', message, re.I)
+    m_yr_word = re.search(r'\b(?:completed\s+my\s+|in\s+my\s+|currently\s+in\s+my\s+|in\s+|am\s+in\s+|a\s+)?(first|second|third|fourth)\s+year\b', message, re.I)
+    word_map = {'first': 1, 'second': 2, 'third': 3, 'fourth': 4, '1st': 1, '2nd': 2, '3rd': 3, '4th': 4}
+
+    yr_val = None
+    if m_yr_cmd:
+        cand = m_yr_cmd.group(1).strip(' .,;:-')
+        if cand.lower() not in {"to", "with", "as", "is"}:
+            yr_val = cand
+    elif m_yr_kv:
+        yr_val = m_yr_kv.group(1).strip(' .,;:-')
+    elif m_yr_dig:
+        yr_val = m_yr_dig.group(1).strip(' .,;:-')
+
+    if re.search(r'\bcompleted\s+my\s+(?:first|1st)\s+year\b', lower):
+        data['year'] = 2
+    elif yr_val:
+        clean_yr = yr_val.strip(' .,;:-').lower()
         try:
-            y_int = int(yr_val)
+            if clean_yr in word_map:
+                y_int = word_map[clean_yr]
+            else:
+                y_int = int(clean_yr)
             if 1 <= y_int <= 6:
                 data['year'] = y_int
+            else:
+                invalid_fields.append("year")
         except ValueError:
-            pass
+            invalid_fields.append("year")
     elif m_yr_word and m_yr_word.group(1).lower() in word_map:
         data['year'] = word_map[m_yr_word.group(1).lower()]
 
     # 5. College
     m_col_kv = re.search(r'\b(?:college|institution)\s*[:=]\s*([a-zA-Z0-9\s\.\'-]+?)(?:,|$|\b(?:branch|sem|semester|stream|cycle|cgpa|degree|year)\b)', message, re.I)
-    m_col_nat = re.search(r'\b(?:studying\s+in|study\s+at|student\s+at|at)\s+(msrit|ramaiah\s+institute\s+of\s+technology|ramaiah)\b', message, re.I)
+    m_col_nat = re.search(r'\b(?:studying\s+in|study\s+at|student\s+at|student\s+of|at)\s+(msrit|ramaiah\s+institute\s+of\s+technology|ramaiah)\b', message, re.I)
     if m_col_kv:
         data['college'] = m_col_kv.group(1).strip()
     elif m_col_nat:
@@ -460,25 +567,56 @@ def _extract_profile_data(message: str) -> Dict[str, Any]:
 
     # 6. Degree
     m_deg_kv = re.search(r'\bdegree\s*[:=]\s*([a-zA-Z\.\s]+?)(?:,|$|\b(?:with|branch|sem|semester|stream|cycle|cgpa|year)\b)', message, re.I)
-    m_deg_nat = re.search(r'\b(?:pursuing|doing|studying\s+for|for)\s+(be|b\.e\.|btech|b\.tech|mtech|m\.tech|mca|mba|barch|b\.arch)\b', message, re.I)
+    m_deg_nat = re.search(r'\b(?:pursuing|doing|studying\s+for|studying|for)\s+(be|b\.e\.|bachelor\s+of\s+engineering|btech|b\.tech|bachelor\s+of\s+technology|mtech|m\.tech|mca|mba|barch|b\.arch)\b', message, re.I)
     deg_val = m_deg_kv.group(1) if m_deg_kv else (m_deg_nat.group(1) if m_deg_nat else None)
     if deg_val:
-        clean_deg = deg_val.strip().upper().replace('.', '')
-        data['degree'] = clean_deg
+        clean_deg = deg_val.strip().lower()
+        if "bachelor of engineering" in clean_deg or clean_deg in ("be", "b.e."):
+            data['degree'] = "BE"
+        elif "bachelor of technology" in clean_deg or clean_deg in ("btech", "b.tech"):
+            data['degree'] = "BTech"
+        else:
+            data['degree'] = clean_deg.upper().replace('.', '')
 
     # 7. Branch
-    m_br_kv = re.search(r'\bbranch\s*[:=]\s*([a-zA-Z0-9\(\)&-]+)', message, re.I)
-    if m_br_kv:
-        code = find_branch_code(m_br_kv.group(1)) or _match_branch(m_br_kv.group(1), m_br_kv.group(1).lower())
-        if code:
-            data['branch'] = code
-        else:
-            data['branch'] = m_br_kv.group(1).strip()
-    else:
-        # Match from natural message
+    m_br_cmd = re.search(
+        r'\b(?:(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:branch|dept|department)|(?:my\s+)?(?:branch|dept|department))\s*(?:is|to|as|with|:=|:|:=|=)?\s*([a-zA-Z0-9\(\)&-]+(?:\s+[a-zA-Z0-9\(\)&-]+)*)',
+        message,
+        re.I
+    )
+    m_br_kv = re.search(r'\b(?:branch|dept|department)\s*[:=]\s*([a-zA-Z0-9\(\)&-]+(?:\s+[a-zA-Z0-9\(\)&-]+)*)', message, re.I)
+    m_studying = re.search(
+        r'\b(?:studying\s+in|student\s+of|pursuing\s+(?:a\s+degree\s+in|in)?|enrolled\s+in|i\s+am\s+in|i\'m\s+in)\s+([a-zA-Z0-9\(\)&-]+(?:\s+[a-zA-Z0-9\(\)&-]+)*)',
+        message,
+        re.I
+    )
+
+    raw_branch = None
+    if m_br_cmd:
+        cand = m_br_cmd.group(1).strip(' .,;:-')
+        cand_tokens = cand.lower().split()
+        cand_stop = {"am", "do", "is", "can", "should", "would", "in", "to", "with", "as", "my", "the", "a", "an", "what", "which", "where", "who", "how"}
+        if cand_tokens and cand_tokens[0] not in cand_stop:
+            raw_branch = cand
+    elif m_br_kv:
+        raw_branch = m_br_kv.group(1).strip(' .,;:-')
+    elif m_studying:
+        cand = m_studying.group(1).strip(' .,;:-')
+        stopwords = {"a", "an", "the", "first", "second", "third", "fourth", "1st", "2nd", "3rd", "4th", "semester", "sem", "year", "college", "msrit"}
+        tokens = [t.lower() for t in cand.split() if t]
+        if tokens and tokens[0] not in stopwords:
+            raw_branch = cand
+
+    if not raw_branch:
+        # Fallback to _match_branch
         b_code = _match_branch(message, clean)
         if b_code:
-            data['branch'] = b_code
+            raw_branch = b_code
+
+    if raw_branch:
+        norm_b = normalize_canonical_branch(raw_branch)
+        if norm_b:
+            data['branch'] = norm_b
 
     # 8. Stream
     m_str_kv = re.search(r'\bstream\s*[:=]\s*([a-zA-Z0-9\s&-]+?)(?:,|$|\b(?:cycle|sem|semester|branch|cgpa)\b)', message, re.I)
@@ -494,7 +632,7 @@ def _extract_profile_data(message: str) -> Dict[str, Any]:
     if cyc_val:
         data['cycle'] = cyc_val.strip()
 
-    return data
+    return data, invalid_fields
 
 
 def _extract_subject_for_summary(message: str) -> Optional[str]:
@@ -516,15 +654,17 @@ def _extract_subject_for_summary(message: str) -> Optional[str]:
 def classify_intent(message: str) -> IntentResult:
     """
     Deterministic intent router implementing strict priority:
-    1. Identity / Conversation
-    2. Memory Update / Profile Statements
-    3. Memory Query (Profile Questions)
+    1. Identity / Conversation (MSRIT AI assistant identity)
+    2. Memory Query (Student queries asking about their own profile details)
+    3. Memory Update / Profile Statements
     4. Greeting
     5. Faculty Lookup (HOD/Faculty by name)
     6. Department Lookup (field-specific or full)
     7. Club Lookup
-    8. Academic RAG / Summarization
-    9. Unknown / Faculty directory placeholder
+    8. Mixed Academic + Document Retrieval
+    9. Document Retrieval
+    10. Academic RAG / Summarization
+    11. Unknown / Faculty directory placeholder
     """
     raw = message.strip()
     low = raw.lower()
@@ -535,17 +675,27 @@ def classify_intent(message: str) -> IntentResult:
         if re.search(ip, clean):
             return IntentResult(type="identity", raw=raw)
 
-    # 2. Memory Update (Statements providing student profile information)
-    is_mem_up = any(re.search(mp, clean) for mp in MEMORY_UPDATE_PATTERNS)
-    extracted_prof = _extract_profile_data(raw)
-    if is_mem_up or (extracted_prof and len(extracted_prof) >= 2):
-        return IntentResult(type="memory_update", raw=raw, profile_data=extracted_prof)
-
-    # 3. Memory Query (Student queries asking about their own profile details)
+    # 2. Memory Query (Student queries asking about their own profile details)
     for mq in MEMORY_QUERY_PATTERNS:
         if re.search(mq, clean):
             q_field = detect_profile_query_field(clean)
             return IntentResult(type="memory_query", raw=raw, query_field=q_field)
+
+    # 3. Memory Update (Statements providing student profile information)
+    # Profile update intent must take strict priority over department lookup
+    # when the message contains explicit update/change/set language referring to my branch, my semester, etc.
+    is_explicit_up = any(re.search(ep, clean) for ep in EXPLICIT_PROFILE_UPDATE_PATTERNS)
+    is_mem_up = is_explicit_up or any(re.search(mp, clean) for mp in MEMORY_UPDATE_PATTERNS)
+    extracted_prof, invalid_fields = _extract_profile_data(raw)
+    has_dept_kw = any(re.search(dk, clean) for dk in DEPT_KEYWORDS)
+
+    # Explicit profile update requests ALWAYS classify as memory_update
+    if is_explicit_up:
+        return IntentResult(type="memory_update", raw=raw, profile_data=extracted_prof, invalid_fields=invalid_fields)
+
+    # General profile statements (e.g. "I am in 3rd semester", "My CGPA is 8.97", "Branch: CSE, Semester: 3")
+    if (is_mem_up or (invalid_fields and is_mem_up) or (extracted_prof and len(extracted_prof) >= 2)) and not (has_dept_kw and not is_mem_up):
+        return IntentResult(type="memory_update", raw=raw, profile_data=extracted_prof, invalid_fields=invalid_fields)
 
     # 4. Greeting
     for gp in GREETING_PATTERNS:
@@ -692,8 +842,34 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
     # 2. MEMORY UPDATE
     if intent_type == "memory_update":
         extracted_profile = intent.get("profile_data")
+        invalid_fields = intent.get("invalid_fields", [])
+        if extracted_profile is None and not invalid_fields:
+            extracted_profile, invalid_fields = _extract_profile_data(clean_msg)
         if not extracted_profile:
-            extracted_profile = _extract_profile_data(clean_msg)
+            extracted_profile = {}
+
+        if invalid_fields:
+            if "cgpa" in invalid_fields:
+                answer = "Please provide a valid numeric CGPA between 0.0 and 10.0 (e.g., 8.97)."
+            elif "semester" in invalid_fields:
+                answer = "Please provide a valid semester number between 1 and 10."
+            elif "year" in invalid_fields:
+                answer = "Please provide a valid academic year between 1 and 6."
+            else:
+                answer = f"I could not understand the value provided for {', '.join(invalid_fields)}. Please provide a valid value."
+
+            log_action(
+                tool_name="update_student_profile",
+                student_id=clean_id,
+                parameters={"query": clean_msg, "invalid_fields": invalid_fields},
+                result_summary="Profile update rejected due to invalid values",
+                success=False
+            )
+            return {
+                "answer": answer,
+                "action_taken": "update_student_profile",
+                "sources": []
+            }
 
         if extracted_profile:
             res = await mcp_client.call_tool(
@@ -721,7 +897,7 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                         lines.append(f"- **{label}:** {extracted_profile[key]}")
                 answer = "\n".join(lines)
         else:
-            answer = "I couldn't identify any profile details to update. You can specify details like Branch:CSE, Semester:3, Name: Vishal, CGPA: 8.97, etc."
+            answer = "What profile information would you like to update? You can specify details like Branch: CSE, Semester: 3, Name: Vishal, CGPA: 8.97, etc."
 
         log_action(
             tool_name="update_student_profile",
@@ -746,43 +922,10 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
         elif not res or not any(res.get(k) is not None for k in ["name", "college", "degree", "branch", "semester", "year", "stream", "cycle", "cgpa"]):
             answer = "You haven't set your profile yet. You can tell me something like 'My name is Vishal and I am in 3rd semester CSE' to set it up!"
         else:
-            if q_field == "name":
-                answer = f"Your name is {res['name']}." if res.get("name") else "I don't have your name in your profile yet."
-            elif q_field == "cgpa":
-                answer = f"Your CGPA is {res['cgpa']}." if res.get("cgpa") is not None else "I don't have your CGPA recorded in your profile yet."
-            elif q_field == "branch":
-                answer = f"You are in the {res['branch']} branch." if res.get("branch") else "I don't have your branch recorded in your profile yet."
-            elif q_field == "semester":
-                answer = f"You are currently in semester {res['semester']}." if res.get("semester") is not None else "I don't have your semester recorded in your profile yet."
-            elif q_field == "college":
-                answer = f"You study at {res['college']}." if res.get("college") else "I don't have your college recorded in your profile yet."
-            elif q_field == "degree":
-                if res.get("degree") and res.get("branch"):
-                    answer = f"You are pursuing {res['degree']} in {res['branch']}."
-                elif res.get("degree"):
-                    answer = f"You are pursuing {res['degree']}."
-                elif res.get("branch"):
-                    answer = f"You are in the {res['branch']} branch."
-                else:
-                    answer = "I don't have your degree or course recorded in your profile yet."
+            if q_field != "full":
+                answer = format_single_field_response(res, q_field)
             else:
-                field_labels = [
-                    ("name", "Name"),
-                    ("college", "College"),
-                    ("degree", "Degree"),
-                    ("branch", "Branch"),
-                    ("semester", "Semester"),
-                    ("year", "Year"),
-                    ("cgpa", "CGPA"),
-                    ("stream", "Stream"),
-                    ("cycle", "Cycle")
-                ]
-                lines = [f"**Your Student Profile ({clean_id}):**"]
-                for key, label in field_labels:
-                    val = res.get(key)
-                    if val is not None and str(val).strip():
-                        lines.append(f"- **{label}:** {val}")
-                answer = "\n".join(lines)
+                answer = format_profile_overview(res, clean_id)
 
         log_action(
             tool_name="get_student_profile",

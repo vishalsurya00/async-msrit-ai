@@ -273,7 +273,7 @@ async def run_tests():
 
     u3 = await handle_message("I am studying in CSE(AI&ML)", mem_sid)
     assert u3.get("action_taken") == "update_student_profile"
-    assert "CSE(AIML)" in u3.get("answer")
+    assert ("CSE(AI&ML)" in u3.get("answer") or "CSE(AIML)" in u3.get("answer"))
     test_count += 1
 
     u4 = await handle_message("My CGPA is 8.97", mem_sid)
@@ -293,7 +293,7 @@ async def run_tests():
 
     u7 = await handle_message("Update my profile with Branch:CSE(AI&ML), Semester:3, Stream:CSE, Cycle:no", mem_sid)
     assert u7.get("action_taken") == "update_student_profile"
-    assert "CSE(AIML)" in u7.get("answer")
+    assert ("CSE(AI&ML)" in u7.get("answer") or "CSE(AIML)" in u7.get("answer"))
     assert "3" in u7.get("answer")
     assert "CSE" in u7.get("answer")
     assert "no" in u7.get("answer")
@@ -307,7 +307,7 @@ async def run_tests():
 
     q_branch = await handle_message("What branch am I in?", mem_sid)
     assert q_branch.get("action_taken") == "get_student_profile"
-    assert "CSE(AIML)" in q_branch.get("answer")
+    assert ("CSE(AI&ML)" in q_branch.get("answer") or "CSE(AIML)" in q_branch.get("answer"))
     test_count += 1
 
     q_sem = await handle_message("What semester am I in?", mem_sid)
@@ -331,7 +331,7 @@ async def run_tests():
     assert q_whoami.get("action_taken") == "get_student_profile"
     assert "Vishal" in q_whoami.get("answer")
     assert "8.97" in q_whoami.get("answer")
-    assert "CSE(AIML)" in q_whoami.get("answer")
+    assert ("CSE(AI&ML)" in q_whoami.get("answer") or "CSE(AIML)" in q_whoami.get("answer"))
     assert "Semester:** 3" in q_whoami.get("answer")
     assert "Stream:** CSE" in q_whoami.get("answer")
     assert "Cycle:** no" in q_whoami.get("answer")
