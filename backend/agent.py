@@ -21,6 +21,11 @@ from backend.info_lookup import (
     get_club_lookup_map,
     lookup_faculty
 )
+from backend.documents import (
+    detect_document_query_params,
+    search_academic_documents,
+    format_document_response
+)
 
 AMBIGUOUS_BRANCHES = {"me"}
 
@@ -85,6 +90,21 @@ DEPT_KEYWORDS = [
     r'\b(?:department|dept)\b',
     r'\b(?:where\s+is|location(?:\s+of)?|office(?:\s+location)?|located|where\s+to\s+go|where\s+should\s+i\s+go)\b',
     r'\b(?:stream|which\s+stream|belongs?\s+to\s+which\s+stream)\b'
+]
+
+DOCUMENT_REQUEST_KEYWORDS = [
+    r'\b(?:pdf|download|lab\s+manual|lab\s+record|question\s+papers?|previous\s+year\s+papers?|pyqs?|cie\s+papers?)\b',
+    r'\b(?:give\s+me|i\s+want|show\s+me|find|get|send|download|provide)\b.*\b(?:notes?|pdf|question\s+papers?|pyqs?|lab\s+manual|syllabus|document|file)\b',
+    r'\b(?:unit\s*[-_]?\s*(?:\d+|i{1,3}|iv|v))\s*(?:notes?|pdf|file|document|paper)?\b',
+    r'\b(?:maths?|physics|chemistry|c\s+programming|civil|mechanical)\s+(?:notes?|pdf|question\s+papers?|pyqs?|lab\s+manual|syllabus)\b',
+    r'\b(?:give\s+me|show\s+me|find|get|download)\s+(?:the\s+)?(?:maths?|physics|chemistry|c\s+programming)\b',
+    r'\b(?:give\s+me|show\s+me|find|get)\s+unit\s*[-_]?\s*(?:\d+|i{1,3}|iv|v)\b'
+]
+
+ACADEMIC_EXPLANATION_KEYWORDS = [
+    r'\b(?:explain|definition\s+of|define|derive|derivation|what\s+is\s+(?:a|an|the)?|what\s+are|teach\s+me|how\s+does.*work|how\s+do|difference\s+between|concept\s+of|algorithm\s+for|sorting\s+algorithms?|recursion|pointers?|linked\s+list|stack\s+and\s+queue)\b',
+    r'\b(?:explain\s+unit\s*\d+|explain\s+this\s+concept|explain\s+this\s+topic|explain\s+laplace)\b',
+    r'\bexplain\s+laplace\s+transform\b'
 ]
 
 ACADEMIC_EXPLICIT_TERMS = [
@@ -567,15 +587,42 @@ def classify_intent(message: str) -> IntentResult:
     if has_club_word and not matched_branch:
         return IntentResult(type="club", entity=None)
 
-    # 6. Academic RAG
-    # Questions requesting explanations, notes, topics, or course concepts
-    has_academic_explicit = any(re.search(ae, clean) for ae in ACADEMIC_EXPLICIT_TERMS)
-    has_academic_action = any(re.search(aa, clean) for aa in ACADEMIC_ACTION_TERMS)
+    # 6. Mixed Academic + Document Request
+    # Combined requests like "Give me Maths Unit 1 PDF and explain Laplace Transform"
+    if re.search(r'\b(?:and|also)\b', clean):
+        parts = re.split(r'\b(?:and|also)\b', clean, maxsplit=1)
+        part1, part2 = parts[0].strip(), parts[1].strip()
+        p1_doc = any(re.search(p, part1) for p in DOCUMENT_REQUEST_KEYWORDS)
+        p1_exp = any(re.search(p, part1) for p in ACADEMIC_EXPLANATION_KEYWORDS)
+        p2_doc = any(re.search(p, part2) for p in DOCUMENT_REQUEST_KEYWORDS)
+        p2_exp = any(re.search(p, part2) for p in ACADEMIC_EXPLANATION_KEYWORDS)
 
+        if (p1_doc and p2_exp) or (p2_doc and p1_exp):
+            raw_parts = re.split(r'\b(?:and|also)\b', raw, flags=re.I, maxsplit=1)
+            raw_doc_q = raw_parts[0].strip() if p1_doc else raw_parts[1].strip()
+            raw_acad_q = raw_parts[1].strip() if p1_doc else raw_parts[0].strip()
+            return IntentResult(type="mixed_academic_document", raw=raw, doc_query=raw_doc_q, academic_query=raw_acad_q)
+
+    # 7. Document Retrieval
+    is_doc_req = any(re.search(p, clean) for p in DOCUMENT_REQUEST_KEYWORDS)
+    is_acad_exp = any(re.search(p, clean) for p in ACADEMIC_EXPLANATION_KEYWORDS)
+    has_file_kw = bool(re.search(r'\b(?:give\s+me|download|find|show\s+me|pdf|file|manual|qp|question\s+paper)\b', clean))
+
+    # Academic explanation priority for queries like "Explain this topic from my notes"
+    if is_acad_exp and not has_file_kw:
+        return IntentResult(type="academic", raw=raw)
+
+    if is_doc_req:
+        return IntentResult(type="document_retrieval", raw=raw)
+
+    # 8. Academic Summarize
     if re.search(r'\b(?:summarize|summary\s+of)\b', clean):
         return IntentResult(type="summarize", raw=raw)
 
-    if has_academic_explicit or has_academic_action:
+    # 9. Academic RAG QA
+    has_academic_explicit = any(re.search(ae, clean) for ae in ACADEMIC_EXPLICIT_TERMS)
+    has_academic_action = any(re.search(aa, clean) for aa in ACADEMIC_ACTION_TERMS)
+    if is_acad_exp or has_academic_explicit or has_academic_action:
         return IntentResult(type="academic", raw=raw)
 
     # Pure branch name / alias queries (e.g. 'Mechanical', 'CSE', 'Biotechnology', 'Mechanical Engineering')
@@ -813,7 +860,130 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             "sources": []
         }
 
-    # 5. ACADEMIC SUMMARIZE
+    # 5. MIXED ACADEMIC + DOCUMENT RETRIEVAL
+    if intent_type == "mixed_academic_document":
+        doc_q = intent.get("doc_query") or clean_msg
+        acad_q = intent.get("academic_query") or clean_msg
+
+        # A. Retrieve document
+        doc_params = detect_document_query_params(doc_q)
+        doc_res = await mcp_client.call_tool(
+            "search_academic_documents",
+            subject=doc_params.get("subject"),
+            unit=doc_params.get("unit"),
+            document_type=doc_params.get("document_type"),
+            year=doc_params.get("year"),
+            query=doc_params.get("title_keyword")
+        )
+        if isinstance(doc_res, dict) and "error" in doc_res:
+            docs = search_academic_documents(
+                subject=doc_params.get("subject"),
+                unit=doc_params.get("unit"),
+                document_type=doc_params.get("document_type"),
+                year=doc_params.get("year"),
+                query=doc_params.get("title_keyword")
+            )
+        else:
+            docs = doc_res if isinstance(doc_res, list) else ([doc_res] if isinstance(doc_res, dict) and "title" in doc_res else [])
+
+        doc_answer, doc_sources = format_document_response(docs, doc_params)
+
+        # B. Academic explanation via local RAG
+        acad_res = await asyncio.to_thread(rag.answer_question, query=acad_q, student_id=clean_id)
+        acad_answer = acad_res.get("answer", "")
+        acad_sources = acad_res.get("sources", [])
+
+        combined_answer = f"{doc_answer}\n\n---\n**Academic Explanation:**\n{acad_answer}"
+        combined_sources = doc_sources + [s for s in acad_sources if s not in doc_sources]
+
+        log_action(
+            tool_name="mixed_document_and_academic",
+            student_id=clean_id,
+            parameters={"doc_query": doc_q, "academic_query": acad_q},
+            result_summary=f"Found {len(docs)} doc(s), explained academic query",
+            success=True
+        )
+        return {
+            "answer": combined_answer,
+            "action_taken": "mixed_document_and_academic",
+            "sources": combined_sources
+        }
+
+    # 6. DOCUMENT RETRIEVAL
+    if intent_type == "document_retrieval":
+        params = detect_document_query_params(clean_msg)
+
+        # Ambiguity Case A: User specifies unit without specifying subject
+        if params.get("needs_subject_clarification"):
+            unit_val = params.get("unit")
+            unit_str = f"Unit {unit_val}" if unit_val is not None else "that unit"
+            answer = f"Which subject's {unit_str} do you want? (e.g., Mathematics, Physics, Chemistry, C Programming)"
+            log_action(
+                tool_name="search_academic_documents",
+                student_id=clean_id,
+                parameters={"query": clean_msg, **params},
+                result_summary="Requested clarification for missing subject",
+                success=True
+            )
+            return {
+                "answer": answer,
+                "action_taken": "search_academic_documents",
+                "sources": []
+            }
+
+        # Ambiguity Case B: Generic query like "Give me the maths PDF" without unit or specific doc_type
+        if params.get("needs_type_clarification"):
+            subj_val = params.get("subject") or "course"
+            answer = f"Sure. Do you want {subj_val} notes, a question paper, lab manual, or the syllabus?"
+            log_action(
+                tool_name="search_academic_documents",
+                student_id=clean_id,
+                parameters={"query": clean_msg, **params},
+                result_summary="Requested clarification for generic document type",
+                success=True
+            )
+            return {
+                "answer": answer,
+                "action_taken": "search_academic_documents",
+                "sources": []
+            }
+
+        res = await mcp_client.call_tool(
+            "search_academic_documents",
+            subject=params.get("subject"),
+            unit=params.get("unit"),
+            document_type=params.get("document_type"),
+            year=params.get("year"),
+            query=params.get("title_keyword")
+        )
+
+        if isinstance(res, dict) and "error" in res:
+            docs = search_academic_documents(
+                subject=params.get("subject"),
+                unit=params.get("unit"),
+                document_type=params.get("document_type"),
+                year=params.get("year"),
+                query=params.get("title_keyword")
+            )
+        else:
+            docs = res if isinstance(res, list) else ([res] if isinstance(res, dict) and "title" in res else [])
+
+        answer, sources = format_document_response(docs, params)
+
+        log_action(
+            tool_name="search_academic_documents",
+            student_id=clean_id,
+            parameters={"query": clean_msg, **params},
+            result_summary=f"Found {len(docs)} document(s)",
+            success=True
+        )
+        return {
+            "answer": answer,
+            "action_taken": "search_academic_documents",
+            "sources": sources
+        }
+
+    # 7. ACADEMIC SUMMARIZE
     if intent_type == "summarize":
         subject = _extract_subject_for_summary(clean_msg)
         if subject:

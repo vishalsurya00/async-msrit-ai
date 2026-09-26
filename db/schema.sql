@@ -65,3 +65,26 @@ CREATE TABLE IF NOT EXISTS audit_log (
     result_summary TEXT,
     success BOOLEAN DEFAULT TRUE
 );
+
+-- Academic documents metadata table
+CREATE TABLE IF NOT EXISTS academic_documents (
+    id SERIAL PRIMARY KEY,
+    document_id VARCHAR(100) UNIQUE,
+    title TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    semester INT,
+    branch TEXT,
+    stream TEXT,
+    cycle TEXT,
+    unit INT,
+    document_type TEXT NOT NULL,
+    year TEXT,
+    source_url TEXT,
+    local_file_path TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_academic_docs_subject ON academic_documents(subject);
+CREATE INDEX IF NOT EXISTS idx_academic_docs_unit ON academic_documents(unit);
+CREATE INDEX IF NOT EXISTS idx_academic_docs_doc_type ON academic_documents(document_type);
+

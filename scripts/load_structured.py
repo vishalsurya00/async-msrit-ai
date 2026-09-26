@@ -174,6 +174,118 @@ def load_clubs(conn, structured_dir: Path) -> int:
     return loaded_count
 
 
+
+def load_academic_documents(conn, structured_dir: Path) -> int:
+    """
+    Load verified academic documents metadata into PostgreSQL.
+    Extracts documents from first_year_metadata.json and links with first_year_links.json.
+    """
+    meta_path = structured_dir / "first_year_metadata.json"
+    if not meta_path.exists():
+        print(f"No academic documents metadata found at {meta_path}")
+        return 0
+
+    links_path = structured_dir / "first_year_links.json"
+    folder_to_url = {}
+    if links_path.exists():
+        try:
+            links_data = json.loads(links_path.read_text(encoding="utf-8"))
+            for r in links_data.get("records", []):
+                if r.get("folder_id") and r.get("folder_url"):
+                    folder_to_url[r["folder_id"]] = r["folder_url"]
+        except Exception as e:
+            print(f"Warning reading {links_path}: {e}", file=sys.stderr)
+
+    try:
+        docs_data = json.loads(meta_path.read_text(encoding="utf-8"))
+        docs = docs_data.get("documents", [])
+    except Exception as e:
+        print(f"Error reading {meta_path}: {e}", file=sys.stderr)
+        return 0
+
+    type_mapping = {
+        "notes": "notes",
+        "quick_revision": "study_material",
+        "practice_problems": "study_material",
+        "lab_manual": "lab_manual",
+        "syllabus": "syllabus",
+        "question_paper": "question_paper",
+        "cie_paper": "question_paper",
+        "textbook": "study_material"
+    }
+
+    insert_sql = """
+        INSERT INTO academic_documents (
+            document_id, title, subject, semester, branch, stream, cycle, unit,
+            document_type, year, source_url, local_file_path
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ON CONFLICT (document_id) DO UPDATE SET
+            title = EXCLUDED.title,
+            subject = EXCLUDED.subject,
+            semester = EXCLUDED.semester,
+            branch = EXCLUDED.branch,
+            stream = EXCLUDED.stream,
+            cycle = EXCLUDED.cycle,
+            unit = EXCLUDED.unit,
+            document_type = EXCLUDED.document_type,
+            year = EXCLUDED.year,
+            source_url = EXCLUDED.source_url,
+            local_file_path = EXCLUDED.local_file_path;
+    """
+
+    loaded = 0
+    with conn.cursor() as cur:
+        for doc in docs:
+            p = doc.get("path", "")
+            fn = doc.get("file_name", "")
+            raw_type = doc.get("doc_type", "notes")
+            canon_type = type_mapping.get(raw_type, "notes")
+            unit = doc.get("unit")
+            exam_yr = str(doc.get("exam_year")) if doc.get("exam_year") else None
+
+            src_url = ""
+            source_urls = doc.get("source_folder_urls", [])
+            if source_urls:
+                src_url = source_urls[0]
+            else:
+                for fid, furl in folder_to_url.items():
+                    if fid in p:
+                        src_url = furl
+                        break
+
+            subjects_info = doc.get("subjects", [])
+            subjs = list({s.get("subject") for s in subjects_info if s.get("subject")})
+            subject = subjs[0] if subjs else "General"
+            if "esc" in p.lower() and "c programming" in p.lower():
+                subject = "Programming in C"
+            elif "esc" in p.lower() and "civil" in p.lower():
+                subject = "Civil Engineering (ESC)"
+            elif "esc" in p.lower() and "mechanical" in p.lower():
+                subject = "Mechanical Engineering (ESC)"
+
+            streams = doc.get("streams", [])
+            cycles = doc.get("cycles", [])
+
+            cur.execute(insert_sql, (
+                doc.get("doc_id"),
+                fn.replace(".pdf", "").strip(),
+                subject,
+                1,
+                None,
+                ", ".join(streams) if isinstance(streams, list) else str(streams),
+                ", ".join(cycles) if isinstance(cycles, list) else str(cycles),
+                unit,
+                canon_type,
+                exam_yr,
+                src_url,
+                p
+            ))
+            loaded += 1
+
+    conn.commit()
+    return loaded
+
+
 def main():
     structured_dir = PROJECT_ROOT / "data" / "structured"
     if not structured_dir.exists():
@@ -185,13 +297,16 @@ def main():
     try:
         branches_count = load_branches(conn, structured_dir)
         clubs_count = load_clubs(conn, structured_dir)
+        docs_count = load_academic_documents(conn, structured_dir)
 
         print("\n--- Structured Data Loading Summary ---")
         print(f"Successfully loaded {branches_count} branches.")
         print(f"Successfully loaded {clubs_count} clubs.")
+        print(f"Successfully loaded {docs_count} academic documents.")
     finally:
         conn.close()
 
 
 if __name__ == "__main__":
     main()
+

@@ -22,6 +22,10 @@ from backend.info_lookup import (
     lookup_club as _lookup_club,
     list_subjects as _list_subjects,
 )
+from backend.documents import (
+    search_academic_documents as _search_academic_documents,
+    get_academic_document as _get_academic_document,
+)
 from backend.audit import audited
 
 mcp = FastMCP("msrit-ai-server")
@@ -116,5 +120,42 @@ def list_subjects(
     return _list_subjects(stream=stream, cycle=cycle)
 
 
+@mcp.tool()
+@audited("search_academic_documents")
+def search_academic_documents(
+    query: Optional[str] = None,
+    subject: Optional[str] = None,
+    unit: Optional[int] = None,
+    semester: Optional[int] = None,
+    branch: Optional[str] = None,
+    document_type: Optional[str] = None,
+    year: Optional[str] = None,
+    limit: int = 10
+) -> List[Dict[str, Any]]:
+    """
+    Search verified MSRIT academic documents, notes, question papers, and syllabus files by subject, unit, semester, document type, or year.
+    """
+    return _search_academic_documents(
+        query=query,
+        subject=subject,
+        unit=unit,
+        semester=semester,
+        branch=branch,
+        document_type=document_type,
+        year=year,
+        limit=limit
+    )
+
+
+@mcp.tool()
+@audited("get_academic_document")
+def get_academic_document(document_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Retrieve exact verified metadata and local file path for an academic document by its unique ID.
+    """
+    return _get_academic_document(document_id=document_id)
+
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")
+

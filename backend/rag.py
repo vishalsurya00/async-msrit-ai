@@ -44,8 +44,17 @@ def answer_question(
             cycle = profile.get("cycle")
 
     try:
+        from backend.documents import normalize_subject
+        detected_subject = normalize_subject(query)
+
         # Retrieve chunks (top_k=3 to keep context focused and avoid broad chapter dumps)
-        chunks = search_notes(query=query, stream=stream, cycle=cycle, top_k=top_k)
+        chunks = []
+        if detected_subject:
+            chunks = search_notes(query=query, stream=stream, cycle=cycle, subject=detected_subject, top_k=top_k)
+
+        if not chunks:
+            chunks = search_notes(query=query, stream=stream, cycle=cycle, top_k=top_k)
+
         if chunks:
             chunks = chunks[:top_k]
 
@@ -87,14 +96,17 @@ def answer_question(
         context_text = "\n\n".join(context_blocks)
 
         prompt = (
-            "You are MSRIT AI, a precise academic assistant for Ramaiah Institute of Technology students.\n"
-            "CRITICAL RULES:\n"
-            "1. Answer ONLY the specific concept or question asked, using strictly the provided notes context.\n"
-            "2. Be direct and concise: provide 3 to 6 focused bullet points or 2 short paragraphs maximum.\n"
-            "3. Do NOT dump entire unit outlines, textbook introductions, syllabus objectives, or broad chapter summaries unless the user explicitly requested a summary.\n"
-            "4. If the context does not address the question, state: 'The provided MSRIT notes do not contain this specific information.'\n\n"
-            f"Context:\n{context_text}\n\n"
-            f"Question: {query}\n\n"
+            "You are MSRIT AI, a knowledgeable, friendly academic assistant for Ramaiah Institute of Technology students.\n\n"
+            f"USER QUESTION:\n{query}\n\n"
+            f"VERIFIED LOCAL MSRIT CONTEXT:\n{context_text}\n\n"
+            "INSTRUCTIONS:\n"
+            "1. Explain the requested concept clearly, naturally, and concisely.\n"
+            "2. Use the verified local MSRIT material above as your primary grounding source.\n"
+            "3. Do not invent MSRIT-specific information (such as fake course codes, fake faculty names, or fake dates).\n"
+            "4. If the retrieved notes context lacks specific details about the question, clearly state: "
+            "'The available MSRIT notes do not contain full details on this topic, but here is an explanation:' "
+            "and provide a clear, accurate explanation of the concept.\n"
+            "5. Structure the explanation cleanly using concise paragraphs or bullet points.\n\n"
             "Answer:"
         )
 

@@ -83,6 +83,12 @@ async def ask_endpoint(payload: AskRequest):
         raise HTTPException(status_code=500, detail=f"Internal error processing request: {str(e)}")
 
 
-# Serve static frontend files (must be mounted after API routes)
+# Serve local academic documents from data/raw
+DATA_RAW_DIR = BASE_DIR / "data" / "raw"
+if DATA_RAW_DIR.exists():
+    app.mount("/data/raw", StaticFiles(directory=str(DATA_RAW_DIR)), name="data_raw")
+
+# Serve static frontend files (must be mounted after API routes and document files)
 if FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
+
