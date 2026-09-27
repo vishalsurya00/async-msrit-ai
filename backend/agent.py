@@ -981,14 +981,7 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
             }
         }
 
-    if force_agentic:
-        res = await run_agentic_workflow(clean_msg, clean_id, router_ms=0.0)
-        return res
-
-    t_router_start = time.perf_counter()
-    intent = classify_intent(clean_msg)
-    intent_type = intent["type"]
-    router_time_ms = round((time.perf_counter() - t_router_start) * 1000, 2)
+    router_time_ms = 0.0
 
     def _with_metrics(
         res_dict: Dict[str, Any],
@@ -1015,6 +1008,29 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
             "total_time_ms": tot_ms,
         }
         return res_dict
+
+    if force_agentic:
+        res = await run_agentic_workflow(clean_msg, clean_id, router_ms=0.0)
+        return res
+
+    # 2. Pending academic follow-up resolver (temporary conversation context)
+    from backend.conversation_context import resolve_academic_followup
+    followup_res = resolve_academic_followup(clean_msg, clean_id)
+    if followup_res is not None:
+        log_action(
+            tool_name=followup_res.get("action_taken", "academic_followup"),
+            student_id=clean_id,
+            parameters={"query": clean_msg},
+            result_summary="Resolved academic follow-up using temporary conversation context",
+            success=True
+        )
+        return _with_metrics(followup_res)
+
+    # 3. Existing deterministic intent router
+    t_router_start = time.perf_counter()
+    intent = classify_intent(clean_msg)
+    intent_type = intent["type"]
+    router_time_ms = round((time.perf_counter() - t_router_start) * 1000, 2)
 
     # Controlled Agentic Path for Multi-Domain / Combined Queries
     if intent_type == "agentic":
@@ -1406,6 +1422,22 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
 
         answer, sources = format_document_response(docs, params)
 
+        # Update temporary conversation context for multi-candidate follow-up
+        if len(docs) > 1:
+            from backend.conversation_context import set_academic_context
+            set_academic_context(clean_id, {
+                "intent": "academic_document",
+                "subject": params.get("subject") or (docs[0].get("subject") if docs else None),
+                "unit": params.get("unit"),
+                "document_type": params.get("document_type") or (docs[0].get("document_type") if docs else "notes"),
+                "year": params.get("year"),
+                "candidates": docs,
+                "awaiting_selection": True
+            })
+        else:
+            from backend.conversation_context import clear_academic_context
+            clear_academic_context(clean_id)
+
         log_action(
             tool_name="search_academic_documents",
             student_id=clean_id,
@@ -1506,6 +1538,21 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
 
         doc_list = docs if isinstance(docs, list) else []
         answer, sources = format_document_response(doc_list, {"subject": subj})
+
+        if len(doc_list) > 1:
+            from backend.conversation_context import set_academic_context
+            set_academic_context(clean_id, {
+                "intent": "academic_document",
+                "subject": subj,
+                "unit": None,
+                "document_type": "notes",
+                "year": None,
+                "candidates": doc_list,
+                "awaiting_selection": True
+            })
+        else:
+            from backend.conversation_context import clear_academic_context
+            clear_academic_context(clean_id)
 
         log_action(
             tool_name="search_academic_documents",

@@ -384,7 +384,9 @@ def _deterministic_synthesis_fallback(query: str, observations: List[Dict[str, A
             else:
                 d_lines = [f"Found {len(res)} academic document(s):"]
                 for d in res[:4]:
-                    d_lines.append(f"- **{d.get('title')}** ({d.get('subject')}, Unit {d.get('unit')}) — `{d.get('local_file_path')}`")
+                    u_str = f", Unit {d.get('unit')}" if d.get('unit') is not None else ""
+                    d_lines.append(f"- **{d.get('title')}** ({d.get('subject')}{u_str})")
+                d_lines.append(f"\nResource link: https://ritnotebook.pages.dev/notes/first")
                 parts.append("\n".join(d_lines))
         elif tool == "get_student_profile" and isinstance(res, dict):
             p_lines = [f"**Student Profile ({res.get('student_id')}):**"]

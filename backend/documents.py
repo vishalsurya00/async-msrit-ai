@@ -346,12 +346,16 @@ def get_academic_document(document_id: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+PUBLIC_FIRST_YEAR_URL = "https://ritnotebook.pages.dev/notes/first"
+
+
 def format_document_response(
     docs: List[Dict[str, Any]],
     query_params: Dict[str, Any]
 ) -> Tuple[str, List[Dict[str, Any]]]:
     """
     Formats the document search results into a clean, concise, helpful markdown message.
+    Never exposes internal filesystem paths or data/raw directories to users.
     Returns (markdown_text, sources_list).
     """
     sources = []
@@ -360,7 +364,8 @@ def format_document_response(
             sources.append({
                 "file_path": d["local_file_path"],
                 "subject": d.get("subject", "Course Document"),
-                "source_url": d.get("source_url", "")
+                "source_url": PUBLIC_FIRST_YEAR_URL,
+                "public_url": PUBLIC_FIRST_YEAR_URL
             })
 
     if not docs:
@@ -382,39 +387,57 @@ def format_document_response(
     # Case 1: Exact single document match
     if len(docs) == 1:
         d = docs[0]
-        dt_label = type_label_map.get(d["document_type"], d["document_type"].title())
+        dt = d.get("document_type", "notes")
+        dt_label = type_label_map.get(dt, dt.title())
         unit_str = f" Unit {d['unit']}" if d.get("unit") is not None else ""
         year_str = f" ({d['year']})" if d.get("year") else ""
-        
-        lines = [
-            f"I found the **{d['subject']}{unit_str} {dt_label}{year_str}**:",
-            f"- **Title:** {d['title']}",
-            f"- **Subject:** {d['subject']}",
-            f"- **Type:** {dt_label}",
-        ]
-        if d.get("unit") is not None:
-            lines.append(f"- **Unit:** Unit {d['unit']}")
-        if d.get("local_file_path"):
-            lines.append(f"- **Local File:** `{d['local_file_path']}`")
-        if d.get("source_url"):
-            lines.append(f"- **Source:** [RITNotebook Cloud Link]({d['source_url']})")
+        title = d.get("title", "").strip()
 
-        return "\n".join(lines), sources
+        if dt == "question_paper":
+            clean_title = title
+            if clean_title.lower() == "2023 may":
+                clean_title = "2023 May"
+            elif clean_title.lower() == "2023 sept":
+                clean_title = "2023 September"
+            answer = f"Here is the {d['subject']} {clean_title} question paper:\n\n{PUBLIC_FIRST_YEAR_URL}"
+        elif d.get("subject", "").lower() == "programming in c" and "cprog" in title.lower():
+            answer = f"Here is the Programming in C — {title} notes:\n\n{PUBLIC_FIRST_YEAR_URL}"
+        elif unit_str and unit_str.strip().lower() in title.lower():
+            answer = f"Here is the {d['subject']} {title} {dt_label.lower()}:\n\n{PUBLIC_FIRST_YEAR_URL}"
+        else:
+            answer = f"Here is the {d['subject']}{unit_str} ({title}) {dt_label.lower()}:\n\n{PUBLIC_FIRST_YEAR_URL}"
+
+        return answer, sources
 
     # Case 2: Multiple matching documents found
     subj = query_params.get("subject") or docs[0].get("subject", "Course")
     unit = query_params.get("unit")
     unit_str = f" Unit {unit}" if unit is not None else ""
 
-    lines = [f"I found these **{len(docs)} {subj}{unit_str}** documents:"]
-    for i, d in enumerate(docs[:6], 1):
-        dt_label = type_label_map.get(d["document_type"], d["document_type"].title())
-        u_str = f" | Unit {d['unit']}" if d.get("unit") is not None else ""
-        yr_str = f" | {d['year']}" if d.get("year") else ""
-        lines.append(f"{i}. **{d['title']}** [{dt_label}{u_str}{yr_str}] - `{d['local_file_path']}`")
+    is_qp = query_params.get("document_type") == "question_paper" or all(d.get("document_type") == "question_paper" for d in docs)
+    if is_qp:
+        lines = [f"Yes. I found {subj} question papers:"]
+        for d in docs[:8]:
+            t_disp = d['title'].strip()
+            if t_disp.lower() == "2023 may":
+                t_disp = "2023 May"
+            elif t_disp.lower() == "2023 sept":
+                t_disp = "2023 September"
+            lines.append(f"- {t_disp}")
+        if len(docs) > 8:
+            lines.append(f"*(and {len(docs) - 8} more)*")
+        lines.append("\nWhich one would you like?")
+        lines.append(f"\nYou can access the first-year question papers here:\n{PUBLIC_FIRST_YEAR_URL}")
+        return "\n".join(lines), sources
 
-    if len(docs) > 6:
-        lines.append(f"\n*(and {len(docs) - 6} more)*")
+    lines = [f"I found {len(docs)} {subj}{unit_str} documents:"]
+    for d in docs[:8]:
+        lines.append(f"- {d['title']}")
+
+    if len(docs) > 8:
+        lines.append(f"*(and {len(docs) - 8} more)*")
 
     lines.append("\nWhich one would you like to access?")
+    lines.append(f"\nYou can access first-year resources here:\n{PUBLIC_FIRST_YEAR_URL}")
     return "\n".join(lines), sources
+
