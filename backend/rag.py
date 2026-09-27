@@ -14,14 +14,21 @@ OLLAMA_URL = os.getenv("OLLAMA_URL", "http://localhost:11434/api/generate")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "qwen2.5:7b")
 
 
+from backend.language_control import safe_qwen_generate
+
+PUBLIC_FIRST_YEAR_URL = "https://ritnotebook.pages.dev/notes/first"
+
+
 def answer_question(
     query: str,
     student_id: Optional[str] = None,
-    top_k: int = 3
+    top_k: int = 3,
+    conversation_history: Optional[List[Dict[str, Any]]] = None
 ) -> Dict[str, Any]:
     """
     Answer student questions grounded strictly in retrieved course notes.
     Applies profile filters if student_id is provided and calls audit.log_action() before returning.
+    Supports optional conversation_history for multi-turn academic reasoning.
     """
     if not query or not query.strip():
         result = {"answer": "Please provide a valid question.", "sources": [], "chunks_used": 0}
@@ -80,7 +87,7 @@ def answer_question(
                 sources.append({
                     "file_path": fp,
                     "subject": c.get("subject", ""),
-                    "source_url": c.get("source_url", "")
+                    "source_url": PUBLIC_FIRST_YEAR_URL
                 })
 
         if not chunks:
@@ -99,14 +106,29 @@ def answer_question(
             )
             return result
 
-        # Construct grounded prompt
+        # Construct grounded prompt without exposing internal filesystem paths
         context_blocks = []
         for i, chunk in enumerate(chunks, 1):
-            fp = chunk.get("file_path", "Note")
+            subj_label = chunk.get("subject") or "Course Note"
+            unit_val = chunk.get("unit")
+            unit_label = f" Unit {unit_val}" if unit_val is not None else ""
             content = chunk.get("content", "").strip()
-            context_blocks.append(f"[Document {i} - {fp}]:\n{content}")
+            context_blocks.append(f"[Document {i} - {subj_label}{unit_label}]:\n{content}")
 
         context_text = "\n\n".join(context_blocks)
+
+        # Optional recent conversation context for multi-turn follow-ups
+        history_text = ""
+        if conversation_history:
+            h_lines = []
+            for m in conversation_history[-6:]:
+                role_label = "Student" if m.get("role") == "user" else "Assistant"
+                c_snippet = m.get("content", "").strip()
+                if len(c_snippet) > 250:
+                    c_snippet = c_snippet[:250] + "..."
+                h_lines.append(f"{role_label}: {c_snippet}")
+            if h_lines:
+                history_text = "\nRECENT CONVERSATION CONTEXT:\n" + "\n".join(h_lines) + "\n"
 
         # Optional student personalization context
         student_context = ""
@@ -135,8 +157,9 @@ def answer_question(
             )
 
         prompt = (
-            "You are MSRIT AI, a knowledgeable, friendly academic assistant for Ramaiah Institute of Technology students.\n\n"
+            "You are RIT NEXUS, a knowledgeable, friendly academic assistant for Ramaiah Institute of Technology students.\n\n"
             f"USER QUESTION:\n{query}\n\n"
+            f"{history_text}"
             f"VERIFIED LOCAL MSRIT CONTEXT:\n{context_text}\n"
             f"{student_context}"
             f"{style_instruction}\n"
@@ -153,14 +176,14 @@ def answer_question(
             "Answer:"
         )
 
-        response = requests.post(
-            OLLAMA_URL,
-            json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False},
-            timeout=180
+        fallback_answer = (
+            "The local language model is currently unavailable, but here are the verified excerpts from your MSRIT course notes:\n\n"
+            + "\n\n---\n\n".join(f"**Excerpt {i+1}** ({c.get('subject', 'Course Material')}):\n{c.get('content', '')[:350]}..." for i, c in enumerate(chunks[:2]))
         )
-        response.raise_for_status()
-        reply_json = response.json()
-        answer = reply_json.get("response", "").strip()
+
+        answer = safe_qwen_generate(prompt, deterministic_fallback=fallback_answer, timeout=180)
+        if not answer:
+            answer = fallback_answer
 
         result = {
             "answer": answer,
@@ -179,7 +202,6 @@ def answer_question(
 
     except Exception as e:
         print(f"Error in answer_question: {e}", file=sys.stderr)
-        err_msg = f"Failed to generate answer from local LLM: {str(e)}"
         log_action(
             tool_name="rag_answer_question",
             student_id=student_id,
@@ -190,7 +212,7 @@ def answer_question(
         if 'chunks' in locals() and chunks:
             fallback_answer = (
                 "The local language model is currently unavailable, but here are the verified excerpts from your MSRIT course notes:\n\n"
-                + "\n\n---\n\n".join(f"**Excerpt {i+1}** (from `{c.get('source_file')}`):\n{c.get('content', '')[:350]}..." for i, c in enumerate(chunks[:2]))
+                + "\n\n---\n\n".join(f"**Excerpt {i+1}** ({c.get('subject', 'Course Material')}):\n{c.get('content', '')[:350]}..." for i, c in enumerate(chunks[:2]))
             )
             return {
                 "answer": fallback_answer,

@@ -352,22 +352,14 @@ def _call_qwen_grounded(question: str, facts: Dict[str, Any], response_type: str
     )
 
     try:
-        resp = requests.post(
-            OLLAMA_URL,
-            json={
-                "model": OLLAMA_MODEL,
-                "prompt": prompt,
-                "stream": False,
-                "options": {
-                    "temperature": 0.3,
-                    "num_predict": 120
-                }
-            },
-            timeout=30
+        from backend.language_control import safe_qwen_generate
+        reply = safe_qwen_generate(
+            prompt,
+            deterministic_fallback="",
+            timeout=30,
+            options={"temperature": 0.3, "num_predict": 120}
         )
-        resp.raise_for_status()
-        reply = resp.json().get("response", "").strip()
-        return reply if reply else None
+        return reply.strip() if reply and reply.strip() else None
     except Exception as e:
         print(f"[Qwen Grounding] Ollama call error: {e}", file=sys.stderr)
         return None
@@ -942,7 +934,13 @@ def classify_intent(message: str) -> IntentResult:
     return IntentResult(type="unknown", raw=raw)
 
 
-async def handle_message(message: str, student_id: str, force_agentic: bool = False) -> Dict[str, Any]:
+async def handle_message(
+    message: str,
+    student_id: str,
+    force_agentic: bool = False,
+    conversation_history: Optional[List[Dict[str, Any]]] = None,
+    session_id: Optional[str] = None
+) -> Dict[str, Any]:
     """
     Main message dispatcher.
     Classifies intent deterministically before calling RAG or audited tools.
@@ -1015,7 +1013,7 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
 
     # 2. Pending academic follow-up resolver (temporary conversation context)
     from backend.conversation_context import resolve_academic_followup
-    followup_res = resolve_academic_followup(clean_msg, clean_id)
+    followup_res = resolve_academic_followup(clean_msg, clean_id, session_id=session_id)
     if followup_res is not None:
         log_action(
             tool_name=followup_res.get("action_taken", "academic_followup"),
@@ -1424,8 +1422,8 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
 
         # Update temporary conversation context for multi-candidate follow-up
         if len(docs) > 1:
-            from backend.conversation_context import set_academic_context
-            set_academic_context(clean_id, {
+            from backend.conversation_context import set_academic_context, set_session_context, get_session_context
+            cand_context = {
                 "intent": "academic_document",
                 "subject": params.get("subject") or (docs[0].get("subject") if docs else None),
                 "unit": params.get("unit"),
@@ -1433,10 +1431,17 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
                 "year": params.get("year"),
                 "candidates": docs,
                 "awaiting_selection": True
-            })
+            }
+            set_academic_context(clean_id, cand_context)
+            if session_id:
+                sctx = get_session_context(session_id)
+                sctx["pending_academic"] = cand_context
+                set_session_context(session_id, sctx)
         else:
             from backend.conversation_context import clear_academic_context
             clear_academic_context(clean_id)
+            if session_id:
+                clear_academic_context(session_id)
 
         log_action(
             tool_name="search_academic_documents",
@@ -1540,8 +1545,8 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
         answer, sources = format_document_response(doc_list, {"subject": subj})
 
         if len(doc_list) > 1:
-            from backend.conversation_context import set_academic_context
-            set_academic_context(clean_id, {
+            from backend.conversation_context import set_academic_context, set_session_context, get_session_context
+            cand_context = {
                 "intent": "academic_document",
                 "subject": subj,
                 "unit": None,
@@ -1549,10 +1554,17 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
                 "year": None,
                 "candidates": doc_list,
                 "awaiting_selection": True
-            })
+            }
+            set_academic_context(clean_id, cand_context)
+            if session_id:
+                sctx = get_session_context(session_id)
+                sctx["pending_academic"] = cand_context
+                set_session_context(session_id, sctx)
         else:
             from backend.conversation_context import clear_academic_context
             clear_academic_context(clean_id)
+            if session_id:
+                clear_academic_context(session_id)
 
         log_action(
             tool_name="search_academic_documents",
@@ -1583,7 +1595,12 @@ async def handle_message(message: str, student_id: str, force_agentic: bool = Fa
     # 8. ACADEMIC RAG QA
     if intent_type == "academic":
         t_rag0 = time.perf_counter()
-        res = await asyncio.to_thread(rag.answer_question, query=clean_msg, student_id=clean_id)
+        res = await asyncio.to_thread(
+            rag.answer_question,
+            query=clean_msg,
+            student_id=clean_id,
+            conversation_history=conversation_history
+        )
         rag_time = (time.perf_counter() - t_rag0) * 1000
         return _with_metrics({
             "answer": res.get("answer", "No answer could be generated."),

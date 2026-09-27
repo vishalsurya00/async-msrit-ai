@@ -659,6 +659,10 @@
     const query = userInput.value.trim();
     if (!query) return;
 
+    // Immediately block concurrent submissions
+    isSubmitting = true;
+    toggleSendButtonState();
+
     const studentIdToSend = isAuthenticated ? (studentProfile.usn || '1MS24CS001') : 'anonymous';
 
     // Create session if not active
@@ -667,6 +671,7 @@
       const generatedTitle = query.length > 36 ? query.substring(0, 36) + '...' : query;
       const newConv = {
         id: newId,
+        backendSessionId: null,
         title: generatedTitle,
         createdAt: new Date().toISOString(),
         messages: []
@@ -698,8 +703,6 @@
     // Reset textarea
     userInput.value = '';
     userInput.style.height = '24px';
-    isSubmitting = true;
-    toggleSendButtonState();
 
     // Show Quiet Typing Indicator
     const typingIndicator = showTypingIndicator();
@@ -708,16 +711,22 @@
     const startTime = performance.now();
 
     try {
+      // Build request body with persistent backend session_id if available
+      const reqBody = {
+        message: query,
+        student_id: studentIdToSend
+      };
+      if (activeConv && activeConv.backendSessionId) {
+        reqBody.session_id = activeConv.backendSessionId;
+      }
+
       // API call strictly adhering to POST /ask contract
       const response = await fetch('/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          message: query,
-          student_id: studentIdToSend
-        })
+        body: JSON.stringify(reqBody)
       });
 
       const elapsedSec = ((performance.now() - startTime) / 1000).toFixed(1);
@@ -740,6 +749,11 @@
         }
       } else {
         const payload = await response.json();
+        // Persist returned backend session_id to active conversation
+        if (payload.session_id && activeConv) {
+          activeConv.backendSessionId = payload.session_id;
+          saveConversations();
+        }
         const assistantMsg = {
           role: 'assistant',
           answer: payload.answer || 'No response content received.',
@@ -820,7 +834,7 @@
               <div class="source-reference-card">
                 <div>
                   <div class="source-subject-title">${escapeHtml(src.subject || 'Reference')}</div>
-                  <div class="source-path-code">${escapeHtml(src.file_path || 'MSRIT Repository')}</div>
+                  <div class="source-path-code"><a href="${escapeHtml(src.public_url || src.source_url || 'https://ritnotebook.pages.dev/notes/first')}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-primary);text-decoration:none;">${escapeHtml(src.title || src.subject || 'First-Year Academic Resources')} ↗</a></div>
                 </div>
                 <span class="source-verification-badge">Verified</span>
               </div>

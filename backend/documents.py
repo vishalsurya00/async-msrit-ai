@@ -360,13 +360,13 @@ def format_document_response(
     """
     sources = []
     for d in docs:
-        if d.get("local_file_path"):
-            sources.append({
-                "file_path": d["local_file_path"],
-                "subject": d.get("subject", "Course Document"),
-                "source_url": PUBLIC_FIRST_YEAR_URL,
-                "public_url": PUBLIC_FIRST_YEAR_URL
-            })
+        sources.append({
+            "title": d.get("title", ""),
+            "subject": d.get("subject", "Course Document"),
+            "file_path": PUBLIC_FIRST_YEAR_URL,
+            "source_url": PUBLIC_FIRST_YEAR_URL,
+            "public_url": PUBLIC_FIRST_YEAR_URL
+        })
 
     if not docs:
         subj = query_params.get("subject")

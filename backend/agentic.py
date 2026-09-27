@@ -282,7 +282,8 @@ def select_tool_agentic(query: str, student_id: str, observations: List[Dict[str
     Returns (selection_dict, latency_ms).
     """
     t0 = time.perf_counter()
-    prompt = _build_tool_selection_prompt(query, student_id, observations)
+    from backend.language_control import inject_english_instruction
+    prompt = inject_english_instruction(_build_tool_selection_prompt(query, student_id, observations))
 
     try:
         resp = requests.post(
@@ -447,24 +448,17 @@ CRITICAL RULES:
 Answer:"""
 
     try:
-        resp = requests.post(
-            OLLAMA_URL,
-            json={
-                "model": OLLAMA_MODEL,
-                "prompt": prompt,
-                "stream": False,
-                "options": {
-                    "temperature": 0.2,
-                    "num_predict": 280
-                }
-            },
-            timeout=90
+        from backend.language_control import safe_qwen_generate
+        fallback = _deterministic_synthesis_fallback(query, observations)
+        answer = safe_qwen_generate(
+            prompt,
+            deterministic_fallback=fallback,
+            timeout=90,
+            options={"temperature": 0.2, "num_predict": 280}
         )
-        resp.raise_for_status()
-        answer = resp.json().get("response", "").strip()
         latency_ms = round((time.perf_counter() - t0) * 1000, 2)
         if not answer:
-            answer = _deterministic_synthesis_fallback(query, observations)
+            answer = fallback
         return answer, latency_ms
     except Exception as exc:
         latency_ms = round((time.perf_counter() - t0) * 1000, 2)
@@ -788,12 +782,13 @@ async def run_agentic_workflow(
                 # Collect document sources if returned
                 if tool_name == "search_academic_documents" and isinstance(tool_res, list):
                     for doc in tool_res:
-                        if doc.get("local_file_path"):
-                            sources.append({
-                                "file_path": doc["local_file_path"],
-                                "subject": doc.get("subject", "Academic Document"),
-                                "source_url": doc.get("source_url", "")
-                            })
+                        sources.append({
+                            "title": doc.get("title", ""),
+                            "subject": doc.get("subject", "Academic Document"),
+                            "file_path": "https://ritnotebook.pages.dev/notes/first",
+                            "source_url": "https://ritnotebook.pages.dev/notes/first",
+                            "public_url": "https://ritnotebook.pages.dev/notes/first"
+                        })
 
     # Step 3: Grounded Answer Synthesis (Runs at most once)
     if not observations:
