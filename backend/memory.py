@@ -5,6 +5,7 @@ Handles persistent student profile storage and retrieval in PostgreSQL.
 from typing import Optional, Dict, Any, List, Tuple
 import sys
 import json
+import re
 import psycopg2.extras
 from db.connection import get_connection
 
@@ -20,6 +21,94 @@ ALLOWED_PROFILE_FIELDS = {
     "cgpa",
     "preferences",
 }
+
+SUPPORTED_PREFERENCE_KEYS = {"explanation_style", "focus_subject"}
+
+SUPPORTED_EXPLANATION_STYLES = {"concise", "detailed"}
+
+EXPLANATION_STYLE_SYNONYMS = {
+    "concise": "concise",
+    "short": "concise",
+    "brief": "concise",
+    "direct": "concise",
+    "detailed": "detailed",
+    "long": "detailed",
+    "thorough": "detailed",
+    "in-depth": "detailed",
+    "in depth": "detailed",
+}
+
+SUPPORTED_FIRST_YEAR_SUBJECTS = {
+    "mathematics": "Mathematics",
+    "maths": "Mathematics",
+    "math": "Mathematics",
+    "physics": "Physics",
+    "phy": "Physics",
+    "chemistry": "Chemistry",
+    "chem": "Chemistry",
+    "programming in c": "Programming in C",
+    "c programming": "Programming in C",
+    "cprog": "Programming in C",
+    "c": "Programming in C",
+    "civil engineering": "Civil Engineering",
+    "civil": "Civil Engineering",
+    "civil engineering (esc)": "Civil Engineering",
+}
+
+
+def normalize_preference_value(key: str, val: Any) -> Tuple[Optional[Any], bool]:
+    """
+    Validates and normalizes supported preference keys and values.
+    Returns (normalized_value, is_valid).
+    """
+    if key == "explanation_style":
+        if isinstance(val, str):
+            clean = val.strip().lower()
+            clean = re.sub(r'\s+(?:explanations?|answers?|responses?|style)$', '', clean).strip()
+            if clean in EXPLANATION_STYLE_SYNONYMS:
+                return EXPLANATION_STYLE_SYNONYMS[clean], True
+        return None, False
+
+    if key == "focus_subject":
+        if isinstance(val, str):
+            clean = val.strip().lower()
+            clean = re.sub(r'\s+(?:subject|course)$', '', clean).strip()
+            if clean in SUPPORTED_FIRST_YEAR_SUBJECTS:
+                return SUPPORTED_FIRST_YEAR_SUBJECTS[clean], True
+        return None, False
+
+    return None, False
+
+
+def validate_and_normalize_preferences(raw_prefs: Any) -> Tuple[Dict[str, Any], List[str]]:
+    """
+    Validates a preferences dictionary or JSON string.
+    Only allows 'explanation_style' and 'focus_subject'.
+    Returns (valid_preferences_dict, invalid_keys_list).
+    """
+    if isinstance(raw_prefs, str):
+        try:
+            raw_prefs = json.loads(raw_prefs)
+        except Exception:
+            return {}, ["preferences_json"]
+
+    if not isinstance(raw_prefs, dict):
+        return {}, ["preferences_type"]
+
+    valid_prefs: Dict[str, Any] = {}
+    invalid_keys: List[str] = []
+
+    for k, v in raw_prefs.items():
+        if k not in SUPPORTED_PREFERENCE_KEYS:
+            invalid_keys.append(k)
+            continue
+        norm_v, is_valid = normalize_preference_value(k, v)
+        if is_valid:
+            valid_prefs[k] = norm_v
+        else:
+            invalid_keys.append(k)
+
+    return valid_prefs, invalid_keys
 
 
 def normalize_canonical_branch(raw: Optional[str]) -> Optional[str]:
@@ -39,12 +128,20 @@ def normalize_canonical_branch(raw: Optional[str]) -> Optional[str]:
     # 1. CSE(AI&ML) variants: MUST come BEFORE plain AI&ML
     cse_aiml_variants = (
         "cse(ai&ml)", "cse(aiml)", "cseaiml", "cseai&ml", "cseaiandml", "cse(aiandml)",
-        "cse-aiml", "cse-ai&ml", "cse/aiml", "cse/ai&ml"
+        "cse-aiml", "cse-ai&ml", "cse/aiml", "cse/ai&ml",
+        "computerscienceandengineering(artificialintelligenceandmachinelearning)",
+        "computerscienceandengineering(artificialintelligence&machinelearning)",
+        "computerscience&engineering(artificialintelligence&machinelearning)",
+        "computerscienceandengineeringartificialintelligenceandmachinelearning",
     )
     cse_aiml_strings = (
         "cse(ai&ml)", "cse (ai&ml)", "cse(aiml)", "cse (aiml)", "cse aiml", "cse ai&ml",
         "cse-aiml", "cse-ai&ml", "cse ai and ml", "cse (ai and ml)", "cse(ai and ml)",
-        "cse artificial intelligence & machine learning", "cse artificial intelligence and machine learning"
+        "cse artificial intelligence & machine learning", "cse artificial intelligence and machine learning",
+        "computer science and engineering (artificial intelligence and machine learning)",
+        "computer science and engineering (artificial intelligence & machine learning)",
+        "computer science & engineering (artificial intelligence & machine learning)",
+        "computer science and engineering artificial intelligence and machine learning",
     )
     if norm in cse_aiml_variants or clean.lower() in cse_aiml_strings:
         return "CSE(AI&ML)"
@@ -196,13 +293,16 @@ def validate_and_normalize_profile_fields(fields: Dict[str, Any]) -> Tuple[Dict[
                 invalid_fields.append("cgpa")
 
         elif k == "preferences":
-            if isinstance(v, (dict, list)):
-                valid_fields["preferences"] = v
-            elif isinstance(v, str):
-                try:
-                    valid_fields["preferences"] = json.loads(v)
-                except Exception:
-                    invalid_fields.append("preferences")
+            if v == {} or v == "{}" or v == "null" or v is None:
+                valid_fields["preferences"] = {}
+            elif isinstance(v, (dict, str)):
+                norm_prefs, inv_keys = validate_and_normalize_preferences(v)
+                if inv_keys:
+                    invalid_fields.extend(inv_keys)
+                if norm_prefs or (not inv_keys and isinstance(v, dict)):
+                    valid_fields["preferences"] = norm_prefs
+            else:
+                invalid_fields.append("preferences")
 
     return valid_fields, invalid_fields
 
@@ -267,6 +367,15 @@ def update_student_profile(student_id: str, **fields) -> Dict[str, Any]:
     try:
         clean_id = student_id.strip()
         filtered_fields, _ = validate_and_normalize_profile_fields(fields)
+
+        # Merge preferences if updating partially and not clearing (i.e. not empty dict)
+        if "preferences" in filtered_fields:
+            if filtered_fields["preferences"] != {}:
+                existing_prof = get_student_profile(clean_id)
+                if existing_prof and isinstance(existing_prof.get("preferences"), dict):
+                    merged_prefs = existing_prof["preferences"].copy()
+                    merged_prefs.update(filtered_fields["preferences"])
+                    filtered_fields["preferences"] = merged_prefs
 
         # If no valid profile fields passed, check if record exists or just update updated_at
         columns = ["student_id"]
@@ -348,6 +457,42 @@ def delete_student_profile(student_id: str) -> bool:
         return False
 
 
+def format_preferences_response(preferences: Optional[Dict[str, Any]], field: str = "preferences") -> str:
+    """
+    Deterministically formats saved student preferences.
+    Only states verified preferences, and clearly reports when none exist.
+    """
+    if not preferences or not isinstance(preferences, dict) or not preferences:
+        if field == "explanation_style":
+            return "You haven't set an explanation style preference yet."
+        if field == "focus_subject":
+            return "You haven't set a focus subject yet."
+        return "You don't have any saved preferences yet."
+
+    if field == "explanation_style":
+        style = preferences.get("explanation_style")
+        if style:
+            return f"You prefer {style} explanations."
+        return "You haven't set an explanation style preference yet."
+
+    if field == "focus_subject":
+        subj = preferences.get("focus_subject")
+        if subj:
+            return f"Your saved focus subject is {subj}."
+        return "You haven't set a focus subject yet."
+
+    lines = ["**Your Saved Preferences:**"]
+    if "explanation_style" in preferences:
+        lines.append(f"- **Explanation Style:** {preferences['explanation_style'].capitalize()} explanations")
+    if "focus_subject" in preferences:
+        lines.append(f"- **Focus Subject:** {preferences['focus_subject']}")
+
+    if len(lines) == 1:
+        return "You don't have any saved preferences yet."
+
+    return "\n".join(lines)
+
+
 def format_single_field_response(profile: Optional[Dict[str, Any]], field: str) -> str:
     """
     Formats a single-field response deterministically without dumping the whole profile.
@@ -355,6 +500,10 @@ def format_single_field_response(profile: Optional[Dict[str, Any]], field: str) 
     """
     if not profile:
         profile = {}
+
+    if field in ("preferences", "explanation_style", "focus_subject"):
+        prefs = profile.get("preferences")
+        return format_preferences_response(prefs, field)
 
     if field == "name":
         val = profile.get("name")
@@ -401,7 +550,7 @@ def format_profile_overview(profile: Optional[Dict[str, Any]], student_id: str) 
     followed by verified profile facts card.
     """
     if not profile or not any(profile.get(k) is not None for k in [
-        "name", "college", "degree", "branch", "semester", "year", "stream", "cycle", "cgpa"
+        "name", "college", "degree", "branch", "semester", "year", "stream", "cycle", "cgpa", "preferences"
     ]):
         return (
             "You haven't set your profile yet. You can tell me something like "
@@ -464,6 +613,13 @@ def format_profile_overview(profile: Optional[Dict[str, Any]], student_id: str) 
         val = profile.get(key)
         if val is not None and str(val).strip():
             lines.append(f"- **{label}:** {val}")
+
+    prefs = profile.get("preferences")
+    if prefs and isinstance(prefs, dict):
+        if "explanation_style" in prefs:
+            lines.append(f"- **Explanation Style:** {prefs['explanation_style'].capitalize()} explanations")
+        if "focus_subject" in prefs:
+            lines.append(f"- **Focus Subject:** {prefs['focus_subject']}")
 
     return "\n".join(lines)
 

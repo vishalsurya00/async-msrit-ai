@@ -12,8 +12,10 @@ from typing import Dict, Any, List, Optional, Tuple
 import re
 import asyncio
 import sys
+import time
 from backend import mcp_client
 from backend import rag
+from backend.agentic import run_agentic_workflow
 from backend.audit import log_action
 from backend.info_lookup import (
     BRANCH_ALIASES,
@@ -29,8 +31,13 @@ from backend.documents import (
 from backend.memory import (
     format_single_field_response,
     format_profile_overview,
+    format_preferences_response,
     validate_and_normalize_profile_fields,
     normalize_canonical_branch
+)
+from backend.knowledge import (
+    format_academic_context_response,
+    format_recommended_clubs_response
 )
 
 AMBIGUOUS_BRANCHES = {"me"}
@@ -47,14 +54,16 @@ GREETING_PATTERNS = [
 ]
 
 EXPLICIT_PROFILE_UPDATE_PATTERNS = [
-    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:profile|branch|department|dept|semester|sem|cgpa|gpa|year|college|degree|name)\b',
-    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:semester|sem|branch|dept|department|cgpa|gpa|year|name)\s+(?:to|with|as|is|=)\b',
-    r'\b(?:my\s+branch|my\s+semester|my\s+sem|my\s+cgpa|my\s+gpa|my\s+name|my\s+college|my\s+degree|my\s+year)\s*(?:is|to|as|with|:=|:|:=|=)\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:profile|branch|department|dept|semester|sem|cgpa|gpa|year|college|degree|name|preference|preferences|explanation\s+preference|focus|focus\s+subject)\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:semester|sem|branch|dept|department|cgpa|gpa|year|name|preference|preferences|explanation\s+preference|focus|focus\s+subject)\s+(?:to|with|as|is|=)\b',
+    r'\b(?:my\s+branch|my\s+semester|my\s+sem|my\s+cgpa|my\s+gpa|my\s+name|my\s+college|my\s+degree|my\s+year|my\s+preference|my\s+main\s+focus|my\s+focus\s+subject)\s*(?:is|to|as|with|:=|:|:=|=)\b',
+    r'\b(?:remember\s+that\s+)?(?:i\s+prefer|i\s+like)\s+(?:concise|short|brief|direct|detailed|long|thorough|in-depth|in\s+depth)\b',
+    r'\b(?:remember\s+that\s+)?my\s+main\s+focus\s+is\b',
 ]
 
 MEMORY_UPDATE_PATTERNS = [
-    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:profile|branch|department|dept|semester|sem|cgpa|gpa|year|college|degree|name)\b',
-    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:semester|sem|branch|dept|department|cgpa|gpa|year|name)\s+(?:to|with|as|is|=)\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:my\s+)?(?:profile|branch|department|dept|semester|sem|cgpa|gpa|year|college|degree|name|preference|preferences|explanation\s+preference|focus|focus\s+subject)\b',
+    r'\b(?:update|change|set|save|record|add|modify|edit|switch)\s+(?:semester|sem|branch|dept|department|cgpa|gpa|year|name|preference|preferences|explanation\s+preference|focus|focus\s+subject)\s+(?:to|with|as|is|=)\b',
     r'\b(?:my\s+name\s+is|my\s+name\'s)\b',
     r'\b(?:you\s+can\s+call\s+me|call\s+me)\b',
     r'\b(?:my\s+cgpa\s+is|my\s+gpa\s+is|my\s+current\s+cgpa\s+is)\b',
@@ -70,7 +79,9 @@ MEMORY_UPDATE_PATTERNS = [
     r'\b(?:i\s+am\s+a\s+\d+(?:st|nd|rd|th)?\s+year\s+student|i\s+completed\s+my\s+\d+(?:st|nd|rd|th)?\s+year|i\s+am\s+currently\s+in\s+my\s+\d+(?:st|nd|rd|th)?\s+year)\b',
     r'\b(?:i\s+am\s+a\s+student\s+of)\b',
     r'\b(?:remember\s+that\s+i|remember\s+my)\b',
-    r'\b(?:branch\s*[:=]|semester\s*[:=]|sem\s*[:=]|stream\s*[:=]|cycle\s*[:=]|cgpa\s*[:=]|college\s*[:=]|degree\s*[:=]|year\s*[:=]|name\s*[:=])\b'
+    r'\b(?:remember\s+that\s+)?(?:i\s+prefer|i\s+like)\s+(?:concise|short|brief|direct|detailed|long|thorough|in-depth|in\s+depth)\b',
+    r'\b(?:remember\s+that\s+)?my\s+main\s+focus\s+is\b',
+    r'\b(?:branch\s*[:=]|semester\s*[:=]|sem\s*[:=]|stream\s*[:=]|cycle\s*[:=]|cgpa\s*[:=]|college\s*[:=]|degree\s*[:=]|year\s*[:=]|name\s*[:=]|preference\s*[:=]|focus\s*[:=])\b'
 ]
 
 MEMORY_QUERY_PATTERNS = [
@@ -81,6 +92,10 @@ MEMORY_QUERY_PATTERNS = [
     r'\b(?:(?:what|which)\s+(?:is\s+my\s+(?:cgpa|gpa|grade|score)|(?:cgpa|gpa|grade|score)\s+do\s+i\s+have)|tell\s+me\s+my\s+(?:cgpa|gpa|grade|score))\b',
     r'\b(?:which\s+college\s+do\s+i\s+study\s+in|what\s+college\s+do\s+i\s+study\s+in|what\s+is\s+my\s+college|where\s+do\s+i\s+study)\b',
     r'\b(?:what\s+course\s+am\s+i\s+pursuing|what\s+degree\s+am\s+i\s+pursuing|what\s+is\s+my\s+degree|what\s+is\s+my\s+course)\b',
+    r'\b(?:what|show|tell\s+me)\s+(?:are\s+)?(?:my\s+)?preferences?\b',
+    r'\bwhat\s+preferences\s+do\s+you\s+(?:remember|have)\s+(?:about\s+me)?\b',
+    r'\b(?:what|which)\s+(?:response\s+style|explanation\s+style)\s+do\s+i\s+prefer\b',
+    r'\bwhat\s+(?:subject\s+am\s+i\s+focusing\s+on|is\s+my\s+focus\s+subject)\b',
 ]
 
 
@@ -89,6 +104,12 @@ def detect_profile_query_field(query: str) -> str:
     Detects which specific profile field a user is querying, or 'full' for overall profile.
     """
     low = query.lower()
+    if re.search(r'\b(?:response\s+style|explanation\s+style)\b', low):
+        return "explanation_style"
+    if re.search(r'\b(?:focus\s+subject|subject\s+am\s+i\s+focusing\s+on)\b', low):
+        return "focus_subject"
+    if re.search(r'\b(?:preferences?|preference)\b', low):
+        return "preferences"
     if re.search(r'\b(?:name)\b', low):
         return "name"
     if re.search(r'\b(?:cgpa|gpa|grade|score)\b', low):
@@ -116,9 +137,12 @@ DOCUMENT_REQUEST_KEYWORDS = [
     r'\b(?:pdf|download|lab\s+manual|lab\s+record|question\s+papers?|previous\s+year\s+papers?|pyqs?|cie\s+papers?)\b',
     r'\b(?:give\s+me|i\s+want|show\s+me|find|get|send|download|provide)\b.*\b(?:notes?|pdf|question\s+papers?|pyqs?|lab\s+manual|syllabus|document|file)\b',
     r'\b(?:unit\s*[-_]?\s*(?:\d+|i{1,3}|iv|v))\s*(?:notes?|pdf|file|document|paper)?\b',
-    r'\b(?:maths?|physics|chemistry|c\s+programming|civil|mechanical)\s+(?:notes?|pdf|question\s+papers?|pyqs?|lab\s+manual|syllabus)\b',
+    r'\b(?:maths?|physics|chemistry|c\s+programming|civil|mechanical)\s+(?:notes?|pdf|question\s+papers?|pyqs?|lab\s+manual|syllabus|material|materials)\b',
     r'\b(?:give\s+me|show\s+me|find|get|download)\s+(?:the\s+)?(?:maths?|physics|chemistry|c\s+programming)\b',
-    r'\b(?:give\s+me|show\s+me|find|get)\s+unit\s*[-_]?\s*(?:\d+|i{1,3}|iv|v)\b'
+    r'\b(?:give\s+me|show\s+me|find|get)\s+unit\s*[-_]?\s*(?:\d+|i{1,3}|iv|v)\b',
+    r'\b(?:what|which)\s+(?:[a-zA-Z\s\(\)&+-]+)?(?:materials?|documents?|notes?|resources?)\s+(?:should\s+i\s+study|are\s+relevant|cover)\b',
+    r'\b(?:material|materials|documents?)\s+(?:to\s+study|should\s+i\s+study)\b',
+    r'\b(?:which|what)\s+[a-zA-Z\s\(\)&+-]+\s+(?:documents?|materials?|resources?|notes?)\s+(?:are\s+relevant|should\s+i\s+study)\b'
 ]
 
 ACADEMIC_EXPLANATION_KEYWORDS = [
@@ -130,7 +154,8 @@ ACADEMIC_EXPLANATION_KEYWORDS = [
 ACADEMIC_EXPLICIT_TERMS = [
     r'\b(?:notes|syllabus|curriculum|module|unit\s*\d*|chapter|topics?|concepts?)\b',
     r'\b(?:chemistry|physics|maths|mathematics|corrosion|laplace|electrochemistry|semiconductor|mechanisms?|transform)\b',
-    r'\b(?:summarize|summary\s+of|overview\s+of)\b'
+    r'\b(?:summarize|summary\s+of|overview\s+of)\b',
+    r'\b(?:what\s+should\s+i\s+study|help\s+me\s+plan\s+what\s+to\s+study|what\s+to\s+study|what\s+material\s+should\s+i\s+study|what\s+should\s+i\s+prepare)\b'
 ]
 
 ACADEMIC_ACTION_TERMS = [
@@ -632,6 +657,52 @@ def _extract_profile_data(message: str) -> Tuple[Dict[str, Any], List[str]]:
     if cyc_val:
         data['cycle'] = cyc_val.strip()
 
+    # 10. Preferences (explanation_style, focus_subject)
+    # Stored ONLY upon explicit user command or declaration
+    is_negated_or_third_party = bool(
+        re.search(r'\b(?:my\s+friend|others?|people)\s+prefers?\b', lower) or
+        re.search(r'\b(?:don\'t|dont|do\s+not)\s+(?:understand|like|prefer)\b', lower) or
+        re.search(r'\bi\s+(?:think\s+i\s+should|might|may)\s+focus\b', lower) or
+        re.search(r'\bi\s+hate\s+long\b', lower) or
+        re.search(r'\b(?:are\s+sometimes|is\s+sometimes)\s+easier\b', lower) or
+        re.search(r'\bi\s+am\s+studying\s+[a-zA-Z\s]+\s+today\b', lower)
+    )
+
+    if not is_negated_or_third_party:
+        # A. Explanation Style
+        m_pref_style = (
+            re.search(r'\b(?:remember\s+that\s+)?(?:i\s+prefer|i\s+like)\s+([a-zA-Z\s-]+?)(?:\s+(?:answers?|explanations?|responses?|style))?(?:,|$|\.|\b(?:and|with)\b)', message, re.I)
+            or re.search(r'\b(?:set|change|update|record|save|switch)\s+(?:my\s+)?(?:explanation\s+)?(?:preference|style|response\s+style)\s+(?:to|as|is|=)\s*([a-zA-Z\s-]+?)(?:\s+(?:answers?|explanations?|responses?|style))?(?:,|$|\.|\b(?:and|with)\b)', message, re.I)
+            or re.search(r'\b(?:preference|style)\s*[:=]\s*([a-zA-Z\s-]+?)(?:\s+(?:answers?|explanations?|responses?|style))?(?:,|$|\.|\b(?:and|with)\b)', message, re.I)
+        )
+        if m_pref_style:
+            raw_style = m_pref_style.group(1).strip().lower()
+            from backend.memory import normalize_preference_value
+            norm_style, is_valid = normalize_preference_value("explanation_style", raw_style)
+            if is_valid:
+                if 'preferences' not in data:
+                    data['preferences'] = {}
+                data['preferences']['explanation_style'] = norm_style
+            else:
+                invalid_fields.append("explanation_style")
+
+        # B. Focus Subject
+        m_pref_focus = (
+            re.search(r'\b(?:remember\s+that\s+)?(?:my\s+)?(?:main\s+)?focus\s+(?:subject\s+)?is\s+([a-zA-Z\s\(\)&+-]+?)(?:,|$|\.|\b(?:and|with)\b)', message, re.I)
+            or re.search(r'\b(?:set|change|update|record|save)\s+(?:my\s+)?(?:focus|focus\s+subject)\s+(?:to|as|is|=)\s*([a-zA-Z\s\(\)&+-]+?)(?:,|$|\.|\b(?:and|with)\b)', message, re.I)
+            or re.search(r'\bfocus\s+subject\s*[:=]\s*([a-zA-Z\s\(\)&+-]+?)(?:,|$|\.|\b(?:and|with)\b)', message, re.I)
+        )
+        if m_pref_focus:
+            raw_subj = m_pref_focus.group(1).strip()
+            from backend.memory import normalize_preference_value
+            norm_subj, is_valid = normalize_preference_value("focus_subject", raw_subj)
+            if is_valid:
+                if 'preferences' not in data:
+                    data['preferences'] = {}
+                data['preferences']['focus_subject'] = norm_subj
+            else:
+                invalid_fields.append("focus_subject")
+
     return data, invalid_fields
 
 
@@ -666,7 +737,9 @@ def classify_intent(message: str) -> IntentResult:
     10. Academic RAG / Summarization
     11. Unknown / Faculty directory placeholder
     """
-    raw = message.strip()
+    raw = message.strip() if message else ""
+    if not raw:
+        return IntentResult(type="empty", raw="")
     low = raw.lower()
     clean = re.sub(r'[^\w\s\(\)&-]', ' ', low).strip()
 
@@ -674,6 +747,10 @@ def classify_intent(message: str) -> IntentResult:
     for ip in IDENTITY_PATTERNS:
         if re.search(ip, clean):
             return IntentResult(type="identity", raw=raw)
+
+    # 1b. Preference Clear (Explicit request to clear/reset/forget preferences)
+    if re.search(r'\b(?:clear|reset|forget|erase)\s+(?:my\s+)?preferences?\b', clean):
+        return IntentResult(type="preference_clear", raw=raw)
 
     # 2. Memory Query (Student queries asking about their own profile details)
     for mq in MEMORY_QUERY_PATTERNS:
@@ -692,6 +769,44 @@ def classify_intent(message: str) -> IntentResult:
     # Explicit profile update requests ALWAYS classify as memory_update
     if is_explicit_up:
         return IntentResult(type="memory_update", raw=raw, profile_data=extracted_prof, invalid_fields=invalid_fields)
+
+    # Multi-Domain / Combined Agentic Queries:
+    # 1. Profile Context + Academic / Document Question:
+    # e.g., "I'm a CSE(AI&ML) student in semester 3. What Mathematics material should I study?"
+    has_question_word = bool(re.search(r'\b(?:what|which|where|who|how|recommend|suggest|show\s+me|find|list|give\s+me)\b', clean) or '?' in raw)
+    has_academic_topic = bool(re.search(r'\b(?:mathematics|maths|physics|chemistry|c\s+programming|notes|syllabus|material|study|subject|subjects|course|books)\b', clean))
+
+    has_profile_ref = bool(re.search(r'\b(?:my\s+(?:profile|branch|dept|department)|based\s+on\s+my\s+profile|from\s+my\s+profile|look\s+up\s+my\s+branch|check\s+my\s+branch)\b', clean))
+    matched_branch = _match_branch(raw, clean)
+    matched_club = _match_club(clean)
+    has_club_word = bool(re.search(r'\b(?:\w*clubs?|societ(?:y|ies))\w*\b', clean))
+    has_dept_kw = any(re.search(dk, clean) for dk in DEPT_KEYWORDS)
+
+    # Pure Branch-Aware Club Queries (Deterministic Knowledge Path)
+    # e.g., "Which clubs are available for my branch?", "Which clubs can I join?", "What clubs are available for ME?"
+    is_rec_club_query = bool(re.search(
+        r'\b(?:which|what)\s+clubs?\s+(?:are\s+available|can\s+i\s+join|should\s+i\s+join|exist)\b|\bclubs?\s+(?:available\s+for|for)\s+(?:my\s+branch|[a-zA-Z\(\)&-]+)\b|\bwhich\s+clubs\s+can\s+i\s+join\b',
+        clean
+    ))
+    if is_rec_club_query and not (has_dept_kw or has_academic_topic or matched_club):
+        cat = None
+        for c_cand in ["technical", "cultural", "literary", "outreach", "welfare"]:
+            if c_cand in clean:
+                cat = c_cand.capitalize()
+                break
+        return IntentResult(type="recommended_clubs", raw=raw, branch=matched_branch, category=cat)
+
+    # 1. Profile reference + Department/Club/Academic
+    if has_profile_ref and (has_dept_kw or matched_club or has_club_word or has_academic_topic):
+        return IntentResult(type="agentic", raw=raw)
+
+    # 2. Profile context statement combined with a question
+    if has_question_word and (has_academic_topic or is_mem_up) and not is_explicit_up and (extracted_prof or is_mem_up):
+        return IntentResult(type="agentic", raw=raw)
+
+    # 3. Department + Club in same query (e.g. "Who is HOD of CSE and what does CodeRIT do?")
+    if (matched_branch or has_dept_kw) and (matched_club or (has_club_word and has_question_word)):
+        return IntentResult(type="agentic", raw=raw)
 
     # General profile statements (e.g. "I am in 3rd semester", "My CGPA is 8.97", "Branch: CSE, Semester: 3")
     if (is_mem_up or (invalid_fields and is_mem_up) or (extracted_prof and len(extracted_prof) >= 2)) and not (has_dept_kw and not is_mem_up):
@@ -714,7 +829,7 @@ def classify_intent(message: str) -> IntentResult:
     has_dept_kw = any(re.search(dk, clean) for dk in DEPT_KEYWORDS)
     matched_branch = _match_branch(raw, clean)
     matched_club = _match_club(clean)
-    has_club_word = bool(re.search(r'\b(?:clubs?|societ(?:y|ies))\b', clean))
+    has_club_word = bool(re.search(r'\b(?:\w*clubs?|societ(?:y|ies))\w*\b', clean))
 
     # 4. Department Lookup
     # Explicit department questions about a branch (e.g. 'CSE HOD', 'Where is CSE?', 'Mechanical Engineering location')
@@ -730,12 +845,52 @@ def classify_intent(message: str) -> IntentResult:
             q_type = detect_department_query_type(raw)
             return IntentResult(type="department", entity=cand.upper(), query_type=q_type)
 
-    # 5. Club Lookup
+    # 5. Knowledge Layer: Recommended Clubs Query
+    # e.g. "Which clubs are available for my branch?", "Which clubs can I join?", "What clubs are available for ME?"
+    is_rec_club_query = bool(re.search(
+        r'\b(?:which|what)\s+clubs?\s+(?:are\s+available|can\s+i\s+join|should\s+i\s+join|exist)\b|\bclubs?\s+(?:available\s+for|for)\s+(?:my\s+branch|[a-zA-Z\(\)&-]+)\b|\bwhich\s+clubs\s+can\s+i\s+join\b',
+        clean
+    ))
+    if is_rec_club_query and not matched_club:
+        cat = None
+        for c_cand in ["technical", "cultural", "literary", "outreach", "welfare"]:
+            if c_cand in clean:
+                cat = c_cand.capitalize()
+                break
+        return IntentResult(type="recommended_clubs", raw=raw, branch=matched_branch, category=cat)
+
+    # 5b. Club Lookup
     # Specific named club queries (e.g. 'CodeRIT', 'What is CodeRIT?', 'SecuRIT', 'Tensor AI', 'TNT')
     if matched_club and not (matched_branch and has_dept_kw):
         return IntentResult(type="club", entity=matched_club)
     if has_club_word and not matched_branch:
         return IntentResult(type="club", entity=None)
+
+    # 5c. Knowledge Layer: Academic Subjects & Curriculum Queries
+    # e.g., "What subjects belong to my current semester?", "What subjects do I have?", "What should I study in my semester?"
+    is_subject_query = bool(re.search(
+        r'\b(?:what\s+(?:are\s+(?:my\s+)?subjects|subjects\s+(?:belong|do\s+i\s+have|are\s+there))|which\s+subjects|show\s+(?:my\s+)?subjects|list\s+(?:my\s+)?subjects|subjects\s+(?:in|for|belonging\s+to)\s+(?:my\s+)?(?:current\s+)?sem(?:ester)?|what\s+should\s+i\s+study\s+in\s+my\s+sem(?:ester)?|what\s+courses\s+do\s+i\s+have)\b',
+        clean
+    ))
+    if is_subject_query:
+        cyc = None
+        if "physic" in clean:
+            cyc = "Physics Cycle"
+        elif "chem" in clean:
+            cyc = "Chemistry Cycle"
+        return IntentResult(type="academic_context", raw=raw, branch=matched_branch, cycle=cyc)
+
+    # 5d. Knowledge Layer: Subject Resources Query
+    # e.g., "What academic resources are associated with Programming in C?", "What academic resources are associated with this subject?"
+    m_res = re.search(
+        r'\b(?:what|which)\s+(?:academic\s+)?resources?\s+(?:are\s+)?(?:associated\s+with|available\s+for|do\s+you\s+have\s+for)\s+(?:this\s+subject\s+)?([a-zA-Z\s\(\)&+-]+)\b',
+        clean
+    )
+    if m_res and not any(re.search(p, clean) for p in DOCUMENT_REQUEST_KEYWORDS):
+        cand_subj = m_res.group(1).strip()
+        from backend.documents import normalize_subject
+        resolved_subj = normalize_subject(cand_subj) or cand_subj.title()
+        return IntentResult(type="subject_resources", raw=raw, subject=resolved_subj)
 
     # 6. Mixed Academic + Document Request
     # Combined requests like "Give me Maths Unit 1 PDF and explain Laplace Transform"
@@ -787,16 +942,84 @@ def classify_intent(message: str) -> IntentResult:
     return IntentResult(type="unknown", raw=raw)
 
 
-async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
+async def handle_message(message: str, student_id: str, force_agentic: bool = False) -> Dict[str, Any]:
     """
     Main message dispatcher.
     Classifies intent deterministically before calling RAG or audited tools.
+    Supports controlled agentic execution when multi-domain or explicitly requested.
     """
-    clean_msg = message.strip()
+    t_start = time.perf_counter()
+    clean_msg = message.strip() if message else ""
     clean_id = student_id.strip() if student_id else "anonymous"
 
+    if not clean_msg:
+        reply = "Please enter a message or question. I can help with MSRIT departments, clubs, academic notes, and your student profile."
+        log_action(
+            tool_name="empty_input",
+            student_id=clean_id,
+            parameters={"query": message},
+            result_summary="Handled empty or whitespace-only input",
+            success=True
+        )
+        return {
+            "answer": reply,
+            "action_taken": "empty_input",
+            "sources": [],
+            "metrics": {
+                "router_ms": 0.0,
+                "agent_selection_ms": 0.0,
+                "tool_execution_ms": 0.0,
+                "synthesis_ms": 0.0,
+                "total_ms": 0.0,
+                "tool_call_count": 0,
+                "qwen_call_count": 0,
+                "router_time_ms": 0.0,
+                "tool_selection_time_ms": 0.0,
+                "mcp_tool_time_ms": 0.0,
+                "final_answer_time_ms": 0.0,
+                "total_time_ms": 0.0
+            }
+        }
+
+    if force_agentic:
+        res = await run_agentic_workflow(clean_msg, clean_id, router_ms=0.0)
+        return res
+
+    t_router_start = time.perf_counter()
     intent = classify_intent(clean_msg)
     intent_type = intent["type"]
+    router_time_ms = round((time.perf_counter() - t_router_start) * 1000, 2)
+
+    def _with_metrics(
+        res_dict: Dict[str, Any],
+        tool_time_ms: float = 0.0,
+        final_answer_ms: float = 0.0,
+        tool_count: int = 0,
+        qwen_count: int = 0,
+        agent_selection_ms: float = 0.0
+    ) -> Dict[str, Any]:
+        tot_ms = round((time.perf_counter() - t_start) * 1000, 2)
+        res_dict["metrics"] = {
+            "router_ms": router_time_ms,
+            "agent_selection_ms": round(agent_selection_ms, 2),
+            "tool_execution_ms": round(tool_time_ms, 2),
+            "synthesis_ms": round(final_answer_ms, 2),
+            "total_ms": tot_ms,
+            "tool_call_count": tool_count,
+            "qwen_call_count": qwen_count,
+            # Backward-compatible aliases
+            "router_time_ms": router_time_ms,
+            "tool_selection_time_ms": round(agent_selection_ms, 2),
+            "mcp_tool_time_ms": round(tool_time_ms, 2),
+            "final_answer_time_ms": round(final_answer_ms, 2),
+            "total_time_ms": tot_ms,
+        }
+        return res_dict
+
+    # Controlled Agentic Path for Multi-Domain / Combined Queries
+    if intent_type == "agentic":
+        res = await run_agentic_workflow(clean_msg, clean_id, router_ms=router_time_ms)
+        return res
 
     # 1. IDENTITY / CONVERSATION
     if intent_type == "identity":
@@ -808,11 +1031,11 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary="Handled identity question without DB/RAG",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": reply,
             "action_taken": "conversation",
             "sources": []
-        }
+        })
 
     # 1. GREETING / CONVERSATION
     if intent_type == "greeting":
@@ -833,14 +1056,42 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary="Handled greeting without DB/RAG",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": reply,
             "action_taken": "conversation",
             "sources": []
-        }
+        })
+
+    # 2. PREFERENCE CLEAR
+    if intent_type == "preference_clear":
+        t_mcp0 = time.perf_counter()
+        res = await mcp_client.call_tool(
+            "update_student_profile",
+            student_id=clean_id,
+            preferences={}
+        )
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
+        if isinstance(res, dict) and res.get("error"):
+            answer = f"Could not clear preferences: {res.get('error')}"
+        else:
+            answer = "Your saved preferences have been cleared. All other profile details remain unchanged."
+
+        log_action(
+            tool_name="update_student_profile",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "action": "clear_preferences"},
+            result_summary="Cleared student preferences",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "update_student_profile",
+            "sources": []
+        }, tool_time_ms=mcp_time, tool_count=1)
 
     # 2. MEMORY UPDATE
     if intent_type == "memory_update":
+        t_tool0 = time.perf_counter()
         extracted_profile = intent.get("profile_data")
         invalid_fields = intent.get("invalid_fields", [])
         if extracted_profile is None and not invalid_fields:
@@ -855,6 +1106,11 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                 answer = "Please provide a valid semester number between 1 and 10."
             elif "year" in invalid_fields:
                 answer = "Please provide a valid academic year between 1 and 6."
+            elif "explanation_style" in invalid_fields:
+                answer = "Invalid explanation style. Supported styles are 'concise' (short/brief/direct) or 'detailed' (long/thorough/in-depth)."
+            elif "focus_subject" in invalid_fields:
+                from backend.memory import SUPPORTED_FIRST_YEAR_SUBJECTS
+                answer = f"Invalid focus subject. Supported first-year subjects are: {', '.join(sorted(SUPPORTED_FIRST_YEAR_SUBJECTS))}."
             else:
                 answer = f"I could not understand the value provided for {', '.join(invalid_fields)}. Please provide a valid value."
 
@@ -865,18 +1121,23 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                 result_summary="Profile update rejected due to invalid values",
                 success=False
             )
-            return {
+            return _with_metrics({
                 "answer": answer,
                 "action_taken": "update_student_profile",
                 "sources": []
-            }
+            })
 
+        mcp_time = 0.0
+        tool_cnt = 0
         if extracted_profile:
+            t_mcp0 = time.perf_counter()
             res = await mcp_client.call_tool(
                 "update_student_profile",
                 student_id=clean_id,
                 **extracted_profile
             )
+            mcp_time = (time.perf_counter() - t_mcp0) * 1000
+            tool_cnt = 1
             if isinstance(res, dict) and res.get("error"):
                 answer = f"Could not update profile: {res.get('error')}"
             else:
@@ -895,6 +1156,12 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                 for key, label in field_labels:
                     if key in extracted_profile:
                         lines.append(f"- **{label}:** {extracted_profile[key]}")
+                if "preferences" in extracted_profile and isinstance(extracted_profile["preferences"], dict):
+                    prefs = extracted_profile["preferences"]
+                    if "explanation_style" in prefs:
+                        lines.append(f"- **Explanation Style:** {prefs['explanation_style']}")
+                    if "focus_subject" in prefs:
+                        lines.append(f"- **Focus Subject:** {prefs['focus_subject']}")
                 answer = "\n".join(lines)
         else:
             answer = "What profile information would you like to update? You can specify details like Branch: CSE, Semester: 3, Name: Vishal, CGPA: 8.97, etc."
@@ -906,21 +1173,26 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary="Updated student profile",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": answer,
             "action_taken": "update_student_profile",
             "sources": []
-        }
+        }, tool_time_ms=mcp_time, tool_count=tool_cnt)
 
     # 3. MEMORY QUERY
     if intent_type == "memory_query":
         q_field = intent.get("query_field") or detect_profile_query_field(clean_msg)
+        t_mcp0 = time.perf_counter()
         res = await mcp_client.call_tool("get_student_profile", student_id=clean_id)
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
 
         if isinstance(res, dict) and "error" in res:
             answer = "MSRIT knowledge service is temporarily unavailable. Please check that the local database and MCP service are running."
-        elif not res or not any(res.get(k) is not None for k in ["name", "college", "degree", "branch", "semester", "year", "stream", "cycle", "cgpa"]):
-            answer = "You haven't set your profile yet. You can tell me something like 'My name is Vishal and I am in 3rd semester CSE' to set it up!"
+        elif not res or not any(res.get(k) is not None for k in ["name", "college", "degree", "branch", "semester", "year", "stream", "cycle", "cgpa", "preferences"]):
+            if q_field in ("preferences", "explanation_style", "focus_subject"):
+                answer = "You don't have any saved preferences yet."
+            else:
+                answer = "You haven't set your profile yet. You can tell me something like 'My name is Vishal and I am in 3rd semester CSE' to set it up!"
         else:
             if q_field != "full":
                 answer = format_single_field_response(res, q_field)
@@ -934,33 +1206,41 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary="Retrieved student profile",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": answer,
             "action_taken": "get_student_profile",
             "sources": []
-        }
+        }, tool_time_ms=mcp_time, tool_count=1)
 
     # 3. DEPARTMENT LOOKUP
     if intent_type == "department":
         target = intent.get("entity") or clean_msg
         query_type = intent.get("query_type") or detect_department_query_type(clean_msg)
-        res = await mcp_client.call_tool("lookup_branch", query=target)
+        t_mcp0 = time.perf_counter()
+        res = await mcp_client.call_tool("lookup_department", query=target)
+        if isinstance(res, dict) and "error" in res and "Unknown tool" in res.get("error", ""):
+            res = await mcp_client.call_tool("lookup_branch", query=target)
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
 
+        final_ans_time = 0.0
         # 1. SERVICE ERROR (MCP, transport, or process failure)
         if isinstance(res, dict) and "error" in res:
             answer = "MSRIT knowledge service is temporarily unavailable. Please check that the local database and MCP service are running."
         # 2. SUCCESS (lookup succeeded and branch record found)
         elif isinstance(res, dict) and res.get("code"):
+            t_g0 = time.perf_counter()
             answer = await generate_grounded_response(clean_msg, res, query_type)
+            final_ans_time = (time.perf_counter() - t_g0) * 1000
         # 3. NOT FOUND (lookup executed but no department matched)
         else:
             answer = f"No department details found matching '{target}'. Please specify a recognized branch name or code (e.g., CSE, ME, Civil, ECE)."
 
-        return {
+        qwen_cnt = 1 if final_ans_time > 0 else 0
+        return _with_metrics({
             "answer": answer,
             "action_taken": "lookup_branch",
             "sources": []
-        }
+        }, tool_time_ms=mcp_time, final_answer_ms=final_ans_time, tool_count=1, qwen_count=qwen_cnt)
 
     # 4. CLUB LOOKUP
     if intent_type == "club":
@@ -972,8 +1252,15 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
         elif "cultural" in low:
             category = "Cultural"
 
-        query_param = target if target else re.sub(r'\b(clubs?|societ(?:y|ies)|tell me about|what is|list|show)\b', '', low).strip()
-        res = await mcp_client.call_tool("lookup_club", query=query_param if query_param else None, category=category)
+        query_param = target
+        if not query_param:
+            cleaned_q = re.sub(r'\b(?:clubs?|societ(?:y|ies)|tell\s+me\s+about|what\s+is|what\s+are|list|show|what|are|available|all|any|can\s+you\s+list)\b', '', low)
+            cleaned_q = re.sub(r'[^\w\s]', ' ', cleaned_q).strip()
+            query_param = cleaned_q if cleaned_q else None
+
+        t_mcp0 = time.perf_counter()
+        res = await mcp_client.call_tool("lookup_club", query=query_param, category=category)
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
 
         if isinstance(res, dict) and "error" in res:
             answer = "MSRIT knowledge service is temporarily unavailable. Please check that the local database and MCP service are running."
@@ -997,11 +1284,11 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             else:
                 answer = "No clubs found matching your search. Campus club entries can be populated in the clubs database table."
 
-        return {
+        return _with_metrics({
             "answer": answer,
             "action_taken": "lookup_club",
             "sources": []
-        }
+        }, tool_time_ms=mcp_time, tool_count=1)
 
     # 5. MIXED ACADEMIC + DOCUMENT RETRIEVAL
     if intent_type == "mixed_academic_document":
@@ -1010,6 +1297,7 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
 
         # A. Retrieve document
         doc_params = detect_document_query_params(doc_q)
+        t_mcp0 = time.perf_counter()
         doc_res = await mcp_client.call_tool(
             "search_academic_documents",
             subject=doc_params.get("subject"),
@@ -1018,6 +1306,7 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             year=doc_params.get("year"),
             query=doc_params.get("title_keyword")
         )
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
         if isinstance(doc_res, dict) and "error" in doc_res:
             docs = search_academic_documents(
                 subject=doc_params.get("subject"),
@@ -1032,7 +1321,9 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
         doc_answer, doc_sources = format_document_response(docs, doc_params)
 
         # B. Academic explanation via local RAG
+        t_rag0 = time.perf_counter()
         acad_res = await asyncio.to_thread(rag.answer_question, query=acad_q, student_id=clean_id)
+        rag_time = (time.perf_counter() - t_rag0) * 1000
         acad_answer = acad_res.get("answer", "")
         acad_sources = acad_res.get("sources", [])
 
@@ -1046,11 +1337,11 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary=f"Found {len(docs)} doc(s), explained academic query",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": combined_answer,
             "action_taken": "mixed_document_and_academic",
             "sources": combined_sources
-        }
+        }, tool_time_ms=mcp_time, final_answer_ms=rag_time, tool_count=1, qwen_count=1)
 
     # 6. DOCUMENT RETRIEVAL
     if intent_type == "document_retrieval":
@@ -1068,11 +1359,11 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                 result_summary="Requested clarification for missing subject",
                 success=True
             )
-            return {
+            return _with_metrics({
                 "answer": answer,
                 "action_taken": "search_academic_documents",
                 "sources": []
-            }
+            })
 
         # Ambiguity Case B: Generic query like "Give me the maths PDF" without unit or specific doc_type
         if params.get("needs_type_clarification"):
@@ -1085,12 +1376,13 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                 result_summary="Requested clarification for generic document type",
                 success=True
             )
-            return {
+            return _with_metrics({
                 "answer": answer,
                 "action_taken": "search_academic_documents",
                 "sources": []
-            }
+            })
 
+        t_mcp0 = time.perf_counter()
         res = await mcp_client.call_tool(
             "search_academic_documents",
             subject=params.get("subject"),
@@ -1099,6 +1391,7 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             year=params.get("year"),
             query=params.get("title_keyword")
         )
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
 
         if isinstance(res, dict) and "error" in res:
             docs = search_academic_documents(
@@ -1120,33 +1413,138 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary=f"Found {len(docs)} document(s)",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": answer,
             "action_taken": "search_academic_documents",
             "sources": sources
-        }
+        }, tool_time_ms=mcp_time, tool_count=1)
+
+    # 6b. KNOWLEDGE LAYER: ACADEMIC CONTEXT / SUBJECTS
+    if intent_type == "academic_context":
+        t_mcp0 = time.perf_counter()
+        target_branch = intent.get("branch")
+        target_cycle = intent.get("cycle")
+        res = await mcp_client.call_tool(
+            "get_academic_context",
+            student_id=clean_id,
+            branch=target_branch,
+            cycle=target_cycle
+        )
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
+
+        if isinstance(res, dict) and res.get("error"):
+            answer = f"Could not retrieve academic curriculum: {res.get('error')}"
+        elif isinstance(res, dict):
+            answer = format_academic_context_response(res)
+        else:
+            answer = "Unable to retrieve academic curriculum at this time."
+
+        log_action(
+            tool_name="get_academic_context",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "branch": target_branch, "cycle": target_cycle},
+            result_summary=f"Resolved academic context for {target_branch or clean_id}",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "get_academic_context",
+            "sources": []
+        }, tool_time_ms=mcp_time, tool_count=1)
+
+    # 6c. KNOWLEDGE LAYER: RECOMMENDED CLUBS FOR BRANCH
+    if intent_type == "recommended_clubs":
+        t_mcp0 = time.perf_counter()
+        target_branch = intent.get("branch")
+        target_cat = intent.get("category")
+
+        # If branch not specified in query, check student profile
+        if not target_branch and clean_id != "anonymous":
+            prof = await mcp_client.call_tool("get_student_profile", student_id=clean_id)
+            if isinstance(prof, dict) and prof.get("branch"):
+                target_branch = prof.get("branch")
+
+        res = await mcp_client.call_tool(
+            "get_recommended_clubs",
+            branch=target_branch,
+            category=target_cat
+        )
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
+
+        clubs_list = res if isinstance(res, list) else []
+        answer = format_recommended_clubs_response(clubs_list, branch=target_branch)
+
+        log_action(
+            tool_name="get_recommended_clubs",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "branch": target_branch, "category": target_cat},
+            result_summary=f"Found {len(clubs_list)} recommended clubs for {target_branch or 'all'}",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "get_recommended_clubs",
+            "sources": []
+        }, tool_time_ms=mcp_time, tool_count=1)
+
+    # 6d. KNOWLEDGE LAYER: SUBJECT RESOURCES
+    if intent_type == "subject_resources":
+        subj = intent.get("subject")
+        if not subj and clean_id != "anonymous":
+            prof = await mcp_client.call_tool("get_student_profile", student_id=clean_id)
+            if isinstance(prof, dict):
+                prefs = prof.get("preferences") or {}
+                if isinstance(prefs, dict) and prefs.get("focus_subject"):
+                    subj = prefs["focus_subject"]
+        t_mcp0 = time.perf_counter()
+        docs = await mcp_client.call_tool(
+            "search_academic_documents",
+            subject=subj,
+            limit=10
+        )
+        mcp_time = (time.perf_counter() - t_mcp0) * 1000
+
+        doc_list = docs if isinstance(docs, list) else []
+        answer, sources = format_document_response(doc_list, {"subject": subj})
+
+        log_action(
+            tool_name="search_academic_documents",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "subject": subj},
+            result_summary=f"Found {len(doc_list)} resources for {subj}",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "search_academic_documents",
+            "sources": sources
+        }, tool_time_ms=mcp_time, tool_count=1)
 
     # 7. ACADEMIC SUMMARIZE
     if intent_type == "summarize":
         subject = _extract_subject_for_summary(clean_msg)
         if subject:
+            t_rag0 = time.perf_counter()
             res = await asyncio.to_thread(rag.summarize_notes, subject=subject)
-            return {
+            rag_time = (time.perf_counter() - t_rag0) * 1000
+            return _with_metrics({
                 "answer": res.get("summary", "No summary generated."),
                 "action_taken": "summarize_notes",
                 "sources": res.get("sources", [])
-            }
+            }, final_answer_ms=rag_time, tool_count=1, qwen_count=1)
 
-    # 5. ACADEMIC RAG QA
+    # 8. ACADEMIC RAG QA
     if intent_type == "academic":
+        t_rag0 = time.perf_counter()
         res = await asyncio.to_thread(rag.answer_question, query=clean_msg, student_id=clean_id)
-        return {
+        rag_time = (time.perf_counter() - t_rag0) * 1000
+        return _with_metrics({
             "answer": res.get("answer", "No answer could be generated."),
             "action_taken": "answer_question",
             "sources": res.get("sources", [])
-        }
+        }, final_answer_ms=rag_time, tool_count=0, qwen_count=1)
 
-    # 6. FACULTY LOOKUP
+    # 9. FACULTY LOOKUP
     if intent_type == "faculty":
         fdata = intent.get("data") or lookup_faculty(clean_msg)
         if fdata:
@@ -1163,13 +1561,13 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
                 result_summary=f"Found faculty {cname} with {len(depts)} department(s)",
                 success=True
             )
-            return {
+            return _with_metrics({
                 "answer": answer,
                 "action_taken": "lookup_faculty",
                 "sources": []
-            }
+            }, tool_count=1)
 
-    # 7. FACULTY DIRECTORY PLACEHOLDER
+    # 10. FACULTY DIRECTORY PLACEHOLDER
     if intent_type == "faculty_unknown":
         answer = "I don't currently have a faculty directory for that person. I can help with MSRIT departments, clubs, academic notes, or your student profile."
         log_action(
@@ -1179,13 +1577,13 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
             result_summary="Faculty lookup unsupported - safe placeholder returned",
             success=True
         )
-        return {
+        return _with_metrics({
             "answer": answer,
             "action_taken": "unknown_faculty",
             "sources": []
-        }
+        })
 
-    # 6. UNKNOWN / UNSUPPORTED
+    # 11. UNKNOWN / UNSUPPORTED
     answer = "I’m not sure what you’re asking about. I can currently help with MSRIT departments, clubs, academic notes, and your student profile."
     log_action(
         tool_name="unknown_clarification",
@@ -1194,8 +1592,8 @@ async def handle_message(message: str, student_id: str) -> Dict[str, Any]:
         result_summary="Out-of-scope query - clarification returned without RAG",
         success=True
     )
-    return {
+    return _with_metrics({
         "answer": answer,
         "action_taken": "unknown_clarification",
         "sources": []
-    }
+    })

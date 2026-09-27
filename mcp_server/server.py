@@ -26,6 +26,10 @@ from backend.documents import (
     search_academic_documents as _search_academic_documents,
     get_academic_document as _get_academic_document,
 )
+from backend.knowledge import (
+    get_academic_context as _get_academic_context,
+    get_recommended_clubs as _get_recommended_clubs,
+)
 from backend.audit import audited
 
 mcp = FastMCP("msrit-ai-server")
@@ -51,7 +55,9 @@ def get_student_profile(student_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieve persistent student profile details including stream, cycle, branch, semester, and preferences by student ID.
     """
-    return _get_student_profile(student_id=student_id)
+    if not student_id or not str(student_id).strip():
+        return None
+    return _get_student_profile(student_id=str(student_id).strip())
 
 
 @mcp.tool()
@@ -72,8 +78,10 @@ def update_student_profile(
     """
     Create or update a student's profile (name, college, degree, branch, semester, year, stream, cycle, cgpa, preferences) in persistent database memory.
     """
+    if not student_id or not str(student_id).strip():
+        return {"error": "student_id is required"}
     return _update_student_profile(
-        student_id=student_id,
+        student_id=str(student_id).strip(),
         name=name,
         college=college,
         degree=degree,
@@ -88,12 +96,24 @@ def update_student_profile(
 
 
 @mcp.tool()
+@audited("lookup_department")
+def lookup_department(query: str) -> Optional[Dict[str, Any]]:
+    """
+    Look up official MSRIT engineering department details such as department code, name, HOD, and location.
+    """
+    if not query or not str(query).strip():
+        return None
+    return _lookup_branch(query=str(query).strip())
+
+
+@mcp.tool()
 @audited("lookup_branch")
 def lookup_branch(query: str) -> Optional[Dict[str, Any]]:
     """
     Look up official MSRIT engineering department/branch details such as branch code, department name, HOD, and location.
+    Backwards-compatible alias for lookup_department.
     """
-    return _lookup_branch(query=query)
+    return lookup_department(query=query)
 
 
 @mcp.tool()
@@ -153,7 +173,34 @@ def get_academic_document(document_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieve exact verified metadata and local file path for an academic document by its unique ID.
     """
-    return _get_academic_document(document_id=document_id)
+    if not document_id or not str(document_id).strip():
+        return None
+    return _get_academic_document(document_id=str(document_id).strip())
+
+
+@mcp.tool()
+@audited("get_academic_context")
+def get_academic_context(
+    student_id: Optional[str] = None,
+    branch: Optional[str] = None,
+    cycle: Optional[str] = None
+) -> Dict[str, Any]:
+    """
+    Resolve multi-hop academic curriculum relationships connecting student, branch, curricular stream, cycle, enrolled subjects, and document counts.
+    """
+    return _get_academic_context(student_id=student_id, branch=branch, cycle=cycle)
+
+
+@mcp.tool()
+@audited("get_recommended_clubs")
+def get_recommended_clubs(
+    branch: Optional[str] = None,
+    category: Optional[str] = None
+) -> List[Dict[str, Any]]:
+    """
+    Search and recommend student clubs based on branch eligibility (branch_scope) and category.
+    """
+    return _get_recommended_clubs(branch=branch, category=category)
 
 
 if __name__ == "__main__":

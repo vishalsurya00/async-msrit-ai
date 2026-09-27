@@ -404,6 +404,10 @@ def lookup_branch(query: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+# Canonical department lookup alias
+lookup_department = lookup_branch
+
+
 def lookup_club(
     query: Optional[str] = None,
     category: Optional[str] = None

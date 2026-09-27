@@ -101,26 +101,41 @@ async def mcp_session():
         await client.close()
 
 
-def _parse_tool_result(result_content: List[Any]) -> Any:
+LIST_RETURNING_TOOLS = {
+    "lookup_club",
+    "search_academic_documents",
+    "search_notes",
+    "list_subjects",
+    "get_recommended_clubs",
+}
+
+
+def _parse_tool_result(result_content: List[Any], tool_name: Optional[str] = None) -> Any:
     """Convert MCP TextContent items back into Python primitives (lists, dicts, or strings)."""
+    is_list_tool = tool_name in LIST_RETURNING_TOOLS if tool_name else False
+
     if not result_content:
-        return None
+        return [] if is_list_tool else None
 
-    if len(result_content) == 1:
-        text = getattr(result_content[0], "text", str(result_content[0]))
-        try:
-            return json.loads(text)
-        except (json.JSONDecodeError, TypeError):
-            return text
-
-    items = []
+    parsed_items = []
     for item in result_content:
         text = getattr(item, "text", str(item))
         try:
-            items.append(json.loads(text))
+            val = json.loads(text)
         except (json.JSONDecodeError, TypeError):
-            items.append(text)
-    return items
+            val = text
+        parsed_items.append(val)
+
+    if is_list_tool:
+        # If the single item parsed is already a list, return it; otherwise return parsed_items as a list
+        if len(parsed_items) == 1 and isinstance(parsed_items[0], list):
+            return parsed_items[0]
+        return parsed_items
+
+    # For single-object tools
+    if len(parsed_items) == 1:
+        return parsed_items[0]
+    return parsed_items
 
 
 async def call_tool(tool_name: str, **kwargs) -> Any:
@@ -137,7 +152,7 @@ async def call_tool(tool_name: str, **kwargs) -> Any:
             err_text = " ".join(getattr(c, "text", str(c)) for c in call_res.content)
             return {"error": f"Tool execution failed: {err_text}"}
 
-        return _parse_tool_result(call_res.content)
+        return _parse_tool_result(call_res.content, tool_name=tool_name)
 
     except Exception as e:
         print(f"Error calling MCP tool '{tool_name}': {e}", file=sys.stderr)
@@ -147,3 +162,17 @@ async def call_tool(tool_name: str, **kwargs) -> Any:
         except Exception:
             pass
         return {"error": f"MCP communication error: {str(e)}"}
+
+
+async def list_tools() -> List[str]:
+    """
+    List names of all registered tools on the MCP server.
+    """
+    try:
+        client = get_mcp_client()
+        session = await client.get_session()
+        res = await session.list_tools()
+        return [tool.name for tool in res.tools]
+    except Exception as e:
+        print(f"Error listing MCP tools: {e}", file=sys.stderr)
+        return []
