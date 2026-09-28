@@ -81,13 +81,15 @@ def answer_question(
         sources = []
         seen = set()
         for c in chunks:
-            fp = c.get("file_path", "")
-            if fp and fp not in seen:
-                seen.add(fp)
+            subj = c.get("subject", "") or "Course Note"
+            if subj not in seen:
+                seen.add(subj)
                 sources.append({
-                    "file_path": fp,
-                    "subject": c.get("subject", ""),
-                    "source_url": PUBLIC_FIRST_YEAR_URL
+                    "title": f"{subj} Notes",
+                    "subject": subj,
+                    "file_path": PUBLIC_FIRST_YEAR_URL,
+                    "source_url": PUBLIC_FIRST_YEAR_URL,
+                    "public_url": PUBLIC_FIRST_YEAR_URL
                 })
 
         if not chunks:
@@ -185,6 +187,9 @@ def answer_question(
         if not answer:
             answer = fallback_answer
 
+        from backend.documents import sanitize_text
+        answer = sanitize_text(answer)
+
         result = {
             "answer": answer,
             "sources": sources,
@@ -254,13 +259,15 @@ def summarize_notes(
         sources = []
         seen = set()
         for c in chunks:
-            fp = c.get("file_path", "")
-            if fp and fp not in seen:
-                seen.add(fp)
+            subj = c.get("subject", "") or clean_subject
+            if subj not in seen:
+                seen.add(subj)
                 sources.append({
-                    "file_path": fp,
-                    "subject": c.get("subject", ""),
-                    "source_url": c.get("source_url", "")
+                    "title": f"{subj} Notes",
+                    "subject": subj,
+                    "file_path": PUBLIC_FIRST_YEAR_URL,
+                    "source_url": PUBLIC_FIRST_YEAR_URL,
+                    "public_url": PUBLIC_FIRST_YEAR_URL
                 })
 
         if not chunks:
@@ -277,9 +284,11 @@ def summarize_notes(
 
         context_blocks = []
         for i, chunk in enumerate(chunks, 1):
-            fp = chunk.get("file_path", "Note")
+            subj_label = chunk.get("subject") or clean_subject or "Note"
+            unit_val = chunk.get("unit")
+            unit_label = f" Unit {unit_val}" if unit_val is not None else ""
             content = chunk.get("content", "").strip()
-            context_blocks.append(f"[Document {i} - {fp}]:\n{content}")
+            context_blocks.append(f"[Document {i} - {subj_label}{unit_label}]:\n{content}")
 
         context_text = "\n\n".join(context_blocks)
 
@@ -288,7 +297,8 @@ def summarize_notes(
             f"Provide a crisp, well-structured bullet-point summary of the core concepts, definitions, and key formulas for '{clean_subject}' based strictly on the provided notes.\n"
             "CRITICAL RULES:\n"
             "1. Avoid vague filler, syllabus outlines, preface text, or course objectives.\n"
-            "2. Present key takeaways directly as clean, focused bullet points.\n\n"
+            "2. Present key takeaways directly as clean, focused bullet points.\n"
+            "3. NEVER mention local filesystem paths (data/raw/...), internal folder IDs, or storage locations. If referring to notes, use the public link: https://ritnotebook.pages.dev/notes/first.\n\n"
             f"Context:\n{context_text}\n\n"
             "Summary:"
         )
@@ -301,6 +311,9 @@ def summarize_notes(
         response.raise_for_status()
         reply_json = response.json()
         summary = reply_json.get("response", "").strip()
+
+        from backend.documents import sanitize_text
+        summary = sanitize_text(summary)
 
         result = {
             "summary": summary,

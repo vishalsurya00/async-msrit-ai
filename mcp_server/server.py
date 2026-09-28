@@ -21,10 +21,16 @@ from backend.info_lookup import (
     lookup_branch as _lookup_branch,
     lookup_club as _lookup_club,
     list_subjects as _list_subjects,
+    get_principal_info as _get_principal_info,
+    get_chief_proctor_info as _get_chief_proctor_info,
+    lookup_office as _lookup_office,
+    get_branch_count as _get_branch_count,
+    get_club_count as _get_club_count,
 )
 from backend.documents import (
     search_academic_documents as _search_academic_documents,
     get_academic_document as _get_academic_document,
+    sanitize_document_metadata as _sanitize_document_metadata,
 )
 from backend.knowledge import (
     get_academic_context as _get_academic_context,
@@ -155,7 +161,7 @@ def search_academic_documents(
     """
     Search verified MSRIT academic documents, notes, question papers, and syllabus files by subject, unit, semester, document type, or year.
     """
-    return _search_academic_documents(
+    docs = _search_academic_documents(
         query=query,
         subject=subject,
         unit=unit,
@@ -165,6 +171,7 @@ def search_academic_documents(
         year=year,
         limit=limit
     )
+    return [_sanitize_document_metadata(d) for d in docs]
 
 
 @mcp.tool()
@@ -175,7 +182,10 @@ def get_academic_document(document_id: str) -> Optional[Dict[str, Any]]:
     """
     if not document_id or not str(document_id).strip():
         return None
-    return _get_academic_document(document_id=str(document_id).strip())
+    doc = _get_academic_document(document_id=str(document_id).strip())
+    if not doc:
+        return None
+    return _sanitize_document_metadata(doc)
 
 
 @mcp.tool()
@@ -203,6 +213,45 @@ def get_recommended_clubs(
     return _get_recommended_clubs(branch=branch, category=category)
 
 
+@mcp.tool()
+@audited("lookup_principal")
+def lookup_principal() -> Optional[Dict[str, Any]]:
+    """
+    Retrieve verified institutional details about the Principal of MSRIT.
+    """
+    return _get_principal_info()
+
+
+@mcp.tool()
+@audited("lookup_proctor")
+def lookup_proctor() -> Optional[Dict[str, Any]]:
+    """
+    Retrieve verified institutional details about the Chief Proctor of MSRIT.
+    """
+    return _get_chief_proctor_info()
+
+
+@mcp.tool()
+@audited("lookup_campus_office")
+def lookup_campus_office(query: str) -> Optional[Dict[str, Any]]:
+    """
+    Retrieve verified office locations and campus administrative facilities.
+    """
+    return _lookup_office(query=query)
+
+
+@mcp.tool()
+@audited("get_entity_counts")
+def get_entity_counts(entity_type: str = "branches") -> Dict[str, Any]:
+    """
+    Get authoritative counts and listings of branches, departments, or clubs.
+    """
+    if "club" in entity_type.lower():
+        return {"entity_type": "clubs", "count": _get_club_count()}
+    return {"entity_type": "branches", "count": _get_branch_count()}
+
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")
+
 

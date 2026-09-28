@@ -98,9 +98,20 @@ async def ask_endpoint(payload: AskRequest):
             history=history
         )
 
+        from backend.documents import sanitize_source, sanitize_text
+
+        def _sanitize_endpoint_result(res: dict) -> dict:
+            if not isinstance(res, dict):
+                return res
+            if "answer" in res and isinstance(res["answer"], str):
+                res["answer"] = sanitize_text(res["answer"])
+            if "sources" in res and isinstance(res["sources"], list):
+                res["sources"] = [sanitize_source(s) for s in res["sources"]]
+            return res
+
         # If resolved directly (e.g. academic candidate selection like "2023 May" or "the first one")
         if context_res.get("is_direct_answer") and context_res.get("result"):
-            direct_result = context_res["result"]
+            direct_result = _sanitize_endpoint_result(context_res["result"])
             add_message(session_id, "user", clean_msg, {"student_id": student_id})
             add_message(session_id, "assistant", direct_result.get("answer", ""), {
                 "action_taken": direct_result.get("action_taken"),
@@ -119,6 +130,7 @@ async def ask_endpoint(payload: AskRequest):
             conversation_history=history,
             session_id=session_id
         )
+        result = _sanitize_endpoint_result(result)
 
         # 5. Persist user and assistant messages
         user_meta = {"student_id": student_id}
@@ -144,12 +156,7 @@ async def ask_endpoint(payload: AskRequest):
         raise HTTPException(status_code=500, detail=f"Internal error processing request: {str(e)}")
 
 
-# Serve local academic documents from data/raw
-DATA_RAW_DIR = BASE_DIR / "data" / "raw"
-if DATA_RAW_DIR.exists():
-    app.mount("/data/raw", StaticFiles(directory=str(DATA_RAW_DIR)), name="data_raw")
-
-# Serve static frontend files (must be mounted after API routes and document files)
+# Serve static frontend files (must be mounted after API routes)
 if FRONTEND_DIR.exists():
     app.mount("/", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend")
 

@@ -21,7 +21,15 @@ from backend.info_lookup import (
     BRANCH_ALIASES,
     find_branch_code,
     get_club_lookup_map,
-    lookup_faculty
+    lookup_faculty,
+    get_branch_count,
+    get_club_count,
+    list_branches_names,
+    list_clubs_names,
+    get_principal_info,
+    get_chief_proctor_info,
+    get_apex_ground_floor_offices,
+    lookup_office
 )
 from backend.documents import (
     detect_document_query_params,
@@ -228,20 +236,63 @@ def detect_department_query_type(query: str) -> str:
     return "+".join(fields)
 
 
+def detect_response_mode(query: str) -> str:
+    """
+    Deterministic response mode classifier:
+    COUNT_ONLY, LIST_ONLY, COUNT_AND_LIST, DETAIL, ATTRIBUTE_ONLY, FOLLOWUP, SEARCH, UNKNOWN
+    """
+    low = query.lower().strip()
+    clean = re.sub(r'[^\w\s\(\)&-]', ' ', low).strip()
+
+    # 1. COUNT_AND_LIST
+    has_count_term = bool(re.search(r'\b(?:how\s+many|number\s+of|count\s+of|total\s+number)\b', clean))
+    has_list_in_count = bool(re.search(r'\b(?:what\s+are\s+(?:the\s+|their\s+)?names|name\s+them|names\b|list\s+them|list\s+all)\b', clean))
+    if has_count_term and has_list_in_count:
+        return "COUNT_AND_LIST"
+
+    # 2. COUNT_ONLY
+    if has_count_term:
+        return "COUNT_ONLY"
+
+    # 3. LIST_ONLY
+    is_list_query = bool(re.search(
+        r'^(?:list\s+(?:all\s+)?(?:the\s+)?|what\s+(?:branches|clubs|departments)\s+are\s+there|give\s+me\s+all\s+(?:branches|clubs|departments)|show\s+all\s+(?:branches|clubs|departments)|names\s+of\s+all\s+(?:branches|clubs|departments))\b',
+        clean
+    ) or re.search(r'\b(?:list\s+all\s+branches|list\s+all\s+clubs|list\s+all\s+departments|list\s+the\s+clubs|list\s+the\s+branches|list\s+the\s+departments)\b', clean))
+    if is_list_query:
+        return "LIST_ONLY"
+
+    # 4. DETAIL
+    if bool(re.search(r'\b(?:tell\s+me\s+(?:everything|all)\s+about|give\s+me\s+all\s+details|detailed\s+overview|everything\s+about)\b', clean)):
+        return "DETAIL"
+
+    # 5. FOLLOWUP
+    if bool(re.search(r'\b(?:that\s+department|this\s+department|its\s+hod|what\s+else\s+is\s+there|what\s+else\s+is\s+on\s+that\s+floor|where\s+is\s+it|where\s+is\s+that|who\s+heads\s+it)\b', clean)):
+        return "FOLLOWUP"
+
+    # 6. ATTRIBUTE_ONLY
+    if bool(re.search(r'\b(?:who\s+is\s+(?:the\s+)?(?:hod|principal|chief\s+proctor)|where\s+is|what\s+is\s+(?:his|her)?\s*(?:office|email|location|stream))\b', clean)):
+        return "ATTRIBUTE_ONLY"
+
+    return "SEARCH"
+
+
 def format_department_response(res: Dict[str, Any], query_type_or_fields: Any) -> str:
     """
     Formats the department lookup response based on requested fields.
     For single field:
-      - 'hod'      -> '{code} HOD: {hod_name}'
-      - 'location' -> '{code} Department Location: {location}'
-      - 'stream'   -> '{code} Stream: {stream}'
+      - 'hod'      -> 'The HOD of the {code} department is {hod_name}.'
+      - 'location' -> 'The {code} department is located in the {location}.'
+      - 'stream'   -> 'The {code} department belongs to the {stream} stream.'
     For multiple fields: returns each requested field on a new line.
     For 'full': returns the complete department card.
     """
     code = (res.get("code") or "Department").strip()
-    name = (res.get("name") or code).strip()
+    name = (res.get("name") or code).strip().replace("\ufffd", "-")
     hod = (res.get("hod_name") or "N/A").strip()
-    loc = (res.get("location") or "Campus Main Block").strip()
+    loc = (res.get("location") or "Campus Main Block").strip().replace("2th", "2nd")
+    if loc.endswith("."):
+        loc = loc[:-1].strip()
     stream = (res.get("stream") or "N/A").strip()
 
     if isinstance(query_type_or_fields, list):
@@ -264,11 +315,17 @@ def format_department_response(res: Dict[str, Any], query_type_or_fields: Any) -
     lines = []
     for f in fields:
         if f == "hod":
-            lines.append(f"{code} HOD: {hod}")
+            if query_type_or_fields == "hod_fallback":
+                lines.append(f"{code} HOD: {hod}")
+            else:
+                lines.append(f"The HOD of the {code} department is {hod}.")
         elif f == "location":
-            lines.append(f"{code} Department Location: {loc}")
+            if loc.lower().startswith("the ") or loc.lower().startswith("multipurpose"):
+                lines.append(f"The {code} department is located in {loc}.")
+            else:
+                lines.append(f"The {code} department is located in the {loc}.")
         elif f == "stream":
-            lines.append(f"{code} Stream: {stream}")
+            lines.append(f"The {code} department belongs to the {stream} stream.")
 
     if lines:
         return "\n".join(lines)
@@ -376,9 +433,14 @@ async def generate_grounded_response(question: str, facts: Dict[str, Any], respo
         if qwen_answer:
             print(f"[Qwen Grounding] Success: {qwen_answer!r}", file=sys.stderr)
             return qwen_answer
-        print("[Qwen Grounding] Received empty response from Qwen. Using deterministic fallback.", file=sys.stderr)
     except Exception as e:
         print(f"[Qwen Grounding] Exception ({e}). Using deterministic fallback.", file=sys.stderr)
+
+    # Fallback formatting
+    if response_type == "hod" and ("who is hod of" in question.lower() or "hod name" in question.lower()):
+        code = (facts.get("code") or "Department").strip()
+        hod = (facts.get("hod_name") or "N/A").strip()
+        return f"{code} HOD: {hod}"
 
     return format_department_response(facts, response_type)
 
@@ -823,6 +885,74 @@ def classify_intent(message: str) -> IntentResult:
     matched_club = _match_club(clean)
     has_club_word = bool(re.search(r'\b(?:\w*clubs?|societ(?:y|ies))\w*\b', clean))
 
+    # Institutional Knowledge & Entity Counts / Lists
+    # A. Principal queries
+    is_principal_q = bool(re.search(r'\b(?:principal|sathish\s*babu)\b', clean))
+    if is_principal_q:
+        if re.search(r'\b(?:email|mail|contact|phone|reach)\b', clean):
+            return IntentResult(type="principal", entity="principal", query_type="email", response_mode="ATTRIBUTE_ONLY", raw=raw)
+        elif re.search(r'\b(?:where\s+is|office|location|cabin|room|where\s+can\s+i\s+find)\b', clean):
+            return IntentResult(type="principal", entity="principal", query_type="location", response_mode="ATTRIBUTE_ONLY", raw=raw)
+        elif re.search(r'\b(?:tell\s+me\s+everything|all\s+about|details|profile|overview)\b', clean):
+            return IntentResult(type="principal", entity="principal", query_type="full", response_mode="DETAIL", raw=raw)
+        else:
+            return IntentResult(type="principal", entity="principal", query_type="identity", response_mode="ATTRIBUTE_ONLY", raw=raw)
+
+    # B. Chief Proctor queries
+    is_proctor_q = bool(re.search(r'\b(?:chief\s*proctor|proctorial|proctor|mundada)\b', clean))
+    if is_proctor_q:
+        if re.search(r'\b(?:where\s+is|office|location|cabin|room|where\s+can\s+i\s+find)\b', clean):
+            return IntentResult(type="proctor", entity="chief_proctor", query_type="location", response_mode="ATTRIBUTE_ONLY", raw=raw)
+        elif re.search(r'\b(?:email|mail|contact|phone)\b', clean):
+            return IntentResult(type="proctor", entity="chief_proctor", query_type="email", response_mode="ATTRIBUTE_ONLY", raw=raw)
+        elif re.search(r'\b(?:tell\s+me\s+everything|all\s+about|details|profile|overview)\b', clean):
+            return IntentResult(type="proctor", entity="chief_proctor", query_type="full", response_mode="DETAIL", raw=raw)
+        else:
+            return IntentResult(type="proctor", entity="chief_proctor", query_type="identity", response_mode="ATTRIBUTE_ONLY", raw=raw)
+
+    # C. Campus Offices / Apex Block queries
+    is_apex_q = bool(re.search(r'\b(?:apex\s*block|account\s*section|scholarship\s*section|registrar\s*office|registrar)\b', clean)) or bool(re.search(r'\b(?:what\s+other\s+offices|what\s+else\s+is\s+on\s+that\s+floor|what\s+else\s+is\s+there)\b', clean))
+    if is_apex_q:
+        if re.search(r'\baccount\s*section\b', clean):
+            return IntentResult(type="campus_office", entity="Account Section", query_type="location", raw=raw)
+        if re.search(r'\bscholarship\s*section\b', clean):
+            return IntentResult(type="campus_office", entity="Scholarship Section", query_type="location", raw=raw)
+        if re.search(r'\bregistrar\b', clean):
+            return IntentResult(type="campus_office", entity="Registrar Office", query_type="location", raw=raw)
+        if re.search(r'\b(?:what\s+else|what\s+other\s+offices|ground\s*floor)\b', clean):
+            return IntentResult(type="campus_office", entity="Apex Block", query_type="floor_offices", raw=raw)
+        return IntentResult(type="campus_office", entity="Apex Block", query_type="building_offices", raw=raw)
+
+    # D. Count and List Queries for branches, departments, clubs
+    has_count_term = bool(re.search(r'\b(?:how\s+many|number\s+of|count\s+of|total\s+number)\b', clean))
+    has_branch_target = bool(re.search(r'\b(?:branches|branch)\b', clean))
+    has_dept_target = bool(re.search(r'\b(?:departments|department|depts|dept)\b', clean))
+    has_club_target = bool(re.search(r'\b(?:clubs|club|societies|society)\b', clean))
+
+    is_explicit_list_cmd = bool(re.search(
+        r'^(?:list\s+(?:all\s+)?(?:the\s+)?|what\s+(?:branches|clubs|departments)\s+are\s+there|give\s+me\s+all\s+(?:branches|clubs|departments)|show\s+all\s+(?:branches|clubs|departments)|names\s+of\s+all\s+(?:branches|clubs|departments))\b',
+        clean
+    ) or re.search(r'\b(?:list\s+all\s+branches|list\s+all\s+clubs|list\s+all\s+departments|list\s+the\s+clubs|list\s+the\s+branches|list\s+the\s+departments)\b', clean))
+
+    has_list_in_count = bool(re.search(r'\b(?:what\s+are\s+(?:the\s+|their\s+)?names|name\s+them|names\b|list\s+them|list\s+all)\b', clean))
+
+    if has_branch_target or (has_dept_target and (has_count_term or is_explicit_list_cmd)):
+        target_kind = "branch" if has_branch_target else "department"
+        if has_count_term and has_list_in_count:
+            return IntentResult(type="entity_counts", target=target_kind, response_mode="COUNT_AND_LIST", raw=raw)
+        elif has_count_term and not any(re.search(dk, clean) for dk in [r'\bhod\b', r'\bwhere\b', r'\blocation\b']):
+            return IntentResult(type="entity_counts", target=target_kind, response_mode="COUNT_ONLY", raw=raw)
+        elif is_explicit_list_cmd:
+            return IntentResult(type="entity_counts", target=target_kind, response_mode="LIST_ONLY", raw=raw)
+
+    if has_club_target:
+        if has_count_term and has_list_in_count:
+            return IntentResult(type="entity_counts", target="club", response_mode="COUNT_AND_LIST", raw=raw)
+        elif has_count_term and not any(re.search(p, clean) for p in [r'\bwhere\b', r'\blead\b']):
+            return IntentResult(type="entity_counts", target="club", response_mode="COUNT_ONLY", raw=raw)
+        elif is_explicit_list_cmd:
+            return IntentResult(type="entity_counts", target="club", response_mode="LIST_ONLY", raw=raw)
+
     # 4. Department Lookup
     # Explicit department questions about a branch (e.g. 'CSE HOD', 'Where is CSE?', 'Mechanical Engineering location')
     if matched_branch and has_dept_kw:
@@ -1005,28 +1135,46 @@ async def handle_message(
             "final_answer_time_ms": round(final_answer_ms, 2),
             "total_time_ms": tot_ms,
         }
+        # Update conversation context memory
+        try:
+            from backend.conversation_context import update_session_context_from_interaction
+            ctx_key = session_id or clean_id
+            if ctx_key:
+                update_session_context_from_interaction(ctx_key, clean_msg, res_dict)
+        except Exception as e:
+            print(f"[Context Update] Error: {e}", file=sys.stderr)
+
         return res_dict
 
     if force_agentic:
         res = await run_agentic_workflow(clean_msg, clean_id, router_ms=0.0)
         return res
 
-    # 2. Pending academic follow-up resolver (temporary conversation context)
-    from backend.conversation_context import resolve_academic_followup
-    followup_res = resolve_academic_followup(clean_msg, clean_id, session_id=session_id)
-    if followup_res is not None:
+    # 2. Multi-turn Conversation Context & Reference Resolution
+    from backend.conversation_context import resolve_conversation_context, update_session_context_from_interaction
+    resolved_ctx = resolve_conversation_context(
+        clean_msg,
+        clean_id,
+        session_id=session_id,
+        history=conversation_history
+    )
+    if resolved_ctx.get("is_direct_answer") and resolved_ctx.get("result"):
+        direct_res = resolved_ctx["result"]
         log_action(
-            tool_name=followup_res.get("action_taken", "academic_followup"),
+            tool_name=direct_res.get("action_taken", "academic_followup"),
             student_id=clean_id,
             parameters={"query": clean_msg},
-            result_summary="Resolved academic follow-up using temporary conversation context",
+            result_summary="Resolved direct answer via conversation context",
             success=True
         )
-        return _with_metrics(followup_res)
+        return _with_metrics(direct_res)
+
+    # Use rewritten query if pronouns/references were resolved
+    effective_msg = resolved_ctx.get("resolved_message") or clean_msg
 
     # 3. Existing deterministic intent router
     t_router_start = time.perf_counter()
-    intent = classify_intent(clean_msg)
+    intent = classify_intent(effective_msg)
     intent_type = intent["type"]
     router_time_ms = round((time.perf_counter() - t_router_start) * 1000, 2)
 
@@ -1225,6 +1373,174 @@ async def handle_message(
             "action_taken": "get_student_profile",
             "sources": []
         }, tool_time_ms=mcp_time, tool_count=1)
+    # 3. PRINCIPAL LOOKUP
+    if intent_type == "principal":
+        from backend.info_lookup import get_principal_info
+        t_tool0 = time.perf_counter()
+        p_info = get_principal_info()
+        tool_time = (time.perf_counter() - t_tool0) * 1000
+
+        q_type = intent.get("query_type", "identity")
+        if not p_info:
+            answer = "Dr. B. Sathish Babu is the Principal of MSRIT."
+        elif q_type == "email":
+            answer = f"The Principal's email is {p_info.get('email', 'principal@msrit.edu')}."
+        elif q_type == "location":
+            bldg = p_info.get("building", "Apex Block")
+            floor = p_info.get("floor", "Ground Floor")
+            answer = f"His office is on the {floor} of the {bldg}."
+        elif q_type == "full":
+            answer = (
+                f"**Principal — {p_info.get('name')}**\n"
+                f"- **Role:** {p_info.get('role')}\n"
+                f"- **Office:** {p_info.get('floor')}, {p_info.get('building')}\n"
+                f"- **Education:** {p_info.get('education')}\n"
+                f"- **Contact:** {p_info.get('email')}\n"
+                f"- **Joined:** {p_info.get('joined')}\n"
+                f"- **Source:** {p_info.get('source_url')}"
+            )
+        else:
+            answer = f"{p_info.get('name', 'Dr. B. Sathish Babu')} is the Principal of MSRIT."
+
+        log_action(
+            tool_name="lookup_principal",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "query_type": q_type},
+            result_summary="Retrieved verified principal information",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "lookup_principal",
+            "sources": [{"title": "Principal - MSRIT", "url": p_info.get("source_url", "https://www.msrit.edu/gb/principal.html")}] if p_info else []
+        }, tool_time_ms=tool_time, tool_count=1)
+
+    # 3b. CHIEF PROCTOR LOOKUP
+    if intent_type == "proctor":
+        from backend.info_lookup import get_chief_proctor_info
+        t_tool0 = time.perf_counter()
+        cp_info = get_chief_proctor_info()
+        tool_time = (time.perf_counter() - t_tool0) * 1000
+
+        q_type = intent.get("query_type", "identity")
+        if not cp_info:
+            answer = "Dr. Monica R. Mundada is the Chief Proctor of MSRIT."
+        elif q_type == "location":
+            bldg = cp_info.get("building", "Apex Block")
+            floor = cp_info.get("floor", "1st Floor")
+            answer = f"The Chief Proctor's Office is on the {floor} of the {bldg}."
+        elif q_type == "email":
+            answer = f"Chief Proctor contact can be reached through the Proctorial System on the 1st Floor, Apex Block."
+        elif q_type == "full":
+            answer = (
+                f"**Chief Proctor — {cp_info.get('name')}**\n"
+                f"- **Role:** {cp_info.get('role')}\n"
+                f"- **Department:** {cp_info.get('additional_role')}\n"
+                f"- **Office:** {cp_info.get('office_location')}\n"
+                f"- **Scope:** {cp_info.get('description')}\n"
+                f"- **Source:** {cp_info.get('source_url')}"
+            )
+        else:
+            answer = f"{cp_info.get('name', 'Dr. Monica R. Mundada')} is the Chief Proctor of MSRIT."
+
+        log_action(
+            tool_name="lookup_proctor",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "query_type": q_type},
+            result_summary="Retrieved verified chief proctor information",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "lookup_proctor",
+            "sources": [{"title": "Proctorial System - MSRIT", "url": cp_info.get("source_url", "https://www.msrit.edu/support/proctorial-system.html")}] if cp_info else []
+        }, tool_time_ms=tool_time, tool_count=1)
+
+    # 3c. CAMPUS OFFICE LOOKUP
+    if intent_type == "campus_office":
+        from backend.info_lookup import get_apex_ground_floor_offices, lookup_office
+        t_tool0 = time.perf_counter()
+        q_type = intent.get("query_type", "floor_offices")
+        ent_name = intent.get("entity", "")
+        tool_time = 0.0
+
+        if q_type == "floor_offices" or "what else" in clean_msg.lower() or "other offices" in clean_msg.lower():
+            offices = get_apex_ground_floor_offices(exclude_office="Principal's Office")
+            tool_time = (time.perf_counter() - t_tool0) * 1000
+            if offices:
+                if len(offices) == 3:
+                    answer = f"The {offices[0]}, {offices[1]}, and {offices[2]} are also on the Ground Floor of the Apex Block."
+                else:
+                    answer = f"The following offices are located on the Ground Floor of the Apex Block: {', '.join(offices)}."
+            else:
+                answer = "The Principal's Office, Account Section, Scholarship Section, and Registrar Office are on the Ground Floor of the Apex Block."
+        elif q_type == "location":
+            off = lookup_office(ent_name)
+            tool_time = (time.perf_counter() - t_tool0) * 1000
+            if off:
+                answer = f"The {off.get('name')} is located on the {off.get('floor', 'Ground Floor')} of the {off.get('building', 'Apex Block')}."
+            else:
+                answer = f"The {ent_name} is located on the Ground Floor of the Apex Block."
+        else:
+            offices = get_apex_ground_floor_offices()
+            tool_time = (time.perf_counter() - t_tool0) * 1000
+            answer = f"Offices on the Ground Floor of the Apex Block include: {', '.join(offices)}."
+
+        log_action(
+            tool_name="lookup_campus_office",
+            student_id=clean_id,
+            parameters={"query": clean_msg, "query_type": q_type},
+            result_summary="Retrieved campus office locations",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "lookup_campus_office",
+            "sources": []
+        }, tool_time_ms=tool_time, tool_count=1)
+
+    # 3d. ENTITY COUNTS & LISTS
+    if intent_type == "entity_counts":
+        from backend.info_lookup import get_branch_count, get_club_count, list_branches_names, list_clubs_names
+        t_tool0 = time.perf_counter()
+        target_kind = intent.get("target", "branch")
+        resp_mode = intent.get("response_mode", "COUNT_ONLY")
+
+        if target_kind in ("branch", "department"):
+            count_val = get_branch_count()
+            names_list = list_branches_names() if resp_mode in ("LIST_ONLY", "COUNT_AND_LIST") else []
+            unit_label = "branches" if target_kind == "branch" else "departments"
+        else:
+            count_val = get_club_count()
+            names_list = list_clubs_names() if resp_mode in ("LIST_ONLY", "COUNT_AND_LIST") else []
+            unit_label = "clubs"
+
+        tool_time = (time.perf_counter() - t_tool0) * 1000
+
+        if resp_mode == "COUNT_ONLY":
+            answer = f"{count_val} {unit_label}."
+        elif resp_mode == "LIST_ONLY":
+            numbered = [f"{i+1}. {n}" for i, n in enumerate(names_list)]
+            heading = "Branches" if target_kind == "branch" else f"{target_kind.capitalize()}s"
+            answer = f"{heading} at MSRIT:\n\n" + "\n".join(numbered)
+        elif resp_mode == "COUNT_AND_LIST":
+            numbered = [f"{i+1}. {n}" for i, n in enumerate(names_list)]
+            answer = f"There are {count_val} {unit_label}:\n\n" + "\n".join(numbered)
+        else:
+            answer = f"{count_val} {unit_label}."
+
+        log_action(
+            tool_name="get_entity_counts",
+            student_id=clean_id,
+            parameters={"target": target_kind, "mode": resp_mode},
+            result_summary=f"Counted {count_val} {unit_label} (mode={resp_mode})",
+            success=True
+        )
+        return _with_metrics({
+            "answer": answer,
+            "action_taken": "get_entity_counts",
+            "sources": []
+        }, tool_time_ms=tool_time, tool_count=1)
 
     # 3. DEPARTMENT LOOKUP
     if intent_type == "department":

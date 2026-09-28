@@ -170,12 +170,54 @@ def detect_document_query_params(query: str) -> Dict[str, Any]:
     if yr_m:
         params["year"] = yr_m.group(1)
 
-    # 5. Topic / Title keyword check (e.g. "Laplace", "Laplace Transform", "Corrosion", "Elasticity")
-    for topic in ["laplace transform", "laplace", "corrosion", "elasticity", "quantum mechanics", "differential calculus"]:
-        if topic in lower:
-            params["title_keyword"] = topic
+    # 5. Topic / Title keyword check (e.g. "Lasers", "May", "Laplace", "Corrosion", "Elasticity")
+    KNOWN_TOPICS = [
+        ("laplace transform", "laplace transform"),
+        ("laplace", "laplace"),
+        ("differential calculus", "differential calculus"),
+        ("quantum mechanics", "quantum mechanics"),
+        ("optical fibres", "optical fibres"),
+        ("optical fibers", "optical fibers"),
+        ("optical fiber", "optical fiber"),
+        ("lasers", "lasers"),
+        ("laser", "laser"),
+        ("electrochemistry", "electrochemistry"),
+        ("corrosion", "corrosion"),
+        ("polymer and liquid crystal", "polymer"),
+        ("polymer", "polymer"),
+        ("liquid crystal", "liquid crystal"),
+        ("fuel cells", "fuel cells"),
+        ("materials science", "materials science"),
+        ("semiconductors", "semiconductor"),
+        ("semiconductor", "semiconductor"),
+        ("quantum computing", "quantum computing"),
+        ("cryogenics", "cryogenics"),
+        ("dielectrics", "dielectrics"),
+        ("modern physics", "modern physics"),
+        ("vibrations", "vibrations"),
+        ("elasticity", "elasticity"),
+        ("electrical conductivity", "electrical conductivity"),
+        ("2023 may", "may"),
+        ("2023 sept", "sept"),
+        ("2023 september", "sept"),
+        ("may", "may"),
+        ("september", "sept"),
+        ("sept", "sept"),
+        ("cie 1 chem", "cie 1 chem"),
+        ("cie 2 chem", "cie 2 chem"),
+        ("cie 2 phy", "cie 2 phy"),
+        ("cie 1", "cie 1"),
+        ("cie 2", "cie 2"),
+        ("cprog", "cprog"),
+        ("concise", "concise")
+    ]
+    for topic, search_term in KNOWN_TOPICS:
+        pat = r'(?<![a-zA-Z0-9])' + re.escape(topic) + r'(?![a-zA-Z0-9])'
+        if re.search(pat, lower):
+            params["title_keyword"] = search_term
             if not params["subject"]:
                 params["subject"] = normalize_subject(topic)
+            break
 
     # 6. Ambiguity checks
     # Ambiguity Case A: User specifies unit without specifying subject
@@ -287,7 +329,9 @@ def search_academic_documents(
                 "unit": u,
                 "document_type": dt,
                 "year": yr,
-                "source_url": src_url or "",
+                "source_url": PUBLIC_FIRST_YEAR_URL,
+                "public_url": PUBLIC_FIRST_YEAR_URL,
+                "file_path": PUBLIC_FIRST_YEAR_URL,
                 "local_file_path": fp or "",
                 "is_local": is_local
             })
@@ -337,7 +381,9 @@ def get_academic_document(document_id: str) -> Optional[Dict[str, Any]]:
             "unit": u,
             "document_type": dt,
             "year": yr,
-            "source_url": src_url or "",
+            "source_url": PUBLIC_FIRST_YEAR_URL,
+            "public_url": PUBLIC_FIRST_YEAR_URL,
+            "file_path": PUBLIC_FIRST_YEAR_URL,
             "local_file_path": fp or "",
             "is_local": is_local
         }
@@ -347,6 +393,77 @@ def get_academic_document(document_id: str) -> Optional[Dict[str, Any]]:
 
 
 PUBLIC_FIRST_YEAR_URL = "https://ritnotebook.pages.dev/notes/first"
+
+
+def sanitize_document_metadata(doc: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Sanitize a document dictionary to ensure NO internal filesystem paths,
+    local_file_path keys, or internal folder IDs can reach the frontend,
+    agentic tool results, or conversation responses.
+    """
+    if not isinstance(doc, dict):
+        return doc
+
+    return {
+        "document_id": doc.get("document_id"),
+        "title": doc.get("title", ""),
+        "subject": doc.get("subject", ""),
+        "unit": doc.get("unit"),
+        "document_type": doc.get("document_type"),
+        "year": doc.get("year"),
+        "semester": doc.get("semester"),
+        "branch": doc.get("branch"),
+        "stream": doc.get("stream"),
+        "cycle": doc.get("cycle"),
+        "public_url": PUBLIC_FIRST_YEAR_URL,
+        "source_url": PUBLIC_FIRST_YEAR_URL,
+        "file_path": PUBLIC_FIRST_YEAR_URL,
+        "is_local": bool(doc.get("is_local", False))
+    }
+
+
+def sanitize_source(src: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Sanitize source card metadata returned to frontend or logged in conversation history.
+    Never exposes data/raw, local_file_path, filesystem paths, or folder IDs.
+    """
+    if not isinstance(src, dict):
+        return {}
+
+    title = src.get("title") or src.get("subject") or "First-Year Academic Resources"
+    subj = src.get("subject") or "Course Document"
+
+    safe: Dict[str, Any] = {
+        "title": title,
+        "subject": subj,
+        "public_url": PUBLIC_FIRST_YEAR_URL,
+        "source_url": PUBLIC_FIRST_YEAR_URL,
+        "file_path": PUBLIC_FIRST_YEAR_URL
+    }
+    if src.get("unit") is not None:
+        safe["unit"] = src.get("unit")
+    if src.get("document_type"):
+        safe["document_type"] = src.get("document_type")
+    if src.get("year"):
+        safe["year"] = src.get("year")
+
+    return safe
+
+
+def sanitize_text(text: str) -> str:
+    """
+    Ensures that strings containing data/raw, local_file_path, or internal folder IDs
+    never appear in final user-facing academic responses.
+    """
+    if not text:
+        return text
+
+    # Strip or replace raw directory paths
+    cleaned = re.sub(r'data[/\\]raw[/\\][^\s\)\"\'>]+', PUBLIC_FIRST_YEAR_URL, text, flags=re.I)
+    cleaned = re.sub(r'local_file_path\s*[:=]\s*[^\s,]+', '', cleaned, flags=re.I)
+    cleaned = re.sub(r'__[0-9a-zA-Z_-]{8,}', '', cleaned)
+    cleaned = re.sub(r'https?://drive\.google\.com/drive/folders/[0-9a-zA-Z_-]+(?:\?[^\s\)\"\'>]*)?', PUBLIC_FIRST_YEAR_URL, cleaned)
+    return cleaned
 
 
 def format_document_response(
@@ -360,13 +477,7 @@ def format_document_response(
     """
     sources = []
     for d in docs:
-        sources.append({
-            "title": d.get("title", ""),
-            "subject": d.get("subject", "Course Document"),
-            "file_path": PUBLIC_FIRST_YEAR_URL,
-            "source_url": PUBLIC_FIRST_YEAR_URL,
-            "public_url": PUBLIC_FIRST_YEAR_URL
-        })
+        sources.append(sanitize_source(d))
 
     if not docs:
         subj = query_params.get("subject")
@@ -374,7 +485,7 @@ def format_document_response(
         unit_str = f" Unit {unit}" if unit is not None else ""
         item_str = f"{subj}{unit_str}" if subj else "requested"
         answer = f"The requested {item_str} document is not currently available in the local MSRIT knowledge base."
-        return answer, []
+        return sanitize_text(answer), []
 
     type_label_map = {
         "notes": "Notes",
@@ -407,7 +518,7 @@ def format_document_response(
         else:
             answer = f"Here is the {d['subject']}{unit_str} ({title}) {dt_label.lower()}:\n\n{PUBLIC_FIRST_YEAR_URL}"
 
-        return answer, sources
+        return sanitize_text(answer), sources
 
     # Case 2: Multiple matching documents found
     subj = query_params.get("subject") or docs[0].get("subject", "Course")
@@ -428,7 +539,7 @@ def format_document_response(
             lines.append(f"*(and {len(docs) - 8} more)*")
         lines.append("\nWhich one would you like?")
         lines.append(f"\nYou can access the first-year question papers here:\n{PUBLIC_FIRST_YEAR_URL}")
-        return "\n".join(lines), sources
+        return sanitize_text("\n".join(lines)), sources
 
     lines = [f"I found {len(docs)} {subj}{unit_str} documents:"]
     for d in docs[:8]:
@@ -439,5 +550,5 @@ def format_document_response(
 
     lines.append("\nWhich one would you like to access?")
     lines.append(f"\nYou can access first-year resources here:\n{PUBLIC_FIRST_YEAR_URL}")
-    return "\n".join(lines), sources
+    return sanitize_text("\n".join(lines)), sources
 

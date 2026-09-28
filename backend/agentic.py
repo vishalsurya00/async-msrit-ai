@@ -30,6 +30,10 @@ ALLOWED_TOOLS = {
     "update_student_profile",
     "get_academic_context",
     "get_recommended_clubs",
+    "lookup_principal",
+    "lookup_proctor",
+    "lookup_campus_office",
+    "get_entity_counts",
 }
 
 TOOL_REGISTRY = {
@@ -97,6 +101,30 @@ TOOL_REGISTRY = {
         "arguments": {
             "branch": "optional string (e.g. 'ME', 'CSE', 'AI&ML', 'ECE')",
             "category": "optional string ('Technical', 'Cultural', 'Outreach', 'Literary')"
+        },
+        "required": []
+    },
+    "lookup_principal": {
+        "description": "Retrieve verified institutional details about the Principal of MSRIT (name, role, office location, contact, joined date, education).",
+        "arguments": {},
+        "required": []
+    },
+    "lookup_proctor": {
+        "description": "Retrieve verified institutional details about the Chief Proctor of MSRIT (name, role, department, office location, responsibilities).",
+        "arguments": {},
+        "required": []
+    },
+    "lookup_campus_office": {
+        "description": "Retrieve verified campus administrative offices, departments, and building locations (e.g. Apex Block, Ground Floor offices).",
+        "arguments": {
+            "query": "string (office name or building keyword, e.g. 'Principal Office', 'Apex Block', 'Scholarship')"
+        },
+        "required": ["query"]
+    },
+    "get_entity_counts": {
+        "description": "Retrieve exact authoritative database counts for branches, departments, or clubs.",
+        "arguments": {
+            "entity_type": "optional string ('branches', 'clubs', 'departments')"
         },
         "required": []
     }
@@ -331,10 +359,20 @@ def _format_observations_for_synthesis(observations: List[Dict[str, Any]]) -> st
             else:
                 lines.append(f"Tool {tool} returned {len(res)} item(s):")
                 for item in res[:5]:
-                    lines.append(f"  - {json.dumps(item)}")
+                    if isinstance(item, dict) and tool in ("search_academic_documents", "get_academic_document"):
+                        from backend.documents import sanitize_document_metadata
+                        safe_item = sanitize_document_metadata(item)
+                    else:
+                        safe_item = item
+                    lines.append(f"  - {json.dumps(safe_item)}")
         elif isinstance(res, dict):
             lines.append(f"Tool {tool} returned record:")
-            for k, v in res.items():
+            if tool in ("search_academic_documents", "get_academic_document"):
+                from backend.documents import sanitize_document_metadata
+                safe_res = sanitize_document_metadata(res)
+            else:
+                safe_res = res
+            for k, v in safe_res.items():
                 lines.append(f"  - {k}: {v}")
         else:
             lines.append(f"Tool {tool} returned: {res}")
@@ -443,13 +481,15 @@ CRITICAL RULES:
 2. DO NOT invent department locations, HOD names, clubs, syllabus details, or document metadata not present in the facts.
 3. If an item was not found or a tool returned empty/none, honestly state that it is not available.
 4. If asked about recommendations, recommend ONLY the documents/notes explicitly listed in the facts.
-5. Provide a crisp, helpful, and polite response for the student.{pref_rule}
+5. NEVER mention local filesystem paths (data/raw/...), internal folder IDs, or storage locations. If referring to notes, use the public link: https://ritnotebook.pages.dev/notes/first.
+6. Provide a crisp, helpful, and polite response for the student.{pref_rule}
 
 Answer:"""
 
     try:
         from backend.language_control import safe_qwen_generate
-        fallback = _deterministic_synthesis_fallback(query, observations)
+        from backend.documents import sanitize_text
+        fallback = sanitize_text(_deterministic_synthesis_fallback(query, observations))
         answer = safe_qwen_generate(
             prompt,
             deterministic_fallback=fallback,
@@ -459,11 +499,12 @@ Answer:"""
         latency_ms = round((time.perf_counter() - t0) * 1000, 2)
         if not answer:
             answer = fallback
-        return answer, latency_ms
+        return sanitize_text(answer), latency_ms
     except Exception as exc:
         latency_ms = round((time.perf_counter() - t0) * 1000, 2)
         print(f"[Grounded Synthesis] Ollama call error: {exc}. Using deterministic fallback.", file=sys.stderr)
-        return _deterministic_synthesis_fallback(query, observations), latency_ms
+        from backend.documents import sanitize_text
+        return sanitize_text(_deterministic_synthesis_fallback(query, observations)), latency_ms
 
 
 def _match_branch_helper(query: str, clean: str) -> Optional[str]:
@@ -681,13 +722,9 @@ async def run_agentic_workflow(
             })
 
             if tool_name == "search_academic_documents" and isinstance(tool_res, list):
+                from backend.documents import sanitize_source
                 for doc in tool_res:
-                    if doc.get("local_file_path"):
-                        sources.append({
-                            "file_path": doc["local_file_path"],
-                            "subject": doc.get("subject", "Academic Document"),
-                            "source_url": doc.get("source_url", "")
-                        })
+                    sources.append(sanitize_source(doc))
 
     else:
         # Agentic Reasoning Path: Qwen tool selection loop for combined/ambiguous queries
@@ -781,14 +818,9 @@ async def run_agentic_workflow(
 
                 # Collect document sources if returned
                 if tool_name == "search_academic_documents" and isinstance(tool_res, list):
+                    from backend.documents import sanitize_source
                     for doc in tool_res:
-                        sources.append({
-                            "title": doc.get("title", ""),
-                            "subject": doc.get("subject", "Academic Document"),
-                            "file_path": "https://ritnotebook.pages.dev/notes/first",
-                            "source_url": "https://ritnotebook.pages.dev/notes/first",
-                            "public_url": "https://ritnotebook.pages.dev/notes/first"
-                        })
+                        sources.append(sanitize_source(doc))
 
     # Step 3: Grounded Answer Synthesis (Runs at most once)
     if not observations:

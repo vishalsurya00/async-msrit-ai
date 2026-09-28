@@ -532,3 +532,195 @@ def list_subjects(
     except Exception as e:
         print(f"Error in list_subjects: {e}", file=sys.stderr)
         return []
+
+
+def get_branch_count() -> int:
+    """Return authoritative live count of engineering branches from branches table."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM branches;")
+        row = cur.fetchone()
+        cnt = row[0] if row else 18
+        cur.close()
+        conn.close()
+        return cnt
+    except Exception as e:
+        print(f"Error in get_branch_count: {e}", file=sys.stderr)
+        return 18
+
+
+def get_club_count() -> int:
+    """Return authoritative live count of student clubs from clubs table."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT COUNT(*) FROM clubs;")
+        row = cur.fetchone()
+        cnt = row[0] if row else 24
+        cur.close()
+        conn.close()
+        return cnt
+    except Exception as e:
+        print(f"Error in get_club_count: {e}", file=sys.stderr)
+        return 24
+
+
+def list_branches_names() -> List[str]:
+    """Return sorted list of canonical branch names."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT code, name FROM branches ORDER BY name ASC;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        cleaned = []
+        for code, name in rows:
+            clean_n = name.replace("\ufffd", "-").replace("  ", " ").strip()
+            cleaned.append(clean_n)
+        return cleaned
+    except Exception as e:
+        print(f"Error in list_branches_names: {e}", file=sys.stderr)
+        return []
+
+
+def list_clubs_names() -> List[str]:
+    """Return sorted list of canonical club names."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM clubs ORDER BY name ASC;")
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        return [r[0].strip() for r in rows if r[0] and r[0].strip()]
+    except Exception as e:
+        print(f"Error in list_clubs_names: {e}", file=sys.stderr)
+        return []
+
+
+def get_principal_info() -> Optional[Dict[str, Any]]:
+    """Retrieve verified Principal facts from institutional_entities."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT name, role, office_location, building, floor, email, education, joined, description, source_url
+            FROM institutional_entities
+            WHERE entity_key = 'principal';
+        """)
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if not row:
+            return None
+        return {
+            "entity_type": "principal",
+            "entity_key": "principal",
+            "name": row[0],
+            "role": row[1],
+            "office_location": row[2],
+            "building": row[3],
+            "floor": row[4],
+            "email": row[5],
+            "education": row[6],
+            "joined": row[7],
+            "description": row[8],
+            "source_url": row[9]
+        }
+    except Exception as e:
+        print(f"Error in get_principal_info: {e}", file=sys.stderr)
+        return None
+
+
+def get_chief_proctor_info() -> Optional[Dict[str, Any]]:
+    """Retrieve verified Chief Proctor facts from institutional_entities."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT name, role, additional_role, office_location, building, floor, description, source_url
+            FROM institutional_entities
+            WHERE entity_key = 'chief_proctor';
+        """)
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if not row:
+            return None
+        return {
+            "entity_type": "proctor",
+            "entity_key": "chief_proctor",
+            "name": row[0],
+            "role": row[1],
+            "additional_role": row[2],
+            "office_location": row[3],
+            "building": row[4],
+            "floor": row[5],
+            "description": row[6],
+            "source_url": row[7]
+        }
+    except Exception as e:
+        print(f"Error in get_chief_proctor_info: {e}", file=sys.stderr)
+        return None
+
+
+def get_apex_ground_floor_offices(exclude_office: Optional[str] = None) -> List[str]:
+    """Retrieve verified offices located on the Ground Floor of Apex Block."""
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT name
+            FROM institutional_entities
+            WHERE building = 'Apex Block' AND floor = 'Ground Floor' AND entity_type = 'office'
+            ORDER BY id ASC;
+        """)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+        offices = [r[0].strip() for r in rows if r[0]]
+        if exclude_office:
+            norm_ex = exclude_office.lower().replace("'", "").replace("office", "").strip()
+            offices = [o for o in offices if norm_ex not in o.lower().replace("'", "")]
+        return offices
+    except Exception as e:
+        print(f"Error in get_apex_ground_floor_offices: {e}", file=sys.stderr)
+        return ["Principal's Office", "Account Section", "Scholarship Section", "Registrar Office"]
+
+
+def lookup_office(query: str) -> Optional[Dict[str, Any]]:
+    """Search institutional offices by query."""
+    if not query or not query.strip():
+        return None
+    clean_q = query.strip()
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        pattern = f"%{clean_q}%"
+        cur.execute("""
+            SELECT entity_key, name, role, office_location, building, floor, source_url
+            FROM institutional_entities
+            WHERE entity_type = 'office' AND (name ILIKE %s OR entity_key ILIKE %s)
+            LIMIT 1;
+        """, (pattern, pattern))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if not row:
+            return None
+        return {
+            "entity_type": "office",
+            "entity_key": row[0],
+            "name": row[1],
+            "role": row[2],
+            "office_location": row[3],
+            "building": row[4],
+            "floor": row[5],
+            "source_url": row[6]
+        }
+    except Exception as e:
+        print(f"Error in lookup_office: {e}", file=sys.stderr)
+        return None
+
