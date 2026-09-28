@@ -12,3 +12,5 @@ data/processed/*
 *.gguf
 *.safetensors
 *.log
+
+scratch/
