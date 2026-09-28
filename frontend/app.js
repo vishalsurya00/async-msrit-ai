@@ -637,7 +637,7 @@
   // System Health Check (GET /health)
   async function checkSystemHealth() {
     try {
-      const resp = await fetch('/health', { method: 'GET' });
+      const resp = await fetch('/api/health', { method: 'GET' });
       if (resp.ok) {
         if (statusText) statusText.textContent = 'Connected';
         if (statusEnginePill) statusEnginePill.textContent = 'Ollama 7B';
@@ -721,7 +721,7 @@
       }
 
       // API call strictly adhering to POST /ask contract
-      const response = await fetch('/ask', {
+      const response = await fetch('/api/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -830,15 +830,23 @@
             </svg>
           </button>
           <div class="sources-cards-flow" style="display: none;">
-            ${sources.map(src => `
+            ${sources.map(src => {
+              const urlCandidate = src.public_url || src.source_url || src.file_path || '';
+              const isSafe = urlCandidate.startsWith('http') && !urlCandidate.includes('data/raw') && !urlCandidate.includes('drive.google.com') && !urlCandidate.includes('by_folder');
+              const safeUrl = isSafe ? urlCandidate : 'https://ritnotebook.pages.dev/notes/first';
+              const rawTitle = src.title || src.subject || 'First-Year Academic Resources';
+              const safeTitle = (rawTitle.includes('data/raw') || rawTitle.includes('data\\raw') || rawTitle.includes('by_folder'))
+                ? (src.subject || 'First-Year Academic Resources')
+                : rawTitle;
+              return `
               <div class="source-reference-card">
                 <div>
                   <div class="source-subject-title">${escapeHtml(src.subject || 'Reference')}</div>
-                  <div class="source-path-code"><a href="${escapeHtml(src.public_url || src.source_url || 'https://ritnotebook.pages.dev/notes/first')}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-primary);text-decoration:none;">${escapeHtml(src.title || src.subject || 'First-Year Academic Resources')} ↗</a></div>
+                  <div class="source-path-code"><a href="${escapeHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-primary);text-decoration:none;">${escapeHtml(safeTitle)} ↗</a></div>
                 </div>
                 <span class="source-verification-badge">Verified</span>
               </div>
-            `).join('')}
+            `;}).join('')}
           </div>
         </div>
       `;
