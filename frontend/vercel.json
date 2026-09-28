@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://memorial-soc-optimization-targets.trycloudflare.com/:path*"
+      "destination": "https://gmbh-signals-cnet-horizontal.trycloudflare.com/:path*"
     }
   ]
 }
