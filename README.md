@@ -488,43 +488,24 @@ graph TD
 
 ## Deployment Architecture
 
-The system supports two execution paradigms:
-1. **Fully Local Setup**: The frontend and backend run entirely on the user's workstation or a campus intranet server.
-2. **Demonstration Architecture (Vercel + Cloudflare Tunnel)**: For hackathon judging and remote accessibility, the static frontend is deployed to Vercel, while local sovereign AI inference is exposed via a secure Cloudflare Tunnel.
+RIT NEXUS runs as a **fully local sovereign deployment**. The user interface is served directly by the local FastAPI application, connecting to local `/health` and `/ask` endpoints with zero intermediate cloud proxies, CDNs, or external network dependencies.
 
 ```mermaid
-graph LR
-    subgraph Remote Client
-        ClientBrowser[Evaluator Browser / Mobile]
-    end
-    
-    subgraph Vercel Edge
-        VercelFrontend[Vercel Static Hosting<br/>HTML / CSS / Vanilla JS]
-        VercelRewrite[Vercel Route Rewrite<br/>/api/* -> Cloudflare Tunnel]
-        VercelFrontend --> VercelRewrite
-    end
-    
-    subgraph Tunnel Ingress
-        CFTunnel[Cloudflare Quick Tunnel<br/>*.trycloudflare.com]
-    end
+graph TD
+    Browser([Student Web Browser]) <--> |http://127.0.0.1:8000| FastAPI[FastAPI Server backend/main.py]
     
     subgraph Local Sovereign Infrastructure
-        LocalAPI[Local FastAPI Instance :8000]
-        LocalDB[(Local PostgreSQL + pgvector :5432)]
-        LocalOllama[Local Ollama Qwen 2.5:7B :11434]
-        
-        LocalAPI <--> LocalDB
-        LocalAPI <--> LocalOllama
+        FastAPI --> StaticUI[Static Frontend /frontend]
+        FastAPI --> Endpoints[Local Endpoints: /health & /ask]
+        FastAPI <--> Postgres[(Local PostgreSQL 16 + pgvector :5432)]
+        FastAPI <--> MCPServer[MCP Server Process stdio]
+        FastAPI <--> Ollama[Local Ollama / Qwen 2.5:7B :11434]
     end
-    
-    ClientBrowser <--> VercelFrontend
-    VercelRewrite <== HTTPS ==> CFTunnel
-    CFTunnel <== Encrypted Wire ==> LocalAPI
 ```
 
 > [!NOTE]
-> **Understanding Sovereign Deployment**:  
-> In the demo configuration, **AI inference remains sovereign and local** on our hardware. No cloud LLM is involved. The Cloudflare Tunnel acts solely as an encrypted network pipe enabling remote web clients to access the local FastAPI server.
+> **Pure Sovereign Operation**:  
+> In this fully local deployment, **all computation remains on-device**: AI inference (Ollama), relational queries, vector similarity search, and tool execution take place strictly on the host system without sending any student queries or telemetry over the internet.
 
 ---
 
@@ -542,8 +523,6 @@ graph LR
 | **Embeddings** | sentence-transformers | `all-MiniLM-L6-v2` (384d) | Local dense embedding model for academic text chunking and RAG |
 | **Agentic Protocol** | Model Context Protocol (MCP) | `mcp[cli] < 2.0` | Standardized, schema-validated tool calling architecture |
 | **PDF Extraction** | PyMuPDF (fitz) | >= 1.23.0 | Fast extraction and chunking of syllabus PDFs and question papers |
-| **Edge Deployment** | Vercel | Static Edge + Rewrites | Public UI hosting with path rewrites to the local tunnel backend |
-| **Tunneling** | Cloudflare Tunnel | `cloudflared` | Secure ingress bridging the Vercel demo frontend to the local server |
 
 ---
 
@@ -575,8 +554,7 @@ async-msrit-ai/
 ├── frontend/                       # Lightweight student web interface
 │   ├── index.html                  # Accessible chat application markup
 │   ├── app.js                      # Chat state handling, API calls & render routines
-│   ├── style.css                   # Polished dark-mode responsive stylesheet
-│   └── vercel.json                 # Vercel deployment & API rewrite configuration
+│   └── style.css                   # Polished dark-mode responsive stylesheet
 ├── scripts/                        # Automated test suites & verification utilities
 │   ├── test_department_responses.py # 61 automated tests for department lookups & counts
 │   ├── test_academic_documents.py   # Test suite for document discovery & sanitization
@@ -748,7 +726,7 @@ To ensure absolute transparency for judges and contributors, the current impleme
   - Multi-turn conversational memory with pronoun and entity resolution.
   - Model Context Protocol (MCP) server with 11 registered, audited tools.
   - Strict filesystem path sanitization preventing server disclosure.
-  - Dual deployment mode (100% local or Vercel + Cloudflare Tunnel).
+  - 100% local sovereign deployment served directly by FastAPI and running on-device via Docker PostgreSQL and Ollama.
 
 - ⏳ **Current Limitations (By Design for Prototype)**:
   - Higher-semester academic curricula (Semesters 3 through 8) are not yet indexed in vector storage.

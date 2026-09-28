@@ -637,7 +637,7 @@
   // System Health Check (GET /health)
   async function checkSystemHealth() {
     try {
-      const resp = await fetch('/api/health', { method: 'GET' });
+      const resp = await fetch('/health', { method: 'GET' });
       if (resp.ok) {
         if (statusText) statusText.textContent = 'Connected';
         if (statusEnginePill) statusEnginePill.textContent = 'Ollama 7B';
@@ -721,7 +721,7 @@
       }
 
       // API call strictly adhering to POST /ask contract
-      const response = await fetch('/api/ask', {
+      const response = await fetch('/ask', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
